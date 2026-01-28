@@ -1,0 +1,16 @@
+introduced in Java17
+enables more fine grained inheritance control in java
+sealing allows classes and interfaces to define their permitted subtypes
+
+Motivation:
+a class hierarchy enables us to reuse code via inheritance. However, the class hierarchy can also serve other purposes. Code reuse is great, but isn't always out primary goal
+
+Imagine a business domain that only works with cards and trucks, not motorcycles. When creating the Vehicle abstract class, we should be able to allow only Car and Truck classes to extend it. As such, we want ensure that there will be no misuse of the Vehicle abstract class within our domain
+
+In earlier versions java provided limited options in the area of inheritance control:
+A final class can have no subclasses
+A package private class can only have subclasses in the same package
+
+A superclass that's developed with a set of subclasses should be able to document its intended usage, not constrain it subclasses. Also having restricted subclasses shouldn't limit the accessibility of its superclass
+
+Thus, the main motivation behind sealed classes is to have the possibility for a superclass to be widely accessible, but not widely extensible 

@@ -1,0 +1,7 @@
+also known as policy pattern
+comes under behavioral pattern
+
+when an algorithm is depended upon object passed by the user
+
+eg. Collection.sort(comparatorObject)
+here sort algorithm works according to comparatorObject

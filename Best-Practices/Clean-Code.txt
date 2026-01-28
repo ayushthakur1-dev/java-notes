@@ -1,0 +1,70 @@
+What? -> easy to read, modify and does what is expected
+
+Why? -> because it is the goal of any architecture to minimize the human efforts needed to create and maintain it.
+
+How? -> Instead of writing clean code directly, you can write a small portion of code first and it's tests(so that you can verify code is correct) and then re-factor it using mentioned principals.
+
+Refactoring is the process of restructuring the existing code without changing its external behaviour
+
+Things that are not refactored: change an algorithm, replace one type of loop with other, upgrade the performance of a piece of code
+
+Things that are refactored: extract a piece of code to a function, rename things, extract several functions to a new class, create a constant to store a hardcoded value, ....
+
+if you are worrying that the code can break after refactoring, to avoid such cases safe refactoring is done by using good automated tests for our code, and after each refactoring you can check if all the tests are still green 
+
+Refactoring tools: modern IDEs have tools that do some of the most common refactoring actions automatically, if we use them we will be reducing the possibilities of breaking something when making changes, for this you can discover all the refactoring tools in your IDE. 
+VSCODE: https://code.visualstudio.com/docs/editing/refactoring
+IntelliJ: https://www.jetbrains.com/help/idea/refactoring-source-code.html
+
+
+1. Naming:
+
+intention-revealing name
+
+pronounceable names
+
+searchable name
+
+avoid disinformation: be careful about words that mean something specific, eg. do not refer to a grouping of accounts as accountList unless it is actually a list, the word has a specific meaning and it may lead to false conclusion
+var accountsList[] -> var accounts[]
+
+avoid noise words: words that do not offer any additional information about the variable, they are redundant and should be removed.
+eg, in above example even if about collection was a list, accounts is a better and simple term, similarly words like the(prefix), info, data, variable, object, manager should be avoided. If your class is named UserInfo, you can just remove the Info and make it User.
+
+be consistent: follow the one word for each concept rule. Do not use fetch, retrieve, and get for the same operations in different class
+
+
+2. Functions: 
+
+should do one thing only, and do it well
+
+avoid side effects, split your functions if you notice that they are doing several things at the same time
+
+no more than 2-3 level of indentation
+
+should have less than 3 arguments 
+
+encapsulate conditions in function: putting conditions into a named function is a good way to make you conditions more readable, eg 
+ 	if((age >= 18 && isStudent == true) || (age > 14 && age < 18 && height > 6)) 
+	if(isValid(age, isStudent, height))
+
+do not use flag arguments: a flag argument is a Boolean function that is passed to a function and two different actions are taken depending upon it's value eg. if(even) else{}, in such cases function should be divided into two as they naturally contradicts the principal of single responsibility
+
+know your language convention: in java -> 
+lowercase for packages
+camelCase for variable, methods name
+UpperCamelCase or PascalCase for class, enums, interfaces
+SCREMEING_SNAKE_CASE for constants like static final
+
+
+3. Comments: 
+
+avoid comments as much as you can, name should be intent revealing and functions should be smaller so that one can easily understand what the code does without reading comments, as there is nothing that forces the comments to be maintained which increase the chances of fake comments after the code is changed. 
+
+The truth is only in the code, and when you think you need to write a comment always think if there is not a better way to express this using code as the goal of those comments was to make our code easier to read, this is the goal that we also have when writing clean code. 
+
+Comments are not forbidden, there are situations where comments make sense:
+Legal comments, TODO, Mandated Comments (Java Docs), in public APIs, amplifications about the importance of something or the reason of a concrete decision in the code
+
+
+AVOID CODE SMELLS!!!

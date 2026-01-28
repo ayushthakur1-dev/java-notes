@@ -1,0 +1,14 @@
+comes under creational design pattern
+designing complex object that requires laborious, step by step initialization of many fields and nested objects, such code is usually buried under a monstrous constructor with lots of parameters, or scattered all over the client code 
+
+Principle: 
+include all fields in product class with default values, simple constructor, getter and setters
+
+make a builder class that sets all the fields using methods, so those parameters could be avoided that are not required at the point of time, and custom objects can be formed by calling those methods
+
+in case you want to make specific objects eg. 
+Main product -> car
+other products -> luxury car, sports car, suv 
+you can pre-build those methods inside a separate director class that can make those custom products with one method call
+
+IMORTANT: after making an object and returning it to the client reset the product object inside the builder class with default values

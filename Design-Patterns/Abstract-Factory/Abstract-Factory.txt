@@ -1,0 +1,3 @@
+in factory design pattern we have a single factory class, that returns different subclasses based on the input provided and factory class uses if-else statement to achieve this. 
+
+In abstract factory design pattern we get rid of if-else block and have a factory class for each sub-class, then an Abstract Factory Class that will return the sub-class based on the input factory class

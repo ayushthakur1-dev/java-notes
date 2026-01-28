@@ -1,0 +1,55 @@
+1. Bolater: code, methods and classes that have increased to such proportions that they are hard to work with
+
+- Long Methods: method containing too many lines, a single method should be around 10 lines only
+
+- Large Class: class containing many fields, and methods
+
+- Primitive obsession: use of primitives instead of small objects for simple task(such as currency, ranges, etc.)
+
+- Long parameter list: more than three or four parameter per method
+
+- Data clumps: different part of codes containing identical group of variables (eg. name, address, phone, pin), These clumps should be turned into their own class
+
+
+2. Object-Orientation Abuser: incomplete or incorrect application of OOPs principals
+
+- Switch statements: use of complex switch operators or sequence of if statements 
+
+- Temporary fields: fields needed by objects only under certain circumstances, and outside of these circumstances they are empty
+
+- Request Bequest: If a subclass uses only some of the methods and properties inherited from its parent, those unneeded methods may simply go unused or be redefined given off exceptions
+
+- Alternative class with different interface: two classes perform identical functions but have different method names
+
+
+3. Change Preventers: if you need to change something in one part of your code you also have to make changes in many other places too
+
+- Divergent change: changing unrelated code snippets (eg. when adding a new product type you have to change the methods for finding, displaying, and ordering products)
+
+- Shotgun Surgery: Making any modification requires that you make many small changes to many different classes
+
+- Parallel Inheritance: whenever you create a subclass for a class, you find yourself needing to create a subclass for another class
+
+
+4. Dispensables: something pointless and unneeded whose absence would make code cleaner, more efficient and easier to understand
+
+- Comments
+
+- duplicate code
+
+- lazy class: understanding and maintaining class always costs time. So if a class doesn't do enough to earn your attention, it should be deleted
+
+- dead code: a variable, method, class, or any other field that is no longer user
+
+- unused field
+
+
+5. Couplers: excessive coupling between classes
+
+- Feature envy: a method accesses the data of another object more than it's own data
+
+- Inappropriate intimacy: one class uses the internal fields of another class
+
+- Message Chains: Series of calls resembling a->b->c->d
+
+- Middle man: if a class performs only one action, delegating work to another class, why does it exist at all? 

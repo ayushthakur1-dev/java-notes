@@ -1,0 +1,89 @@
+Think of JVM as a mini operating system with it's own memory model
+When a Java Program runs, the JVM divides memory into 5 logical areas, each with a very specific responsibility
+
+1. Heap <- Object
+2. Method Area (Metaspace) <- Class data
+3. Java Stack (per thread) <- Method calls
+4. PC Register (per thread) <- Instructions pointer
+5. Native Memory Stack <- JNI*
+
+
+Heap: 
+where all the objects created with 'new', and instance fields are stored
+is a shared resource 
+managed by garbage collector
+heap is not flat it is divided into generations:
+Young Generation
+	Eden
+	Survivor S0
+	Survivor S1
+Old generation
+
+*** Purpose of generation in HEAP: 
+when object is created it stays in eden space(very fast allocation, filled quickly, emptied frequently), when eden fills up live object are coped into survivor and eden will be emptied, each time an object survives a Minor GC its age increases, when age reaches a threshold object is promoted to old generation, where GC frequency is low. 
+Major GC will be triggered when old generation is full and in that case all application threads are stopped until the process is complete
+
+*** why two survivor states?
+when an object is in survivor state it is not promoted until it reaches a certain threshold age, so until then it stays in survivor. 
+so what if survivor is full? -> that is why there are two survivor state out of which one will be used and other will be empty, as it exist for ensuring clean copy
+S0(full) -> Garbage will be collected -> survived object copied into S1 -> S0 will be emptied -> now S1 will be used (process will repeat until object is too large or it reaches threshold age, after that it will be promoted)
+
+*** BUT, OBJECTS ARE NOT ALWAYS STORED IN HEAP!!! (What????)
+when JVM proves that they don't escape, replaces them with scalars, or backs them with native memory instead
+
+Escape Analysis: HotSpot Analyzes weather an object: escapes the method, escapes the thread, is only used locally
+eg: an object made locally inside a function and not passed anywhere else, so when the method is completed object will be removed anyway, in such cases JVM may allocate object to a stack. Why this is safe? -> because stack frames disappear when method exits, and object lifetime is guaranteed 
+
+Scalar Replacement: lets say we have something like Point p = new Point(1, 2) return p.x + p.y; -> in such cases JVM may not allocate Point at all and replace it with two local variable like int x = 1, int y = 2 return x + y; in such case there is no object allocated to heap
+
+Some Java objects are wrapped around the native memory in such case they are handled by native memory stack
+
+
+Method Area(Metaspace): where class data in stored
+Method Area -> JVM specific concept(?)
+Metaspace -> Actual implementation (Java 8+)(?)
+When JVM load a class, metaspace stores: class name, method bytecode, static field information, method signature, constant pool(?), annotations
+But instance fields and object data is not stored here as they do not belongs to the class itself 
+it is a shared resource and has a native memory(?) type
+mostly managed by garbage collector (not fully)
+
+*** Difference between method area and metaspace
+Java talks about memory at two different levels: Specifications(WHAT) and Implementation(HOW)
+Method Area = Logical Area, JVM specification says: there must exist a memory area called Method Area that stores class level information, but it does not say where is that memory, how it must be implemented, how big it must be, so method area is a contract, not a concrete memory block
+whereas, Metaspace = HotSpot's Implementation: where method area is implemented as Metaspace, stored in native memory and grows dynamically 
+
+*** what is constant pool?
+constant pools stored in method area/ metaspace (constant pool != string pool as that is for storing string literals only that too in HEAP): 
+there are two constant pools: compile time constant pool(inside .class file) and runtime constant pool(in method area)
+when a class is loaded, JVM reads constant from .class file and puts them into runtime constant pool for accessing
+So if there exist a string inside a class, will it be stored in both string pool and constant pool?
+No, in that case String value will be stored in string pool and constant pool will store a reference to that entry
+
+*** native memory?
+native memory is memory allocated directly from the OS, outside the java heap, and managed by the JVM or native code not by the garbage colletor
+oteher memory type is Java-managed memory (managed by GC)
+
+*** metaspace was introduced in Java 8 replacing PermGen(Permanent generation) that is of fixed size and was located in Heap memory, but now metaspace is dynamic and is stored in native memory(off heap)
+
+
+Java Stack: Per Thread Execution Memory
+Each thread gets it's own stack, and it stored method calls in the form of stack frames
+Each method call creates a frame storing -> local variables, operand stack(for performing calculations), return address(when a method calls another address JVM will remember from where the execution should resume)
+Stack lifecycle: Method called -> frame pushed, Method returns -> frame popped
+it is not a shared resource
+
+
+PC Register: Instruction Pointer
+PC -> Program Counter 
+Each thread has a PC register that stores address of current bytecode instruction, when a thread pauses pc register remembers where to resume
+not a shared resource 
+
+
+Native Memory Stack: for JNI
+JNI? -> Java Native Interface is a standard framework that allows java code running in a JVM to call and be called by native applications and libraries written in other languages, primarily C/C++, for platform-specific features or performance. 
+It acts as a bridge, enabling Java applications to access native code (like device drivers or existing libraries) and vice versa, improving performance for demanding tasks like scientific calculations, but requires platform specific compilation
+Key functions & Concepts:
+Creates a well defined link between Java's managed code and native code, allowing creation, inspection and manipulation of Java objects from native code and vice-versa
+You can declare methods in java as native, then implement them in C/C++.
+Used when standard Java APIs lack functionality (like hardware access) or for speed
+Ensures native libraries work across different JVM implementation(HotSpots, OpenJ9, GraalVM, Zing -> engines that follow JVM specs but can behave differently internally) on the same platform

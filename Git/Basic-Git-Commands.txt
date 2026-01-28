@@ -1,0 +1,90 @@
+1. git config:
+Before you can start using git, you need to configure it, this command allows you to set the username and email address that will be used with your commits
+
+git config --global user.name "<your-user-name>"
+git config --global user.email "<your-email-address>"
+
+
+2. git init:
+creates all the necessary files and directories for Git to keep track of everything. All of these files are kept in a directory called .git, '.'(dot) at start represents that it will be hidden 
+
+$ git init
+
+
+3. git clone: 
+the git clone command takes a path (typically a URL) to the git repository you want to clone. It creates a local working copy of remote repo's source code. When you clone a repo, the code is downloaded to your machine automatically. If you have permission, this command will add the original location as a remote location, allowing you to grab changes from it and push changes to it.
+
+$ git clone https://github.com/<repo-url>
+
+
+4. git status: 
+tells about the state of our repo as seen by git, it is recommended to run this command after any other command in order to avoid potential inaccurate assumptions about the state of your file/ repo.
+
+$ git status
+
+
+5. git add: 
+moves file from working directory to staging area, allowing you to compare your local version to the remote repo's version before committing it. 
+
+$ git add file1 file2 file3 ... fileN
+$ git add . (moves all files, except the ignored files in .gitignore from working directory to staging area, but it is not recommended as there is potential risk of adding file that should not be tracked, although any change can be done easily before pushing the commits)
+
+
+6. git commit: 
+saves a log message along with commit id of the modifications made to the git repo in your local machine
+
+$ git commit -m "<logging message>"
+$ git commit --amend (lets you modify most recent commit instead of creating a new one, so that you can change the commit message or files included in the commit, keep in mind not to change older commits using --amend as it rewrites history that can cause potential issues)
+
+
+7. git push:
+pushes the contents of your local repo to the remote repository you have added. If a named branch does not exist in the remote repo, it will be created
+
+$ git push
+
+8. git branch:
+create, list, delete, or rename branches
+
+$ git branch <branch-name> (creates a branch)
+$ git branch or $ git branch --list (lists branches)
+$ git branch -d <branch-name> (deletes a branch)
+$ git branch -m <old-name> <new-name> (renames a branch)
+
+
+9. git checkout: 
+it is used to switch to an existing branch or to create and switch to a new one. To accomplish this, the branch you want to switch to must be present in your local system, and any modifications made to your current branch must be committed before switching, as to switch between branches git remove all tracked files from your current branch and replace them with the files present in new one.
+
+$ git checkout -b <branch-name> (creates a new branch for this git repo and switches to it)
+$ git checkout <branch-name> (switch branch)
+
+
+10. git merge: 
+it joins your branch to the parent branch, depending on your process the parent branch can be either a development branch or a master branch. If there are no conflicts, it will make a new commit automatically. You should be on the branch you want to merge with your parent branch before running this command.
+
+$ git merge <name-of-branch-to-merge-in>
+
+
+11. git pull:
+the contents of the remote repo are fetched and integrated into your local repo using this command. git pull pulls the most recent changes from the remote server into the local repo, ensuring you have the most up-to-date information form you coworkers
+
+$ git pull
+
+
+12. git log: 
+This command displays a log of all the commits made to the current branch so far.
+
+$ git log
+
+
+13. git cherry-pick:
+lets you take one or a few specific commits from one branch and apply them onto another branch without merging the whole branch
+
+$ git cherry-pick <branch-name>
+
+
+14. git rebase:
+moves a sequence of commits onto a new base commit, creating a clean linear history
+
+$ git rebase <branch-name>
+$ git rebase <parent-branch> <rebasing-branch> (rebasing without placing HEAD on that branch)
+$ git rebase -i <branch-name> (let's you do multiple rebase in one go using interactive rebase)

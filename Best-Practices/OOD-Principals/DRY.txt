@@ -1,0 +1,18 @@
+Don't Repeat Yourself: avoid redundancy in code
+
+EXAMPLE:
+two classes -> both having salaryCalculate method with same logic -> violates the DRY principal -> create a separate class Calculations -> define salaryCalation method there -> use that method at both place
+
+Advantages: 
+code reusability
+maintenance efficiency
+readability and clarity
+
+Disadvantages:
+over-abstraction: over complex logic, sometimes making codebase harder to understand and maintain
+tight-coupling: makes code harder to reuse as it will be tightly coupled to a certain code block
+maintenance bottlenecks: changes to shared functionality may impact multiple components, potentially causing conflicts or unintended consequences 
+
+
+Conclusion: 
+Use it but only at a certain extent 

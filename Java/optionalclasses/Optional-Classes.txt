@@ -1,0 +1,31 @@
+the null reference is the source of many problems because it often used to denote the absence of a value. Java SE 8 introduces a new class called java.util.Optional that can alleviate some of these problems
+
+lets say we have a code that look like: 
+String version = computer.getSoundcard().getUSB().getVersion();
+
+This code looks reasonable, however many computers like Respberry Pi don't actually ship with a sound card, so what is the result of this getSoundcar() ? - > a common bad practice is to return the null value to indicate the absence of a soundcard, this means the call to getUSB() will try to return the USB port of a null reference which will result in a NullPointerException at runtime
+
+to handle this we can use exception handling but that will instantly make our code ugly due to nested checks
+
+so what alternatives are there? 
+Languages like Groovy have safe navigation operator represented by '?' to safely navigate through potential null references, it was also proposed in JAVA7 but didn't make it into the release, it works as follows: 
+String version = computer?.getSoundcard()?.getUSB()?.getVersion() ?: "UNKNOWN"; (where ?: returns the default value)
+
+In other languages like Haskell and Scala there is no concept of a null reference, they use 'Maybe' and Optional[t] respectively to encapsulate the presence or absence of a value type 'T'
+
+So what about JAVA SE 8:
+a new class called java.util.Optional<T> that is inspired from the ideas of Haskell and Scala. It is a class that encapsulates an optional value 
+You can view Optional as a single-value container that either contains a value or doesn't (it is said to be empty)
+
+Now our code will look like this: 
+public class Computer {
+	private Optional<Soundcard> soundcard; 
+	public Optional<Soundcard> getSoundcard();
+}....
+
+this code immediately shows that a computer might or might not have a soundcard as it is optional 
+
+Optional class includes methods to explicitly deal with the cases where a value is present or absent. However the advantage compared to null reference is that Optional class forces you to think about the cases when the value is not present, as a consequence you can prevent unintended null pointer exceptions. 
+
+It is important to note that intention of Optional class is not to replace every single null reference. Instead, it is to help design more comprehensible APIs so that by just reading the signature of a method, you can tell whether you can except an optional value. 
+

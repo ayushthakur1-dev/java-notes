@@ -1,0 +1,45 @@
+CPU: responsible for executing instructions from programs, it performs basic arithmetic, logic, control, and input/output operations specified by the instructions.
+
+Modern CPU eg: Intel core i7, AMD Ryzen
+
+CORE: A core is an individual processing unit within a CPU. Modern CPUs have multiple cores. allowing them to perform multiple tasks simultaneously, eg: a quad core processor has four cores, allowing it to perform four tasks simultaneously. For instance one core could handle your web browser, another your music player, another a download manager, and another a background system update.
+
+Program: Set of instruction written in a programming language that tells the computer how to perform a specific task, eg. Microsoft word is a program that allows users to create and edit files
+
+Process: An instance of  a program that is being executed, when a program runs, the OS creates a process to manage its execution, eg. when we open Microsoft word it becomes a process in the OS
+
+Thread: smallest unit of execution within a process. A process can have multiple threads, which share the same resources but can run independently. eg, a web browser like google chrome might use multiple threads for different tabs, with each tab running as a separate thread.
+
+Multitasking: allows an OS to run multiple processes simultaneously. On single core CPU, this is done through time-sharing, rapidly switching between tasks. On multi-core CPU, true parallelism occurs, with tasks distributed across cores. The OS scheduler balances the load, ensuring efficient and responsive system performance. 
+
+Multi-Threading: refers to ability to execute multiple threads withing a single process concurrently. It enhances the efficiency of multi tasking by breaking down individual tasks into smaller sub tasks or threads. These threads can be processed simultaneously making better use of CPU's capabilities. 
+
+Time slicing: assigning time to each process before context switching
+
+Context Switching: process of saving the state of a currently running process or thread and loading the state of next one to be executed. When a process or thread's time slice expires the OS scheduler performs a context switching to move to CPU's focus to another process or thread. This allows multiple processes and threads to share the CPU, giving the appearance of simultaneous execution on a single-core CPU or improving parallelism on multi core CPU.
+
+Multitasking operates at the level of processes, which are the OS's primary units of execution
+while Multithreading operates at the level of threads, which are smallest units within a process
+
+In java, multithreading is the concurrent execution of two or more threads to maximize the utilization of the CPU. Java's multithreading capabilities are part of the java.lang package, making it easy to implement concurrent execution
+
+In a single core env, Java's multithreading is managed by JVM and OS, which switch between threads to give the illusion of concurrency, the threads share single core and time slicing is used to manage thread execution
+
+In multi core env, Java's multithreading can take full advantage of available cores. The JVM can distribute threads across multiple cores allowing true parallel execution of threads.
+
+A thread is a light weight process, the smallest unit of process. 
+java supports multithreading through it's java.lang.Thread class and the java.lang.Runnable interface.
+
+When a java program starts one thread begins running immediately, which is called main thread. This thread is responsible for executing main method of program.
+
+To create a new thread in Java, you can either extend the Thread class or implement the Runnable Interface
+so which method should be used? 
+if class A is already extending class B, then it is not possible to extend Thread class too as multiple inheritance is not allowed in java, in that case you have to implement Runnable interface
+but if this is not the case than class A can easily extend Thread class without any problem
+
+Thread lifecycle: In java thread consists of several states, which a thread can move through during it's execution
+1. New: When it is created but not yet started
+2. Runnable: after the start method is called, the thread becomes runnable. It's ready to run and is waiting for CPU time
+3. Running: when it is executing
+4. Blocked/ Waiting: when it is waiting for a resource or for another thread to perform an action
+5. Terminated: when it has finished execution

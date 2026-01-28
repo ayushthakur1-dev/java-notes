@@ -1,0 +1,12 @@
+You Ain't Gonna Need It: refrain from implementing functionality until it is deemed necessary. 
+
+Avoid premature optimization, or over-engineering in software development, focus on delivering only the features that are required to meet current business needs, rather than anticipating future requirements that may never materialize.
+
+Advantages: 
+Reduced Complexity
+Faster time to market
+Flexibility and Adaptability: make decisions based on actual user feedback and changing business priorities
+
+Disadvantages: 
+Lack of future proofing
+Incomplete or inefficient solution

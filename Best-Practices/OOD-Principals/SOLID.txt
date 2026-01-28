@@ -1,0 +1,36 @@
+S.O.L.I.D. is an acronym based on the name of the design principles in collection:
+Single Responsibility Principle 
+Open Close Principle
+Liskov's Substitution Principle
+Interface Segregation Principle
+Dependency Inversion Principle
+
+
+3 important characteristics of a bad design that should be avoided: 
+Rigidity: It is hard to change because each change requires change in multiple parts of system
+Fragility: When you make a change, unexpected part of system breaks
+Immobility: It is hard to use in another application because it cannot be disentangled from the current  application
+
+
+S Single Responsibility Principle: 
+A class should have only one reason to change (responsibility is considered to be one reason to change). This principal states that if we have 2 responses to change for class, we have to split the functionality in two classes, and each class will have one responsibility as on future if we need to make one change we are going to make it in the class which handle it, when we need to make a change in a class having more responsibilities the change might affect the other functionality of the classes. 
+
+
+O Open Close Principle:
+Software entities like classes, modules and functions should be open for extension but closed for modifications, when writing your classes make sure that when you need to extend their behaviour you don't have to change the class but to extend it. The same principle can be applied for modules, packages, libraries. 
+
+
+L Liskov's Substitution Principle 
+Derived types must be completely substitutable for their base types
+This is just an extension of the Open Close Principle in terms of behavior meaning that we must make sure that new derived classes are extending the base classes without changing their behavior. The new derived classes should be able to replace the base classes without any change in the code.
+
+
+I Interface Segregation Principle 
+Clients should not be forced to depend upon interface that they don't use
+In interface take care to add only those methods that should be there, else class implementing that interface will have to implement those methods as well. Interfaces containing methods that are not specific to it are called polluted or fat interfaces, we should avoid them
+
+
+D Dependency Inversion Principle (also known as IOC: Inversion Of Control)
+High Level Modules should not depend on Low Level Modules, both should depend on abstraction
+Abstraction should not depend on details, details should depend upon abstraction 
+

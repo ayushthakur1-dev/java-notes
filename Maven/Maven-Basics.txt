@@ -1,0 +1,41 @@
+Used as a build tool(turning source code into a runnable or deployable artifact), configuration tool(setting up and maintaining env), dependency manager, provides plugin framework(plugin? -> set of goals that maven can execute)
+
+
+Details required before setting up a maven project: GAV
+groupID: <package-name> (eg. com.tutorial.maven)
+artifactID: <artifact-name> (name used for Archive file like .jar, .war)
+version: <1.0> (also used for naming Archive file)
+(Archive file name is by default the combination of artifactID and version: artifact-name-1.0.jar)
+
+
+POM: Project Object Model
+The pom.xml file is the core of a project's configuration in Maven. It is a single configuration file that contains the majority of information required to build a project in just the way you want. 
+
+
+Goal:
+specific task(an action)
+
+Phase:
+stage in the building lifecycle (an ordering mechanism)
+
+
+Maven Phases:
+(default lifecycle phases execution)
+1. validate: validate the project is correct and all necessary information is available 
+2. compile: compile the source code of the project
+3. test: test the compiled source code using a suitable unit testing framework. 
+4. package: take the compiled code and package it in its distributed format such as JAR. (JAR? -> Java ARchive is a platform-independent, compressed file format used to bundle multiple java related files for efficient distribution and deployment)
+5. integration-test: process and deploy the package if necessary into an environment where integration tests can be run 
+6. verify: run any checks to verify the package is valid and meets quality criteria
+7. install: install the package into the local repo, for use as a dependency in other project locally
+8. deploy: copies the final repo to remote repo for sharing with other devs and projects. 
+
+there are two maven lifecycle of note beyond the default list: 
+1. clean: cleans up artifacts build up by prior builds
+2. site: generates site documentation for the project by $ mvn site, you can look the documentation generated under target/site
+
+phases are actually mapped to underlying goals. The specific goals executed per phase is dependent upon the packaging type of the project, eg. package executes jar:jar if the project type is JAR, and war:war if package type is WAR(WAR? -> Web Application Archive file is a standard, single compressed file used to package all the components of a web application for deployment on a web server or servlet container)
+
+phases and goals may be executed in sequence
+$ mvn clean dependency:copy-dependencies package (clean: phase, copy: goal)
+

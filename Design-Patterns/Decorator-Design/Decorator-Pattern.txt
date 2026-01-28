@@ -1,0 +1,17 @@
+we use inheritance or composition to extend the behaviour of an object but this is done at compile time and it is applicable to all the instances of class, we can't add any new functionality of remove any existing behaviour at runtime. That's when decorator pattern comes into picture 
+
+Advantages:
+helpful in providing runtime modification abilities and hence more flexible 
+Easy to maintain and extend when number of choices are more
+
+Disadvantages:
+it uses a lot of similar kind of objects
+
+Application:
+used in Java IO classes, such as FileReader, BufferReader etc
+
+Components required for Decorator patter:
+1. Component Interface: interface or abstract class defining the methods 
+2. Component Implementation: basic implementation of component interface
+3. Decorator: decorator class implements the component interface, the component variable should be accessible to child decorator classes, so we will make this protected
+4. Concrete Decorators: extending the base decorator functionality and modifying the component behaviour accordingly 

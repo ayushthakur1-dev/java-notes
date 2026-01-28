@@ -1,0 +1,31 @@
+Comes under creational design pattern
+
+Principle: 
+restricts the instantiation of a class and ensures that only one instance of a class exists in JVM 
+must provide a global access point to get instance of the class
+
+Application: 
+used for logging, driver objects, caching and thread pool
+also used in core java classes(java.lang.Runtime, java.awt.Desktop)
+
+Implementation: 
+1. Eager initialization: 
+define constructor as private, create private static instance inside the class and send it outside using a public getInstance() method
+Why called eager? -> because instance is created one the very first reference of class in the code base, which is okay if your object is not large but in cases where it is used for database pool or any other heavy use it can degrade the performance of the application
+
+2. Lazy initialization: 
+create the instance inside of getInstance() method checking if it is already created or not, it will create the instance only when the method is called not on the first reference of class hence called lazy. 
+But, it is not thread safe as if two concurrent operations are calling getInstance() method, it will create two different objects out of which first one will be overridden
+
+3. Thread safe singleton: 
+to make it thread safe we have two options: 
+first is to define method as public static synchronized getInstance() -> it will be thread safe but there will be overhead due to synchronized block
+
+other way is to create instance inside inner private class and return InnerClass.Instance from public getInstance() method -> by wrapping instance initialization inside a private class, JVM will ensure that no concurrent operations is being performed on it(refer classLoader docs to know how)
+
+But these methods can easily be destroyed through reflection
+
+4. Enum Singleton (reflection safe but eagerly loaded):
+Use Enum to implement singleton design pattern as java ensures that any Enum value is instantiated only once, since java Enum values are globally accessible so is the singleton, but it does not allow lazy loading
+
+Conclusion: Use the method best suitable to your project requirement

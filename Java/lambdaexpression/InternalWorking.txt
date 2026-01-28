@@ -1,0 +1,26 @@
+compiler sees a Lambda: 
+arr.removeIf(n -> (n >> 1) == 1);
+
+then it creates a synthetic(hidden) method behind the scenes, like: 
+private static boolean lambda$main0(Integer n) {
+	return (n >> 1) == 1;
+}
+
+At runtime JVM does not create a sperate class file instead it uses invokedynamic(?) + LambdaMetafactory(?) to create an object internally that points to hidden method
+
+invokedynamic: (specification)
+it is a JVM bytecode instruction (added in JAVA7)
+it allows JVM to decide at runtime what method to call (dynamic linking)
+so instead of compiler deciding everything at compile time, it says: JVM you figure out the real target method at runtime
+
+Why does Java uses it for lambda? 
+because lambdas should not create extra .class file like anonymous classes, so the compiler puts invokedynamic in the bytecode, meaning: 
+Create a functional interface object at runtime and connect it to its lambda code
+
+LambdaMetaFactory: (implementation)
+it creates the lambda object at runtime, and it generates something that implement the functional interface.
+
+Why lambda expression only accept final and effective final variable?
+because when lambda uses a local variable, Java captures it, and Java only allows capturing variable that are immutable, but why?
+a lambda is like an object it can be stored and executed later, but local variables live inside the method and they may disappear after the method ends, so java captures the value and to keep things consistent, the value must not change
+also lambda often run in other threads, multiple local variables could cause race conditions, final/effective final makes it thread safe

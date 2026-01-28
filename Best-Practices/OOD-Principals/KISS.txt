@@ -1,0 +1,17 @@
+Keep It Simple Stupid: keep your code simple and avoid unnecessary complexity, avoid overthinking solutions and write code that anyone can understand
+
+The goal is not sacrificing functionality but designing the simplest solution possible without compromising performance or usability. Simple systems are easier to maintain, debug and extend.
+
+Avoid overly complicated structures. Instead of creating deep hierarchy, it is better to design structures that align with other principals like SOLID, which complements KISS 
+
+
+Example: return (a > 10 ? (power(a, 2) * (b + 5) - ((a + b) / 2)) : ((a * b) - (b / 2) + power(a, b)));
+this can also be written as:
+int result;
+if(a > 10) {
+	result = power(a, 2) * (b + 5) - ((a + b) / 2);
+}
+else {
+	result = (a * b) - (b / 2) + power(a, b)
+}
+return result;

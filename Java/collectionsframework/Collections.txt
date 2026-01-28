@@ -1,0 +1,50 @@
+Iterable
+	Collection
+		List
+			ArrayList
+			LinkedList
+			Vector
+			Stack
+		Set
+			HashSet
+			LinkedHashSet
+			TreeSet
+			EnumSet
+			ConcurrentSkipListSet
+			SortedSet
+			CopyOnWriteArraySet
+		Queue
+			LinkedList
+			PriorityQueue
+			Deque
+				ArrayDeque
+				LinkedList
+				ConcurrentLinkedDeque
+			BlockingQueue
+			ArrayBlockingQueue
+			LinkedBlockingQueue
+			PriorityBlockingQueue
+			SynchronousQueue
+			DelayQueue
+			ConcurrentLinkedQueue
+
+
+Before the introduction of collection framework in JDK 1.2, java used to rely on a variety of 
+classes like Vector, Stack, Hashtable, and arrays to store and manipulate group of objects
+
+However the classes have inconsitency, lack of inter-operabilty and no common interface
+
+map is a seperate interface -> does not extend iterable 
+
+Map
+	HashMap
+		LinkedHashMap
+		WeakHashMap
+		IdentiyHashMap
+	HashTable(legacy class)
+	SortedMap
+		TreeMap
+		NavigableMap
+	ConcurrentMap
+		ConcurrentHashMap
+		ConcurrentSkipListMap

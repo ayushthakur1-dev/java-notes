@@ -1,0 +1,32 @@
+were introduced in JAVA8
+they are special type of lambda expression, it fulfils it's purpose by increasing the readability and to write neat code.
+
+it works in case of functional interfaces. Whenever, we are calling a method of a functional interface with a lambda expression, we can use a method reference
+
+Method reference help to point to methods by their names even without specifying the arguments.
+It is described using '::'
+
+Why to use?
+increases the readability 
+supports the functional programming style, which makes it easier to work with streams and collections
+chances of logical and type error are lower, and so no boilerplate is required, reusability increases as we use the existing methods
+
+Types: 
+Static methods
+Instance method of a particular object
+Instance method of an arbitrary object
+Constructor using new operator 
+
+Method reference for static method: 
+Static methods can be used like -> <Class-Name>::<static-method-name>
+
+Method reference for a particular object
+<object-name>::<method-name>
+
+Arbitrary Object: a non-specific instance of a given class that is not known until run time 
+similar to an instance method for a particular object, we can refer to an instance method of an arbitrary object
+<arbitrary-object::<method-name>
+
+Method reference for constructor:
+we can use it to invoke a constructor as well, this is similar to static method invocation, but here we are using new instead of method name
+<class-name>::new

@@ -1,0 +1,24 @@
+What? -> typical solution to common problems in software design 
+when a solution gets repeated over and over in various projects, someone eventually puts a name to them
+
+Benefits? -> tries and tested solutions
+
+Keep in mind -> having to know about pattern doesn't mean you have to apply them everywhere, sometime simple code is better
+
+Types of patterns: 
+1. Creational: provides object creation mechanism the increases flexibility and reuse of existing code
+2. Structural: explains how to assemble objects and classes into larger structures, keeping the structure flexible 
+3. Behavioral: take care of effective communication and the assignments of responsibilities between objects
+
+There are 22 patterns in total out of them these are mainly used:
+
+Creational: 
+Singleton
+Factory Design 
+Abstract Factory Design
+
+Structural:
+Decorator Design
+
+Behavioral:
+Strategy Design

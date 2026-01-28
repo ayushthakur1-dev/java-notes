@@ -1,0 +1,28 @@
+were introduced in JAVA8 and were touted to be the biggest feature of JAVA8
+
+it facilitates functional programming and simplifies development a lot
+
+it works on the principle of functional interface
+functional interface -> an interface that only have SAM(Single Abstract Method), 
+note: it can have other default methods(?) but abstract method should be one
+
+default methods -> they are methods with 'default' keyword that can be defined in an interface like any other concrete methods, those methods are also inherited by implementing class
+
+lambda expression eliminates the need of anonymous class and gives a very simple yet functional programming capability of java.
+
+Syntax: 
+param -> function body 
+
+no need to declare the type of parameter, the compiler can inference the same from the value of the parameter
+no need to use parenthesis if there is only one parameter
+no need to use curly braces if there is only one statement in function body
+no need to use return keyword, compiler will automatically return the value if it is the single
+in case you need to use return keyword you have to enclose that statement inside curly braces
+
+using these, we can refer to any final variable or effective final variable(a variable which is not final but assigned value only once), but if we assign a new value to them, then lambda function will throw a compilation error
+
+after JAVA8 almost all collections are enhanced to accept lambda expression to perform operations on them, eg. to iterate, filter sort a  list and so on. 
+
+example: 
+arr.forEach(i -> System.out.println(i))
+arr.removeIf(n -> n % 2 != 0)
