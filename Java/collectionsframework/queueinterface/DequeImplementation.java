@@ -1,3 +1,4 @@
+package queueinterface;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -7,7 +8,7 @@ public class DequeImplementation {
     public static void main(String[] args) {
         // double ended queue
         // allows insertion and deletion from both ends
-        // varsatile than regular queue and stack because it support all the operations of both
+        // versatile than regular queue and stack because it supports all the operations of both
 
         Deque<Integer> deque = new LinkedList<>(); // null allowed, more memory, slower iteration
         Deque<Integer> deque2 = new ArrayDeque<>(); // null not allowed, less memory, faster iteration

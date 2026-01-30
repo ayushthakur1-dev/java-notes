@@ -1,3 +1,4 @@
+package queueinterface;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -18,11 +19,11 @@ public class BlockingQueueImplementation {
         // more threads -> high waiting
         BlockingQueue<Integer> bQueue1 = new ArrayBlockingQueue<>(10);
 
-        // optinally bounded(if capacity is not defined it will set capacity = Integer.MAX_VALUE)
+        // optionally bounded(if capacity is not defined it will set capacity = Integer.MAX_VALUE)
         // queue backed by a linked list
         // high memory overhead
-        // uses two seperate locks for enqueue and dequeue operations
-        // heigher concurrency possible
+        // uses two separate locks for enqueue and dequeue operations
+        // higher concurrency possible
         // more threads -> less waiting 
         BlockingQueue<Integer> bQueue2 = new LinkedBlockingQueue<>();
 
@@ -30,11 +31,11 @@ public class BlockingQueueImplementation {
         // binary heap as an array and can grow dynamically
         BlockingQueue<Integer> bQueue3 = new PriorityBlockingQueue<>();
 
-        // it has capacity of atmost one element
+        // it has capacity of almost one element
         // each insertion operation must wait for a corresponding remove operation by another thread and vice versa
         BlockingQueue<Integer> bQueue4 = new SynchronousQueue<>();
 
-        // threa safe 
+        // thread safe
         // unbounded
         // elements can only be taken from the queue when their delay has expired
         // useful for scheduling tasks to be executed after a certain delay

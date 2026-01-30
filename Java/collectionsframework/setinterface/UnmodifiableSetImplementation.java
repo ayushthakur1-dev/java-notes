@@ -1,12 +1,13 @@
+package queueinterface;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 public class UnmodifiableSetImplementation {
-    // to make unmodifable sets
+    // to make unmodifiable sets
     public static void main(String[] args) {
-        Set<Integer> set = Set.of(1,2,3,4,5,6,7); // you can directly make unmodifable set
+        Set<Integer> set = Set.of(1,2,3,4,5,6,7); // you can directly make unmodifiable set
         // and unlike Map.of() it can take n number of elements not just 10
 
         // or you can make an existing set as unmodifiable

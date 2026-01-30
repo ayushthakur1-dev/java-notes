@@ -1,8 +1,9 @@
+package listinterface;
 
 import java.util.Stack;
 
 public class StackImplementation {
-    // follws LIFO
+    // follows LIFO
     // subclass of vector, which means inherits all the features but restricted by LIFO principle
 
     // it is recommended to use ArrayDeque as a stack in single threaded env

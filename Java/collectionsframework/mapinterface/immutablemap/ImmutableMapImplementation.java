@@ -1,3 +1,5 @@
+package mapinterface.immutablemap;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,14 +13,14 @@ public class ImmutableMapImplementation {
 
         Map<Integer, Integer> immutableMap = Collections.unmodifiableMap(map);
         // but there is one issue, we are creating a copy or view of other map
-        // so if someone changes the orignal copy it will not match the copied one
+        // so if someone changes the original copy it will not match the copied one
         // hence things will be inconsistent
 
         // to solve this Map.of() was introduced in java9
         Map<Integer, Integer> orgMap = Map.of(1, 1, 2, 1, 3, 1);
         // BUT, it is only limited to 10 key value pairs
 
-        // if you want more enteries there is another method for it:
+        // if you want more entries there is another method for it:
         // Map.ofEnteries()
         Map<Integer, Integer> unlimitedEnteries = Map.ofEntries(
             Map.entry(1, 1),

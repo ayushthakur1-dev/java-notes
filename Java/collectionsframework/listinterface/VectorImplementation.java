@@ -1,3 +1,4 @@
+package listinterface;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,14 +11,14 @@ public class VectorImplementation {
     // now is part of collection framework
     // uses internal array
 
-    // not recommended to use due to it's synchrnized overhead due to locking and unlocking cost
+    // not recommended to use due to its synchronization overhead due to locking and unlocking cost
     // use ArrayList in single threaded env
     // but still can be useful in certain situations where thread safety is a concern
 
     // key features: 
     // dynamic size
     // synchronized but a legacy class
-    // growth factor: 2x but changable by prividing it inside constructor
+    // growth factor: 2x but changeable by providing it inside constructor
     // unlike arrayList there is method to check capacity of vector
     public static void main(String[] args) {
         // four types of constructors

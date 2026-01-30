@@ -32,15 +32,15 @@ Iterable
 Before the introduction of collection framework in JDK 1.2, java used to rely on a variety of 
 classes like Vector, Stack, Hashtable, and arrays to store and manipulate group of objects
 
-However the classes have inconsitency, lack of inter-operabilty and no common interface
+However, the classes have inconsistency, lack of inter-operability and no common interface
 
-map is a seperate interface -> does not extend iterable 
+map is a separate interface -> does not extend iterable
 
 Map
 	HashMap
 		LinkedHashMap
 		WeakHashMap
-		IdentiyHashMap
+		IdentifyHashMap
 	HashTable(legacy class)
 	SortedMap
 		TreeMap

@@ -1,3 +1,4 @@
+package mapinterface.sortedmap;
 
 import java.util.NavigableMap;
 import java.util.SortedMap;
@@ -5,12 +6,12 @@ import java.util.TreeMap;
 
 public class TreeMapImplementation {
     // data is stored in red black tree instead of traditional array
-    // implementes navigable map(?) interface that extends sorted map(?) that extends map interface
+    // implements navigable map(?) interface that extends sorted map(?) that extends map interface
     
     // navigable map -> provides more powerful navigation options such as finding the closest 
-    // maching key or retriving the map in reverse order
+    // matching key or retrieving the map in reverse order
 
-    // sorted map -> guarrentees that the enteries are sorted based on the keys, 
+    // sorted map -> guarantees that the entries are sorted based on the keys,
     // either in natural ordering or by specific comparator
     public static void main(String[] args) {
         // you can also provide custom comparator inside constructor
