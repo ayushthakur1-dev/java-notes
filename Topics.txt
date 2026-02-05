@@ -1,18 +1,20 @@
 DSA
-annotation, custom annotation creation, how to restrict use
 generics
-atomic, volatile, transient 
-spliterators
+Spliterators
 multi-threading
 class-loader
 JVM-Hotpsot
 java25 features
 reflection
-serialization
+serialization, transient, atomic, volatile, what happens with final transient variables?
+cloning
 OS
 SQL
 garbage collection algorithms 
 virtual threads 
 system design
+jvm architecture 
+mvn working 
+
 
 
