@@ -1,0 +1,43 @@
+java types that are preceded by '@'
+an annotation assigns extra metadata to the source code it's bound to 
+Java has had annotations ever since the 1.5release 
+
+by adding an annotation to a method, interface, class or a filed, we can: 
+1. inform the compiler about warning and errors
+2. manipulate source code at compile time
+3. modify of examine behaviour at runtime
+
+
+Build-in annotations: these annotations generate or suppress warnings and errors
+
+@Override: indicates that a method overrides or replaces the behaviour of an inherited method
+
+@SuppressWarnings: indicates that we want to ignore certain warnings from a part of the code
+
+@SafeVarags: also acts on a type of warning related to using varags
+
+@Deprecated: used to mark an API as not intended for use anymore, moreover this annotation is retrofitted in Java9 to represent more information about the deprecation
+
+@FunctionalInterface: if we intend a SAM interface to be used by lambdas, we can optionally mark it as functional interface
+
+@Native: introduced in java8 in the java.lang.annotation package, it indicates the annotated field is a constant that may be referenced from the native code.
+
+
+Meta-annotation: annotation that can be applied to other annotations, these are used for annotation configuration
+
+@Target: the scope of annotations can vary based on their requirements, while one annotation is only used with methods, another annotation can be consumed with constructor and field declaration., to determine the target elements of a custom annotation, we need to label it with a @Target annotation.
+
+@Retention: some annotations are meant to be used as hint for the compiler, while others are used at runtime, we use retention annotation to say where in our program's lifecycle our annotation applies
+We can use retention with one of the three policies: 
+RetentionPolicy.SOURCE: visible by neither the compiler nor the runtime
+RetentionPolicy.CLASS: visible by the compiler
+RetentionPolicy.RUNTIME: visible by the compiler and the runtime
+If no retention policy is present on the annotation declaration, then the default policy is Rentention.CLASS
+
+@Inherited: in some situations, we may need a subclass to have the annotation bound to a parent class, in that case we can use inherited annotation to propagate from annotated class to it's subclass
+
+@Documented: by default java does not include usage of an annotation is javadocs, but we can use documented annotation to change the java's default behaviour 
+
+@Repeatable: sometimes it can be useful to specify the same annotation more than once on a given java element, before java7 we had to group annotations together into a single container annotation. However java7 brought a cleaner approach
+
+@Schedules: to use repeatable annotation, we need to have a container too

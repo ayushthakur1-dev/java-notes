@@ -1,3 +1,4 @@
+package listinterface;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -6,7 +7,7 @@ public class CopyOnWriteArrayListImplementation {
         CopyOnWriteArrayList<Integer> list = new CopyOnWriteArrayList<>();
 
         // copy on write means whenever a write operation like adding or removing an element
-        // is performmed instead of directly modifying the existing list a new copy of the list is 
+        // is performed instead of directly modifying the existing list a new copy of the list is
         // created and the modification is applied to that copy
         // this ensures that other threads reading the list while it's being modified are unaffected
 

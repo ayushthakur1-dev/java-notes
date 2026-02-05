@@ -1,21 +1,22 @@
+package queueinterface;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class CopyOnWriteArraySetImplementation {
-    // why it is needed? -> only ConcurrentSkipListSet is thread safe
+    // why it is needed? -> only ConcurrentSkipListSet is thread safe,
     // but it stores the elements in sorted order and it is weakly consistent(?)
 
-    // weakly consitent:
+    // weakly consistent:
     // suppose we are traversing a ConcurrentSkipListSet and added an element into it
     // now it is not certain that it will reflect that change or not 
 
     // but in case of CopyOnWriteArraySet it is not the case as it will only reflect changes
     // when read operation is over, but there will be overhead on write operations
 
-    // so in case where we are doing write intensive operations it is reommended to use ConcurrentSkipListSet
-    // and when we have more iteration operations then we need stability, hence CopyOnWriteArraySet should be used
+    // so in case where we are doing write intensive operations it is recommended to use ConcurrentSkipListSet
+    // and when we have more iteration operations than we need stability, hence CopyOnWriteArraySet should be used
 
     // it is similar to CopyOnWriteArrayList, major difference it that it does not store 
     // duplicate elements

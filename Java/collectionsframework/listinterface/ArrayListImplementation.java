@@ -1,8 +1,7 @@
+package listinterface;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 public class ArrayListImplementation {
     // Internal Working: 
@@ -20,7 +19,7 @@ public class ArrayListImplementation {
     // if yes remove the element by shifting all the elements to right of it by 1 place to their left
     // reduce size by 1
 
-    // NOTE: you can define initial capaicty before hand inside the constructor to save some overhead 
+    // NOTE: you can define initial capacity inside the constructor to save some overhead
 
     public static void main(String[] args) {
         List<Integer> list = new ArrayList<>();
@@ -47,7 +46,7 @@ public class ArrayListImplementation {
 
         // toArray:
         // toArray(new Object[0]): convert ArrayList to ordinary array meaning now size will be fixed, but we can replace element
-        // but why 0? -> when JVM will see that it has more element then this it will itself decide the size 
+        // but why 0? -> when JVM will see that it has more element than this it will itself decide the size
         // so it is not a hard and fast rule but just a convention
 
         // Arrays.asList() -> returns a fixed size list, elements can be replaced but size is fixed

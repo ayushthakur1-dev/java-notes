@@ -1,4 +1,4 @@
-
+package mapinterface.hashmap;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -19,7 +19,7 @@ public class WeakHashMapImplementation {
         System.out.println("Image cache before: ");
         System.out.println(imageCache);
 
-        // this will not guarantee the gc but will work as an suggestion for JVM 
+        // this will not guarantee the gc but will work as a suggestion for JVM
         // final call will be of JVM 
         System.gc(); 
         applicationSimulation();
@@ -33,8 +33,8 @@ public class WeakHashMapImplementation {
         // like here we can see that firstImage was having a strong reference so we can still access it
         System.out.println(firstImage + "\n");
 
-        // similary if keys were of String type then they will be not be removed as they are stored in 
-        // string pool that is be maintained by the JVM until the very end of application execution 
+        // similarly if keys were of String type then they will be not be removed as they are stored in
+        // string pool that is being maintained by the JVM until the very end of application execution
         // hence they will be treated as strong reference 
         
         // but if they are made using new String("value"), they can be removed by weak reference logic
@@ -53,7 +53,7 @@ public class WeakHashMapImplementation {
         System.out.println("Image Cache2 After:");
         System.out.println(imageCache2);
 
-        // if you explicitly want to declare an reference as weak reference you can do it 
+        // if you explicitly want to declare a reference as weak reference you can do it
         WeakReference<Image> imageWeakReference = new WeakReference<>(new Image(6, 0, 0));
     }
 

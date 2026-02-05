@@ -1,3 +1,4 @@
+package setinterface;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -10,7 +11,7 @@ public class ConcurrentSkipListSetImplementation {
     public static void main(String[] args) {
         // one way of making set synchronized
         // problem with this method: it blocks other threads on both read and write operations
-        // hence performce overhead is high
+        // hence performance overhead is high
         Set<Integer> set = Collections.synchronizedSet(new HashSet<>());
 
         // to solve this ConcurrentSkipListSet was introduced

@@ -1,3 +1,4 @@
+package mapinterface.concurrentmap;
 
 import java.util.concurrent.ConcurrentSkipListMap;
 
@@ -17,9 +18,9 @@ public class ConcurrentSkipListMapImplementation {
     // layer 1: 1 5 9
     // layer 2: 1 3 5 7 9
     // layer 3: 1 2 3 4 5 6 7 8 9
-    // now lets say we have to retrive 7, first it will check at layer 1, 1 5 9, now we know that
+    // now lets say we have to retrieve 7, first it will check at layer 1, 1 5 9, now we know that
     // 7 is greater than 5 and less than 9 so after going on second layer it will start search from 5
-    // this will shorten the time to retrive an element
+    // this will shorten the time to retrieve an element
 
     public static void main(String[] args) {
         ConcurrentSkipListMap<Integer, Integer> map = new ConcurrentSkipListMap<>();

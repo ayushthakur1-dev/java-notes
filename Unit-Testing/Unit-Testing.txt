@@ -1,0 +1,91 @@
+What? -> software testing method where individual units or components of code are tested in isolation.
+A unit can be as small as function or as large as a small module
+the key principle is isolation, external resources like DB, APIs or file systems should be simulated using fake objects so the test focuses only on the unit's logic
+
+
+Why? -> saves time, reduces risk
+early bug detection -> problem detected when introduced, making fixes faster and cheaper
+improved code quality -> clean, testable code leads to better architecture 
+regression protection -> safety net during refactoring, ensuring old features keep working
+faster development cycle -> automated tests shorten QA feedback loops and reduce manual testing overhead
+
+
+How? 
+1. Analyse the unit and define cases:
+identify the smallest testable behaviour. List happy paths, edge cases, and error conditions. Clarify input/output and pre/postconditions.
+
+2. Set up the test environment:
+pick framework, load minimal features, and isolate dependencies(mocks(?)/stubs(?)/fakes). keep setup light weight to avoid slow brittle tests
+
+3. Write the test(AAA pattern):
+Arrange(inputs and context), Act(call the unit), Assert(expected outcome)
+
+4. Run locally	
+
+5. Diagnose failure, fix and refactor:
+fix the code or the test, not both at once.	
+
+6. Rerun, review and maintain
+re-run the full suite, Remove flaky tests(tests that provide inconsistent results), deduplicate fixtures and enforce coverage(?) threshold without gaming them. Tag slow tests to run less frequently
+
+Tips: 
+keep tests fast(<200 ms) and independent
+name tests for behaviour(eg. test_total_includes_tax)
+Threat flakiness as a bug, quarantine, fix the root cause, and then re-enable
+
+
+Different unit testing techniques:
+1. Black box testing: testing of the user interface, along with input and output
+2. White box testing: involves testing the functional behaviour 
+3. Gray box testing: test suites, methods, cases and perform risk analysis
+
+
+Role of mocking and stubbing in unit testing: 
+unit tests should focus only code under test, not it's dependencies, these test doubles replace the real object so you can isolate behaviour, control input and avoid slow flaky tests
+
+Stubs: simplifies replacement that returns a fixed response, It doesn't record interactions, just provides 	canned data
+Example: simulating input from database
+
+Mocks: more powerful, can verify interactions	
+Example: sending email to a user
+
+
+Coverage: a metric that specifies the quality and quantity of testing performed
+
+
+Common Unit Testing Tools:
+JUnit -> for java
+NUnit -> for .Net
+PHPUnit -> for PHP
+
+
+Test Driven Development(TDD) and unit testing: 
+tests are written before the code
+rely heavily on testing frameworks
+all classes in the application are tested
+quick and easy integration is made possible
+
+Benefits of TDD: 
+encourage small, testing units and simple design
+prevents over-engineering; you build only what test demands
+provides a safety nets for refactoring
+
+
+Integrating unit tests into CI/CD: 
+unit tests are wired directly into continuous integration and continuous deployment pipeline, acting as a quality gate that automatically validates every change before it ships.
+
+
+Unit testing disadvantages: 
+can't be expected to catch every error in the program, it is not possible to evaluate all execution paths, even in most trivial programs
+it can't catch integration error or broad system level errors
+
+It's recommended to use unit testing be used in conjunction with other testing activities.
+
+
+Best practices: 
+unit test cases should be independent, in case of enhancements or changes in requirements, unit test cases should not be affected
+test only one code at a time
+follow clear and consistent naming conventions 
+in case of change in code in any module, ensure there is a corresponding unit Test Case for the module, and the module passes that tests before changing the implementation
+bugs identified during unit testing must be fixed before proceeding to the next phase in SDLC
+adopt a "test as you code" approach, as the more you code without testing, the more paths you have to check for errors.

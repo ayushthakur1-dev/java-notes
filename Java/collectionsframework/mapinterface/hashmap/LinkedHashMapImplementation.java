@@ -1,3 +1,4 @@
+package mapinterface.hashmap;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -7,12 +8,12 @@ public class LinkedHashMapImplementation {
     public static void main(String[] args) {
         Map<Integer, Integer> map1 = new LinkedHashMap<>();
         
-        // sub class of hashMap 
+        // subclass of hashMap
         // has a double linked list to preserve the order of insertion
         // due to which it takes more time and space compared to it's parent HashMap
         
         // overridden constructor of linkedHashMap
-        // we can set initial capacity of bucket array, load factor and acessOrder(?)
+        // we can set initial capacity of bucket array, load factor and accessOrder(?)
         // by default insertionOrder is set as true and accessOrder is false
         // only one of them can remain true so if we set accessOrder as true, insertionOrder will be false
         // but what is this? 
@@ -74,9 +75,9 @@ class LRU extends LinkedHashMap<Integer, Integer> {
     int capacity = 10;
     int size = 0;
 
-    // this method is automatically invoked in LinkedHashMap before making an entry
-    // and we can define our custom logic here in order to control the behaviour for removing
-    // eldest entry
+    // this method is automatically invoked in LinkedHashMap before making an entry,
+    // and we can define our custom logic here in order to control the behavior for removing
+    // the eldest entry
     @Override
     protected boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest) {
         return size > capacity; 

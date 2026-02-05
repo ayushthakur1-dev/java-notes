@@ -1,3 +1,4 @@
+package mapinterface.hashtable;
 
 import java.util.Hashtable;
 

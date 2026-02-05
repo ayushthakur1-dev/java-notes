@@ -1,7 +1,6 @@
+package listinterface;
 
 import java.util.LinkedList;
-
-
 
 public class LinkedListImplementation {
     // Internal Working: 
@@ -23,7 +22,7 @@ public class LinkedListImplementation {
         // removeLastOccurence(), removeFirstOccurence(), removeAll(collection), ....
 
         // get: 
-        // get(index): time complextiy will be O(n)
+        // get(index): time complexity will be O(n)
         // getFirst(element), getLast(element), ....
     }
 }
