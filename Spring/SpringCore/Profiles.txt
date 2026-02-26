@@ -1,0 +1,30 @@
+Spring profiles let you activate different beans or configuration depending on the environment your app runs in
+inside spring framework, they answer this question: should this object/config exist in DEV, TEST or PROD?
+because real system rarely runs with the same setup everywhere
+
+example differences: 
+Dev: local database, mock services, debug tools
+Prod: real cluster, real integration, security restrictions 
+
+hardcoding switches inside code would be a mess, profiles keep it clean
+
+How profiles work? 
+you tag bean or configs with a profile name, the load when that profile is active
+
+example: 
+@Service
+@Profile("dev")
+class FakePaymentService implements PaymentService() { }
+
+@Service
+@Profile("prod")
+class StripePaymentService implements PaymentService() { }
+
+How do we activate a profile? 
+1. from application properties: spring.profiles.active=dev
+2. or via command line: -Dspring.profiles.active=prod
+
+Profiles can also affect properties
+you can have: 
+application-dev.properties
+application-prod.properties

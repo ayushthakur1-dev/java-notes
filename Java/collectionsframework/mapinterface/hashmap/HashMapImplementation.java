@@ -60,7 +60,7 @@ public class HashMapImplementation {
     // provides constant time for basic operations like get, put, ... assuming no collision
     // if there is collision, the performance will degrade to O(n) where n is number of elements in bucket
     // but after java 8 if there are too many elements in a single bucket hashmap switches to balanced tree reducing
-    // the time complexity O(n);
+    // the time complexity to O(logn);
 
     // how data is retrieved from HashMap:
     // hash the key, calculate the index, search in bucket

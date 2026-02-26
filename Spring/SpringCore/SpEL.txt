@@ -1,0 +1,70 @@
+Spring Expression Language(SpEL):
+expressions we can use with XML or annotation based Spring configuration 
+supports querying and manipulating and object graph at runtime
+
+Valid operators: 
+
+Arithmetic: +, -, *, /, %, ^(power of), div(same as /), mod(same as %)
+
+Relational: <, >, ==, !=, <=, >=, lt(less than), gt(greater than), eq(equal to), ne(not equal to), le(less than equal to), ge(greater than equal to)
+
+Logical: and, or, not, &&(and), ||(or), !(not)
+
+Conditional: ?:
+
+Regex: matches
+
+Syntax: property placeholder cannot contain expressions
+eg -> ${property.age} -> valid
+${property.age + 10} -> invalid
+to do so we can put it inside #{}
+#{${property.age} + 10} -> valid
+
+eg. with value annotation
+@Value("#{19 + 10}") // 20
+private double add;
+
+@Value("#{'100' matches '\\d+'}")
+
+
+we can also access list and map objects with the help of SpEL:
+suppose we have a class:
+
+@Component
+public class CarPark {
+
+	private List<Car> cars = new ArrayList<>();
+	private Map<String, Car> carsByDriver = new HashMap<>();
+
+	public CarPark() {
+		Car car1 = new Car();
+		Car car2 = new Car();
+
+		list.add(car1);
+		list.add(car2);
+
+		carsByDriver.put("John", car1);
+		carsByDriver.put("Doe", car2);
+	}
+}
+
+now we can access these like:
+
+@Value("#{carPark.carsByDriver['John']}")
+private Car driver1Car;
+
+@Value("#{carPark.carsByDriver['Doe']}")
+private Car dirver2Carl
+
+@Value("#{carPark.cars[0]}")
+private Car car1;
+
+@Value('#{carPark.cars[1]}')
+private Car car2;
+
+
+we can also use this in spring bean configuration xml
+eg. 
+<bean id="Cars" class="com.epam.java.model.Cars">
+	<property name="greaterThanEqual" value="#{someCar.engine.numberOfCylinders >= 6}" />
+</bean>

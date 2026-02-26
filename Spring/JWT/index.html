@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Security & JWT</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e3a5f;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --warn: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --code-bg: #0d1117;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 60px;
+    position: relative;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 400;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section:nth-child(1) { animation-delay: 0.1s; }
+  .section:nth-child(2) { animation-delay: 0.2s; }
+  .section:nth-child(3) { animation-delay: 0.3s; }
+  .section:nth-child(4) { animation-delay: 0.4s; }
+  .section:nth-child(5) { animation-delay: 0.5s; }
+  .section:nth-child(6) { animation-delay: 0.6s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 20px 0 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  p {
+    color: #94a3b8;
+    line-height: 1.75;
+    margin-bottom: 14px;
+    font-weight: 400;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: rgba(0,212,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  /* Two col comparison */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .compare-card.auth { border-top: 2px solid var(--accent); }
+  .compare-card.authz { border-top: 2px solid var(--accent2); }
+
+  .compare-card h3 { margin-top: 0; }
+  .compare-card.authz h3 { color: var(--accent2); }
+
+  /* JWT parts */
+  .jwt-parts {
+    display: flex;
+    gap: 8px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+  }
+
+  .jwt-part {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .jwt-part.header { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .jwt-part.payload { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+  .jwt-part.signature { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+
+  /* Flow steps */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 16px 0;
+  }
+
+  .flow-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 36px;
+    width: 1px;
+    height: calc(100% - 4px);
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-content {
+    padding-bottom: 24px;
+  }
+
+  .step-content p { margin: 4px 0 0; font-size: 0.9rem; }
+
+  .step-title {
+    font-weight: 700;
+    color: #fff;
+    font-size: 0.95rem;
+  }
+
+  /* Code blocks */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+    position: relative;
+  }
+
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 10px; right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #e2e8f0;
+  }
+
+  .kw { color: #c084fc; }
+  .cl { color: #60a5fa; }
+  .fn { color: #34d399; }
+  .st { color: #fbbf24; }
+  .cm { color: #475569; }
+  .an { color: #fb7185; }
+
+  /* Badge list */
+  .badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    font-weight: 700;
+  }
+
+  .badge.green { background: rgba(16,185,129,0.1); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+  .badge.blue { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
+  .badge.purple { background: rgba(124,58,237,0.1); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+  .badge.orange { background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+
+  /* Best practices */
+  .practice {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .practice:last-child { border-bottom: none; }
+
+  .practice-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .practice-text strong {
+    display: block;
+    color: #fff;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+
+  .practice-text span {
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Endpoint badges */
+  .endpoint {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 14px;
+    margin: 4px 4px 4px 0;
+  }
+
+  .method { font-weight: 700; }
+  .method.post { color: #fbbf24; }
+  .method.get { color: #34d399; }
+
+  .endpoint-path { color: #e2e8f0; }
+  .endpoint-desc { color: var(--muted); font-size: 11px; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    margin-top: 40px;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <span class="tag">// Spring Security &amp; JWT — Complete Guide</span>
+    <h1>Securing REST APIs<br>with JWT Bearer Tokens</h1>
+    <p class="subtitle">Authentication · Authorization · Token-Based Security</p>
+  </header>
+
+  <!-- Section 1: Spring Security -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Spring Security Overview</h2>
+    </div>
+
+    <div class="card">
+      <p>Spring Security is a powerful, highly customizable authentication and access-control framework for Java applications. It is the de facto standard for securing Spring-based apps, providing comprehensive security services through a filter chain that intercepts every HTTP request.</p>
+      <div class="badge-list">
+        <span class="badge blue">Filter Chain</span>
+        <span class="badge green">Authentication</span>
+        <span class="badge purple">Authorization</span>
+        <span class="badge orange">CSRF Protection</span>
+      </div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-card auth">
+        <h3>// Authentication</h3>
+        <p><strong style="color:#fff">Who are you?</strong></p>
+        <p>Verifies the identity of a user. The process of confirming credentials — username/password, tokens, certificates — match a known entity.</p>
+      </div>
+      <div class="compare-card authz">
+        <h3>// Authorization</h3>
+        <p><strong style="color:#fff">What can you do?</strong></p>
+        <p>Determines what an authenticated user is allowed to access. Role-based or permission-based decisions on protected resources.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>// HTTP Basic vs Bearer Token</h3>
+      <p><strong style="color:#fff">HTTP Basic Auth</strong> — Sends <code style="background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:12px">Base64(username:password)</code> in every request header. Simple but credentials are exposed on every call — not ideal for stateless APIs.</p>
+      <p><strong style="color:#fff">Bearer Token (JWT)</strong> — Client authenticates once, receives a signed token, and uses it for all subsequent requests. Stateless, scalable, and far more secure for REST APIs.</p>
+    </div>
+  </div>
+
+  <!-- Section 2: JWT Basics -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>JWT — JSON Web Token</h2>
+    </div>
+
+    <div class="card">
+      <p>A JWT is a compact, self-contained token for securely transmitting information between parties as a JSON object. It is digitally signed, making the data verifiable and trustworthy without needing a database lookup on every request.</p>
+
+      <h3>// Three Parts</h3>
+      <div class="jwt-parts">
+        <div class="jwt-part header">HEADER</div>
+        <div style="color:var(--muted);align-self:center;font-size:18px">.</div>
+        <div class="jwt-part payload">PAYLOAD</div>
+        <div style="color:var(--muted);align-self:center;font-size:18px">.</div>
+        <div class="jwt-part signature">SIGNATURE</div>
+      </div>
+
+      <pre data-lang="JSON"><code><span class="cm">// Header — algorithm &amp; token type</span>
+{ <span class="st">"alg"</span>: <span class="st">"HS256"</span>, <span class="st">"typ"</span>: <span class="st">"JWT"</span> }
+
+<span class="cm">// Payload — claims (user data, expiry)</span>
+{ <span class="st">"sub"</span>: <span class="st">"john@example.com"</span>, <span class="st">"roles"</span>: [<span class="st">"USER"</span>], <span class="st">"exp"</span>: 1700000000 }
+
+<span class="cm">// Signature — HMACSHA256(base64Header + "." + base64Payload, secret)</span></code></pre>
+
+      <div class="badge-list">
+        <span class="badge green">Stateless</span>
+        <span class="badge blue">Self-contained</span>
+        <span class="badge purple">Compact — URL-safe</span>
+        <span class="badge orange">Digitally Signed</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: JWT Flow -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>JWT Authentication Flow</h2>
+    </div>
+
+    <div class="card">
+      <div class="flow">
+        <div class="flow-step">
+          <div class="step-dot">1</div>
+          <div class="step-content">
+            <div class="step-title">User sends credentials</div>
+            <p>Client POSTs <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:11px">{ username, password }</code> to <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:11px">/authenticate</code></p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-dot">2</div>
+          <div class="step-content">
+            <div class="step-title">Server validates &amp; generates JWT</div>
+            <p>Spring Security authenticates the credentials and signs a JWT with a secret key &amp; expiry.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-dot">3</div>
+          <div class="step-content">
+            <div class="step-title">Client stores and uses the token</div>
+            <p>Future requests include <code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;font-size:11px">Authorization: Bearer &lt;token&gt;</code> header.</p>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="step-dot">4</div>
+          <div class="step-content">
+            <div class="step-title">Server validates token &amp; grants access</div>
+            <p>The custom filter reads, verifies, and populates the Security Context — no session needed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: JWT Utility Class -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>JWT Utility Class</h2>
+    </div>
+
+    <div class="card">
+      <p>Uses the <code style="background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:12px">io.jsonwebtoken (jjwt)</code> library. Add to pom.xml:</p>
+      <pre data-lang="XML"><code><span class="cm">&lt;!-- pom.xml --&gt;</span>
+<span class="kw">&lt;dependency&gt;</span>
+  <span class="cl">&lt;groupId&gt;</span>io.jsonwebtoken<span class="cl">&lt;/groupId&gt;</span>
+  <span class="cl">&lt;artifactId&gt;</span>jjwt-api<span class="cl">&lt;/artifactId&gt;</span>
+  <span class="cl">&lt;version&gt;</span>0.11.5<span class="cl">&lt;/version&gt;</span>
+<span class="kw">&lt;/dependency&gt;</span></code></pre>
+
+      <pre data-lang="Java"><code><span class="an">@Component</span>
+<span class="kw">public class</span> <span class="cl">JwtUtil</span> {
+
+    <span class="kw">private final</span> String SECRET_KEY = <span class="st">"your-256-bit-secret"</span>;
+    <span class="kw">private final long</span> EXPIRATION = <span class="st">1000 * 60 * 60 * 10</span>; <span class="cm">// 10 hours</span>
+
+    <span class="cm">/** Generate a signed JWT for the given username */</span>
+    <span class="kw">public</span> String <span class="fn">generateToken</span>(String username) {
+        <span class="kw">return</span> Jwts.builder()
+            .setSubject(username)
+            .setIssuedAt(<span class="kw">new</span> Date())
+            .setExpiration(<span class="kw">new</span> Date(System.currentTimeMillis() + EXPIRATION))
+            .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()),
+                      SignatureAlgorithm.HS256)
+            .compact();
+    }
+
+    <span class="cm">/** Validate token — check signature &amp; expiry */</span>
+    <span class="kw">public boolean</span> <span class="fn">validateToken</span>(String token, UserDetails userDetails) {
+        String username = <span class="fn">extractUsername</span>(token);
+        <span class="kw">return</span> username.equals(userDetails.getUsername())
+               &amp;&amp; !<span class="fn">isTokenExpired</span>(token);
+    }
+
+    <span class="cm">/** Extract username (subject) from JWT payload */</span>
+    <span class="kw">public</span> String <span class="fn">extractUsername</span>(String token) {
+        <span class="kw">return</span> <span class="fn">extractClaims</span>(token).getSubject();
+    }
+
+    <span class="kw">private</span> Claims <span class="fn">extractClaims</span>(String token) {
+        <span class="kw">return</span> Jwts.parserBuilder()
+            .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+    }
+
+    <span class="kw">private boolean</span> <span class="fn">isTokenExpired</span>(String token) {
+        <span class="kw">return</span> <span class="fn">extractClaims</span>(token).getExpiration().before(<span class="kw">new</span> Date());
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- Section 5: Custom Auth Filter -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Custom Authentication Filter</h2>
+    </div>
+
+    <div class="card">
+      <p>Intercepts every HTTP request, extracts the Bearer token, and populates the Spring Security Context on successful validation.</p>
+      <pre data-lang="Java"><code><span class="an">@Component</span>
+<span class="kw">public class</span> <span class="cl">JwtRequestFilter</span> <span class="kw">extends</span> <span class="cl">OncePerRequestFilter</span> {
+
+    <span class="an">@Autowired</span> <span class="kw">private</span> <span class="cl">JwtUtil</span> jwtUtil;
+    <span class="an">@Autowired</span> <span class="kw">private</span> <span class="cl">UserDetailsService</span> userDetailsService;
+
+    <span class="an">@Override</span>
+    <span class="kw">protected void</span> <span class="fn">doFilterInternal</span>(HttpServletRequest req,
+            HttpServletResponse res, FilterChain chain)
+            <span class="kw">throws</span> ServletException, IOException {
+
+        String authHeader = req.getHeader(<span class="st">"Authorization"</span>);
+        String token = <span class="kw">null</span>, username = <span class="kw">null</span>;
+
+        <span class="kw">if</span> (authHeader != <span class="kw">null</span> &amp;&amp; authHeader.startsWith(<span class="st">"Bearer "</span>)) {
+            token = authHeader.substring(<span class="st">7</span>);
+            username = jwtUtil.<span class="fn">extractUsername</span>(token);
+        }
+
+        <span class="kw">if</span> (username != <span class="kw">null</span> &amp;&amp;
+            SecurityContextHolder.getContext().getAuthentication() == <span class="kw">null</span>) {
+
+            <span class="cl">UserDetails</span> userDetails =
+                userDetailsService.<span class="fn">loadUserByUsername</span>(username);
+
+            <span class="kw">if</span> (jwtUtil.<span class="fn">validateToken</span>(token, userDetails)) {
+                <span class="cm">// Populate Security Context</span>
+                <span class="kw">var</span> authToken = <span class="kw">new</span> UsernamePasswordAuthenticationToken(
+                    userDetails, <span class="kw">null</span>, userDetails.getAuthorities());
+                authToken.setDetails(
+                    <span class="kw">new</span> WebAuthenticationDetailsSource().<span class="fn">buildDetails</span>(req));
+                SecurityContextHolder.getContext()
+                    .<span class="fn">setAuthentication</span>(authToken);
+            }
+        }
+        chain.<span class="fn">doFilter</span>(req, res);
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- Section 6: Security Config -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Spring Security Configuration</h2>
+    </div>
+
+    <div class="card">
+      <p>Spring Security 6+ uses a bean-based filter chain instead of <code style="background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:12px">WebSecurityConfigurerAdapter</code>.</p>
+      <pre data-lang="Java"><code><span class="an">@Configuration</span>
+<span class="an">@EnableWebSecurity</span>
+<span class="kw">public class</span> <span class="cl">SecurityConfig</span> {
+
+    <span class="an">@Autowired</span> <span class="kw">private</span> <span class="cl">JwtRequestFilter</span> jwtFilter;
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="cl">SecurityFilterChain</span> <span class="fn">filterChain</span>(HttpSecurity http) <span class="kw">throws</span> Exception {
+        <span class="kw">return</span> http
+            .csrf(csrf -> csrf.<span class="fn">disable</span>())
+            .sessionManagement(s -> s
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(<span class="st">"/api/auth/**"</span>).<span class="fn">permitAll</span>()
+                .requestMatchers(<span class="st">"/api/users/**"</span>).<span class="fn">authenticated</span>()
+                .anyRequest().<span class="fn">authenticated</span>())
+            .addFilterBefore(jwtFilter,
+                UsernamePasswordAuthenticationFilter.class)
+            .build();
+    }
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> <span class="cl">PasswordEncoder</span> <span class="fn">passwordEncoder</span>() {
+        <span class="kw">return new</span> BCryptPasswordEncoder();
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- Section 7: Auth Controller -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Authentication Controller</h2>
+    </div>
+
+    <div class="card">
+      <pre data-lang="Java"><code><span class="an">@RestController</span>
+<span class="an">@RequestMapping</span>(<span class="st">"/api/auth"</span>)
+<span class="kw">public class</span> <span class="cl">AuthController</span> {
+
+    <span class="an">@Autowired</span> <span class="kw">private</span> <span class="cl">AuthenticationManager</span> authManager;
+    <span class="an">@Autowired</span> <span class="kw">private</span> <span class="cl">JwtUtil</span> jwtUtil;
+    <span class="an">@Autowired</span> <span class="kw">private</span> <span class="cl">UserDetailsService</span> userDetailsService;
+
+    <span class="an">@PostMapping</span>(<span class="st">"/authenticate"</span>)
+    <span class="kw">public</span> ResponseEntity&lt;?&gt; <span class="fn">authenticate</span>(
+            <span class="an">@RequestBody</span> <span class="cl">AuthRequest</span> request) {
+
+        authManager.<span class="fn">authenticate</span>(
+            <span class="kw">new</span> UsernamePasswordAuthenticationToken(
+                request.getUsername(), request.getPassword()));
+
+        <span class="cl">UserDetails</span> userDetails =
+            userDetailsService.<span class="fn">loadUserByUsername</span>(request.getUsername());
+
+        String jwt = jwtUtil.<span class="fn">generateToken</span>(userDetails.getUsername());
+        <span class="kw">return</span> ResponseEntity.<span class="fn">ok</span>(<span class="kw">new</span> AuthResponse(jwt));
+    }
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- Section 8: Protected Endpoints -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Securing REST Endpoints</h2>
+    </div>
+
+    <div class="card">
+      <h3>// Endpoint Overview</h3>
+      <div>
+        <div class="endpoint"><span class="method post">POST</span><span class="endpoint-path">/api/auth/authenticate</span><span class="endpoint-desc">public — get JWT</span></div>
+        <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/users</span><span class="endpoint-desc">protected — requires Bearer token</span></div>
+        <div class="endpoint"><span class="method get">GET</span><span class="endpoint-path">/api/users/{id}</span><span class="endpoint-desc">protected — requires Bearer token</span></div>
+      </div>
+
+      <h3>// Usage Flow</h3>
+      <pre data-lang="HTTP"><code><span class="cm"># Step 1 — Login and receive JWT</span>
+<span class="kw">POST</span> /api/auth/authenticate
+Content-Type: application/json
+
+{ <span class="st">"username"</span>: <span class="st">"john"</span>, <span class="st">"password"</span>: <span class="st">"secret"</span> }
+
+<span class="cm">---</span>
+<span class="cm"># Step 2 — Use JWT in protected requests</span>
+<span class="kw">GET</span> /api/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</code></pre>
+
+      <h3>// Role-Based Access with @PreAuthorize</h3>
+      <pre data-lang="Java"><code><span class="an">@PreAuthorize</span>(<span class="st">"hasRole('ADMIN')"</span>)
+<span class="an">@DeleteMapping</span>(<span class="st">"/api/users/{id}"</span>)
+<span class="kw">public</span> ResponseEntity&lt;?&gt; <span class="fn">deleteUser</span>(<span class="an">@PathVariable</span> Long id) { ... }
+
+<span class="an">@PreAuthorize</span>(<span class="st">"hasAnyRole('USER','ADMIN')"</span>)
+<span class="an">@GetMapping</span>(<span class="st">"/api/users/me"</span>)
+<span class="kw">public</span> ResponseEntity&lt;?&gt; <span class="fn">getProfile</span>() { ... }</code></pre>
+    </div>
+  </div>
+
+  <!-- Section 9: Best Practices -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>Best Practices</h2>
+    </div>
+
+    <div class="card">
+      <div class="practice">
+        <div class="practice-icon">🔒</div>
+        <div class="practice-text">
+          <strong>Always use HTTPS</strong>
+          <span>Tokens in transit must be encrypted. Never expose JWT over plain HTTP — it's visible in network logs.</span>
+        </div>
+      </div>
+      <div class="practice">
+        <div class="practice-icon">⏱️</div>
+        <div class="practice-text">
+          <strong>Token Expiration &amp; Refresh</strong>
+          <span>Set short-lived access tokens (15–60 min) and use refresh tokens for seamless re-authentication without re-login.</span>
+        </div>
+      </div>
+      <div class="practice">
+        <div class="practice-icon">🔑</div>
+        <div class="practice-text">
+          <strong>BCrypt for Passwords</strong>
+          <span>Always hash passwords with BCryptPasswordEncoder. Never store plain text. Use a work factor of 10–12.</span>
+        </div>
+      </div>
+      <div class="practice">
+        <div class="practice-icon">🛡️</div>
+        <div class="practice-text">
+          <strong>@PreAuthorize for RBAC</strong>
+          <span>Annotate methods with role checks. Enable with @EnableMethodSecurity on your config class.</span>
+        </div>
+      </div>
+      <div class="practice">
+        <div class="practice-icon">🚫</div>
+        <div class="practice-text">
+          <strong>No sensitive data in payload</strong>
+          <span>JWTs are Base64-encoded, not encrypted. Never put passwords, SSNs, or private keys in claims.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Spring Security &amp; JWT — Complete Reference · Built with ♥
+  </footer>
+
+</div>
+</body>
+</html>

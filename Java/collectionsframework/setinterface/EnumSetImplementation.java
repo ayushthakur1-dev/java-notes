@@ -1,4 +1,4 @@
-package queueinterface;
+package setinterface;
 
 import java.util.EnumSet;
 import java.util.Set;

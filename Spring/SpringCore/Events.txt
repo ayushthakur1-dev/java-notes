@@ -1,0 +1,66 @@
+Events are part of the application context and allow loosely coupled communication between components.
+One bean publishes something that happened, other beans react to it, without either side knowing about the other
+
+An event is just an object that represents something noteworthy in your application 
+eg; user registered, order placed, payment failed, application started
+
+Core pieces of the system 
+1. Event -> what happened
+2. Publisher -> announces it
+3. Listener -> reacts to it
+
+Event class
+a simple POJO -> Plain Old Java Object
+you don't need to extent any base class
+
+Event publisher 
+@Componenet
+public class UserService {
+	
+	private final ApplicationEventPublisher publisher;
+
+	public UserSerive(ApplicationEventPublisher publisher) {
+		this.publisher = publisher;
+	}
+}
+
+Event listener
+@Component
+public class WelcomeEmailListner {
+		
+	@EventListener
+	public void handle(UserRegisteredEvent event) { }
+}
+
+Built in spring events:
+Spring itself publishes many lifecycle events like:
+
+ApplicationReadyEvent
+Common uses: 
+- warm cache
+- pre loaded data
+- trigger startup jobs
+
+ContextRefreshedEvent
+when the context is initialized or refreshed
+often used in older apps
+
+ContextClosedEvent
+when the app is shutting down
+great for releasing resources and stopping threads
+
+
+Async listeners
+by default listeners run synchronously , if one is slow -> your main flow is slow 
+we can make then asynchronous 
+
+@Async 
+@EventListener
+public void handle(UserRegisteredEvent event) { }
+
+but before that we have to enable it -> @EnableAsync
+
+
+Conditional Listeners:
+just like caching, conditional can also be used with listeners 
+condition, and unless

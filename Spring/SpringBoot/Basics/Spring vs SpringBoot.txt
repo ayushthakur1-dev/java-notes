@@ -1,0 +1,20 @@
+What is spring? 
+provides comprehensive infrastructure support for developing java applications
+it's packed with some features like DI, and out of box modules like:
+- JDBC
+- MVC
+- Security
+- AOP 
+- ORM 
+- Test
+
+these modules can drastically reduce the development time of an application 
+
+What is Spring boot? 
+it is basically an extension of Spring framework, which eliminates the boilerplate configuration required for setting up an Spring application
+It takes an opinionated view of the spring platform which paves the way for a faster and more efficient development ecosystem 
+features of spring boot: 
+- starter dependencies to simplify the build and application configuration 
+- embedded server to avoid complexity in application deployment 
+- metrics, health check, and externalized configuration 
+- automatic config for Spring configuration - whenever possible 

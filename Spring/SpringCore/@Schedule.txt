@@ -1,0 +1,46 @@
+@Schedule is used to run a method automatically at fixed times or intervals
+What kind of tasks use this?
+common real world example: 
+clean temporary files
+send reports
+sync data
+retry failed operations
+refresh cache 
+
+example usage: 
+@Component 
+class ReportJob {
+	 @Scheduled(fixedRate = 5000)
+	public void generate() {
+		System.out.println("Running every 5 seconds");
+	}
+}
+
+now spring calls is automatically, you don't trigger it	
+
+But first, scheduling must be enabled
+@EnableScheduling -> often placed on the main application or a config class, without it nothing runs
+
+Ways to schedule execution: 
+There are three main styles
+1. fixed rate: run every X milliseconds from the start time
+@Scheduled(fixedRate = 5000) -> if job takes 2 seconds next run still tries every 5 seconds
+
+2. fixed delay: wait X milliseconds after previous run finishes
+@Schedule(fixedDelay = 5000) -> if job takes 2 seconds -> next starts after 7 seconds
+
+3. cron: 
+@Schedule(cron = "0 0 2 * * ?") -> runs every day at 2 am , OR
+@Schedule(cron = "0 * * * * ?") -> runs every minute
+
+Rules for scheduled methods: 
+they must be public, void and no parameters because spring triggers them automatically 
+
+Spring creates a background task executor, it keeps checking triggers and invokes your method when time arrives
+
+
+Parameterizing the Schedule: 
+Hardcoding these schedules is simple, but we usually need to be able to control the schedule wihtout re-compiling and re-deploying the entire app
+we'll make use of Spring expressions to externalize the conifiguration of tasks, and we'll store these in properties
+eg. 
+A fixedDelay task: @Scheduled(fixedDelayString = "${fixedDelay.in.milliseconds}")

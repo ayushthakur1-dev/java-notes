@@ -1,0 +1,32 @@
+@SpringBootApplication:
+combination of:
+@Configuration(marks a class as a source of bean definition),
+@EnableAutoConfiguration(enables autoconfiguration, we have to use this @Configuration annotation, spring boot looks for auto-configuration beans on it's class path and automatically applies them) and 
+@ComponentScan(tells spring to scan packages and find classes marked with @Component, @Service, @Repository, @Controller, or @Configuration and register them as bean)
+
+
+@ConditionalOnClass -> activates a configuration only if specific classes are on the class path
+typical use -> enable integration when dependency is present 
+eg.
+@ConditionalOnClass(name = "com.mysql.cj.jdbc.Driver")
+@Configuration
+class MySqlAutoConfig {}
+
+@ConditionalOnMissingClass -> apply the configuration if class is not present
+
+@ConditionalOnBean -> apply only if a bean of a given type or name already exists in the context
+
+@ConditionalOnMissingBean -> apply only if a bean of a given type or name does not exists in the context
+
+@ConditionalOnProperty -> apply configuration based on a property value from application.yml/ application.properties
+
+@ConditionalOnResource -> matches if a specific resource exists (file, classpath, resource, etc.)
+
+@ConditionalOnWebApplication -> applies only in web environment
+
+@ConditionalOnNotWebApplication -> load only in a non-web env (CLI, batch jobs)
+
+@ConditionalExpression -> uses SpEL	
+
+@Conditioanl -> base annotation, all of the convenience wrappers built top of it
+

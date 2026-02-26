@@ -1,4 +1,4 @@
-package queueinterface;
+package setinterface;
 
 import java.util.NavigableSet;
 import java.util.Set;

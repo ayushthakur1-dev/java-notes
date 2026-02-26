@@ -1,0 +1,68 @@
+AOP -> Aspect Oriented Programming
+it allows adding cross cutting concerns like logging, transactions, and security to methods without modifying the business code, typically using proxies
+it is about adding behaviour to your code without changing the code itself
+
+The real problem AOP solves: 
+imagine you have 100 service methods
+you want to -> log each call, measure execution time, check permissions
+if you write code inside every method then there will be duplication everywhere 
+
+AOP says: write the logic once and apply it automatically 
+
+Core idea: 
+separate cross cutting concerns from business logic
+business code focuses on business
+infrastructure concerns are added transparently 
+
+Example: 
+without AOP
+public void pay() {
+	log.info("start");
+	checkSecurity();
+	
+	//business logic
+
+	// log.info("end");
+}
+
+with AOP
+public void pay() {
+	// pure business logic
+}
+
+How spring achieves this? 
+Spring wraps your bean in a proxy object
+when someone calls your method: 
+caller -> proxy -> extra logic -> real method
+
+AOP works mainly for: 
+public methods
+called from outside the bean
+
+self invocation may bypass the proxy
+
+AOP terminology:
+Aspect 
+an aspect is a class that contains cross cutting logic
+
+@Aspect 
+@Component
+class LoggingAspect { }
+
+Join Point: 
+it is a place in program execution where AOP can act
+// if a method is running -> you are at a join point
+
+Pointcut: 
+there my be thousands of methods, pointcut is a filter for them
+
+Advice: 
+advice is the action
+types of advice: 
+- @Before
+- @After
+- @AfterReturning
+- @AfterThrowing
+- @Around
+
+

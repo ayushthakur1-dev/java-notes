@@ -1,0 +1,19 @@
+In spring framework, @Component, @Service, @Repository are all ways to say: register this class as a Spring bean
+So at the container level, they are similar 
+The difference is mainly about role, intention, readability, and in one case a bit of extra behaviour 
+
+
+@Component: 
+use when the class doesn't fit another stereotype 
+like utility, helper, infrastructure etc
+
+@Service: 
+communicates: this class contains business rules/ use cases
+
+@Repository: 
+communicates: this class talks to the database
+spring adds exception translation: low level DB exceptions -> converted into Spring's data access exception, this makes error handling more consistent, so @Repository is not just decoration, it has extra help
+
+Why stereotype matter in real project? -> when someone opens your codebase, they can instantly see structure: 
+controller -> service -> repository 
+and without reading logic architecture becomes visible

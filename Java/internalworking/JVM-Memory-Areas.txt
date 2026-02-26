@@ -61,7 +61,7 @@ No, in that case String value will be stored in string pool and constant pool wi
 
 *** native memory?
 native memory is memory allocated directly from the OS, outside the java heap, and managed by the JVM or native code not by the garbage colletor
-oteher memory type is Java-managed memory (managed by GC)
+other memory type is Java-managed memory (managed by GC)
 
 *** metaspace was introduced in Java 8 replacing PermGen(Permanent generation) that is of fixed size and was located in Heap memory, but now metaspace is dynamic and is stored in native memory(off heap)
 

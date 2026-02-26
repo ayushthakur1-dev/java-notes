@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/../.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Tasks/2.1-filter-and-collect-employee-names-using-streams" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Tasks/2.3-map-and-reduce-using-streams" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Tasks/2.5-flatmap-for-nested-list-processing" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Tasks/3.2-parallel-streams-for-performance-optimization" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Tasks/3.4-group-employees-by-department-using-streams" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Tasks/3.5-build-a-pipeline-for-data-processing" vcs="Git" />
+  </component>
+</project>

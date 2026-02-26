@@ -1,0 +1,41 @@
+@Order defines precedence among multiple beans of the same type
+lower value = higher priority 
+
+The problem order solves: 
+often spring finds multiple candidates that must run in sequence 
+in that case spring must decide who runs first? who runs last? 
+
+order is frequently used with aspects, filters, event listners, etc.
+
+Order with AOP: 
+when multiple aspects match the same methods, spring must build a chain 
+
+@Aspect
+@Order(1)
+class SecurityAspect { }
+
+@Aspect 
+@Order(2)
+class LogginAspect { }
+
+execution becomes: security -> logging -> business method
+
+if you don't specify order may be unpredictable that is dangerous in production
+
+How spring reads order internally ? 
+when spring builds chain it, 
+collects all candidates
+checks if they implement Ordered or have @Order
+sorts them
+executes in that sequence
+
+So @Order is essentially metadata for sorting
+
+Alternative: 
+class MyAspect implements Ordered {
+	public int getOrder() {
+		return 1;
+	}
+}
+
+same meaning annotation is just cleaner 

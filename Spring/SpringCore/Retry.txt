@@ -1,0 +1,47 @@
+Spring retry provides the ability to automatically re-invoke a failed operation, 
+it helps when errors may be transient (self-correcting interruptions that disrupts system operations for a brief duration, often caused by network glitches)
+
+it is different from circuit breaker(?) as retry is for transient failures, while circuit breaker is for persistent failures.
+
+***circuit breaker pattern allow a microservice to continue operating when a related service fails, preventing the failure from cascading and giving the failing service time to recover
+
+to enable spring retry in an application, we need to add the @EnableRetry annotation to our @Configuration class
+and we can add @Retryable annotation to add retry functionality to methods
+
+when a @Retryable method fails with a specific exception a separate recovery method is called that is marked with @Recovery annotation
+
+eg. 
+@Service
+public interface MyService {
+	
+	@Retryable(retryFor = SQLException.class)
+	void retryServiceWithRecovery(String sql) throws SQLException;
+
+	@Recover
+	void recover(SQLException e, String sql);
+}
+
+to customize a rety's behaviour, we can use the parameters maxAttempts and backoff
+@Service
+public interface MyService {
+	
+	@Retryable(reyFor = SQLException.class, maxAttempts = 2, backoff = @Backoff(delay = 100))
+	void retryServiceWithCutomization(String sql) throws SQLExcpetion;
+}
+
+we can also use Spring properties in the @Retry annotation 
+retry.maxAttempts=4
+retry.maxDelay=100
+
+
+***
+while retry helps recover from transient failures, we can use concurrency throttling to protect resources from being overwhelmed by an excessive number of simultaneous requests
+
+@ConcurrencyLimit annotation specifies the maximum number of concurrent invocations allowed for the annotated method
+to enable this feature use @EnableReselientMethods on Configuration class
+
+eg. 
+@ConcurrencyLimit(5)
+void concurrentLimitService();
+
+now if more than five threads attempt to call concurrentLimitService() at the some time, it blocks the sixth thread

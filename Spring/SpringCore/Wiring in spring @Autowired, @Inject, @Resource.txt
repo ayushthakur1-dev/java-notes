@@ -1,0 +1,27 @@
+Wiring: connecting beans together, supplying one object as the dependency of another
+instead of writing 'new', the container finds the right bean and links them 
+
+1. @Autowired: (Spring Native)
+it resolve dependency by type first
+if multiple beans of that type exist - it may fail unless we help it
+we can combine it with @Qualifier("name") to specify which one
+it works with constructors, setters and fields
+we have extra features like 'requried'
+@Autowired(required=false) -> if bean is missing then there will be not crash
+
+2. @Inject: (standard Java) -> from JSR-330, not spring specific
+it also resolves by type first like @Autowired
+for choosing between many beans you use @Name instead of @Qulifier
+it was introduced in order to provide one universal dependency injection annotation that any framework can support, so that our code is less married to Spring
+but in practice, most spring application uses spring libraries, spring configuration, spring boot, so you are already tied to spring anyway
+
+3. @Resource: (name first injection)
+it resolved by name first, then by type if name fails
+
+@Resource
+private PaymentService creditCardPaymentService
+
+Spring will look for a bean name 'creditCardPaymentService	
+
+
+But typical modern style don't need any annotation at all as if there is only one constructor, spring injects automatically using Constructor Dependency Injection.

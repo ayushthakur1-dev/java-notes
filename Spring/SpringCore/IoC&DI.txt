@@ -1,0 +1,71 @@
+In spring framework, IoC and DI are the foundation everything else stands on.
+
+In plane Java, object usually create their own dependencies
+eg. 
+class OrderService {
+	private PaymentService paymentService = new PaymentService();
+}
+
+Now everything is tightly coupled
+
+Inversion of Control = objects no longer control their own creation 
+the control is moved to a container(Spring)
+now container creates dependencies & provides them
+so the who is in charge is 'inverted'
+
+The spring IoC container is responsible for: 
+creating objects
+connecting them
+configuring them
+managing lifecycle
+These managements are called 'beans' (bean -> object managed by spring)
+
+What is Dependency Injection?
+Dependency Injection is how IoC happens
+So our previous code will look like
+@Service
+class OrderService {
+	private PaymentService paymentService;
+
+	public OrderService(PaymentService paymentService) {
+		this.paymentService = paymentService;
+	}
+}
+
+now the service receives instead of creates
+Spring will create PaymentService and inject it
+
+this tiny shift enables:
+loose coupling
+easy mocking in test
+cleaner architecture
+central configuration
+
+this type of injection is known as Constructor Dependency Injection
+there are two more type of DI but those are not recommended:
+
+Setter Injection: dependency is injected through setter
+@Service
+class OrderService {
+	private PaymentService paymentService;
+	
+	@Autowired
+	public void setPaymentService(PaymentService paymentService) {
+		this.paymentService = paymentService
+	}
+}
+
+Field Injection: dependency is directly injected into field
+@Service
+class OrderService {
+	@Autowired
+	private PaymentService paymentService;
+}
+
+How spring do it? what happens during application startup? 
+1. Spring scans classes
+2. Finds annotated components
+3. Creates objects(beans)
+4. Resolve dependency 
+5. Inject them
+6. Keeps them in container

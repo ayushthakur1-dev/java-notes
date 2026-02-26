@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring REST — Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2236;
+    --border: #1e2d47;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --accent3: #34d399;
+    --accent4: #fb923c;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --highlight: #0ea5e9;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 0 0 40px 0;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .logo h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--accent);
+    letter-spacing: -0.3px;
+  }
+  .logo span {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .nav-section {
+    margin: 6px 0;
+  }
+  .nav-group-title {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    padding: 8px 20px 4px;
+    font-weight: 600;
+  }
+  .nav-link {
+    display: block;
+    padding: 7px 20px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 400;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: var(--accent);
+    background: rgba(56,189,248,0.06);
+    border-left-color: var(--accent);
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0a0e1a 0%, #0d1628 40%, #0a1628 100%);
+    padding: 80px 60px 70px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(56,189,248,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 200px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(129,140,248,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(56,189,248,0.1);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.72rem;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.4rem;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #f1f5f9;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero p {
+    color: #94a3b8;
+    font-size: 1rem;
+    max-width: 560px;
+    font-weight: 300;
+  }
+  .hero-chips {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent3);
+  }
+
+  /* CONTENT */
+  .content { padding: 0 60px 80px; max-width: 940px; }
+
+  /* SECTION */
+  .section {
+    padding-top: 70px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+  .section:first-of-type { border-top: none; margin-top: 0; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    background: rgba(56,189,248,0.1);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 6px;
+    padding: 3px 9px;
+    margin-top: 8px;
+    white-space: nowrap;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 28px 0 10px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  h4 {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent3);
+    margin: 20px 0 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  p { color: #94a3b8; margin-bottom: 14px; font-size: 0.9rem; }
+  p strong { color: var(--text); }
+
+  /* CODE */
+  .code-block {
+    background: #060b14;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 18px 0;
+    font-size: 0.8rem;
+  }
+  .code-header {
+    background: var(--surface2);
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .code-file {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent3);
+  }
+  pre {
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.65;
+    color: #cbd5e1;
+  }
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .kw { color: #c792ea; }
+  .ann { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .num { color: #f78c6c; }
+  .cmt { color: #546e7a; font-style: italic; }
+  .cls { color: #ffcb6b; }
+  .fn { color: #82aaff; }
+  .ret { color: #89ddff; }
+
+  /* CARDS */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card-icon { font-size: 1.4rem; margin-bottom: 10px; }
+  .card-title { font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+  .card-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+  /* MATURITY TABLE */
+  .maturity-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .maturity-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: 60px 1fr 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+  .maturity-level {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    text-align: center;
+  }
+  .l0 { color: #ef4444; }
+  .l1 { color: #fb923c; }
+  .l2 { color: #facc15; }
+  .l3 { color: var(--accent3); }
+  .maturity-name { font-weight: 600; font-size: 0.9rem; color: var(--text); margin-bottom: 4px; }
+  .maturity-desc { font-size: 0.78rem; color: var(--muted); }
+  .maturity-example { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--accent); background: rgba(56,189,248,0.07); padding: 6px 10px; border-radius: 6px; }
+
+  /* HTTP VERB BADGES */
+  .verb { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 4px; }
+  .get { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+  .post { background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); }
+  .put { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  .patch { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); }
+  .delete { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.83rem; }
+  th { background: var(--surface2); color: var(--text); font-weight: 600; padding: 10px 14px; text-align: left; border: 1px solid var(--border); }
+  td { padding: 9px 14px; border: 1px solid var(--border); color: #94a3b8; vertical-align: top; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  td code { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent); background: rgba(56,189,248,0.08); padding: 1px 5px; border-radius: 3px; }
+
+  /* CALLOUT */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 0.83rem;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .callout.info { background: rgba(56,189,248,0.07); border-left: 3px solid var(--accent); }
+  .callout.tip { background: rgba(52,211,153,0.07); border-left: 3px solid var(--accent3); }
+  .callout.warn { background: rgba(251,146,60,0.07); border-left: 3px solid var(--accent4); }
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .callout p { color: #94a3b8; margin: 0; }
+
+  /* STATUS CODES */
+  .status-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.78rem;
+  }
+  .status-code { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .s2xx { color: var(--accent3); }
+  .s3xx { color: #38bdf8; }
+  .s4xx { color: #fb923c; }
+  .s5xx { color: #f87171; }
+  .status-label { color: var(--muted); }
+
+  /* INLINE CODE */
+  code { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--accent); background: rgba(56,189,248,0.08); padding: 1px 6px; border-radius: 3px; }
+
+  /* PAGINATION VISUAL */
+  .page-visual {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+  .page-visual .page-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; color: var(--muted); }
+  .page-visual .page-key { color: var(--accent2); min-width: 100px; }
+  .page-visual .page-val { color: var(--accent3); }
+
+  /* SWAGGER */
+  .swagger-block {
+    background: #1a1f2e;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .swagger-endpoint {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 0.82rem;
+  }
+  .swagger-path { font-family: 'JetBrains Mono', monospace; color: var(--text); }
+  .swagger-summary { color: var(--muted); font-size: 0.75rem; }
+
+  /* BEST PRACTICES */
+  .bp-list { list-style: none; margin: 14px 0; }
+  .bp-list li {
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.83rem;
+    color: #94a3b8;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .bp-list li .bp-icon { flex-shrink: 0; margin-top: 1px; }
+  .bp-good { border-left: 3px solid var(--accent3); }
+  .bp-bad { border-left: 3px solid #ef4444; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .hero, .content { padding: 40px 20px; }
+    .hero h1 { font-size: 2.2rem; }
+    .maturity-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <h2>Spring REST</h2>
+    <span>Complete Reference</span>
+  </div>
+  <div class="nav-section">
+    <div class="nav-group-title">Foundations</div>
+    <a class="nav-link" href="#rest-intro">What is REST?</a>
+    <a class="nav-link" href="#rmm">Richardson Maturity Model</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-group-title">Controllers</div>
+    <a class="nav-link" href="#controllers">REST Controllers</a>
+    <a class="nav-link" href="#request-handling">Request &amp; Response</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-group-title">Error &amp; Validation</div>
+    <a class="nav-link" href="#exception">Exception Handling</a>
+    <a class="nav-link" href="#validation">REST Validation</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-group-title">Data</div>
+    <a class="nav-link" href="#crud">CRUD Operations</a>
+    <a class="nav-link" href="#pagination">Pagination &amp; Sorting</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-group-title">Production</div>
+    <a class="nav-link" href="#docs">API Documentation</a>
+    <a class="nav-link" href="#best-practices">Best Practices</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">☕ Spring Framework · REST API</div>
+    <h1>Spring <em>REST</em><br>Complete Guide</h1>
+    <p>Build production-grade RESTful APIs with Spring Boot — from fundamentals to best practices.</p>
+    <div class="hero-chips">
+      <div class="chip">@RestController</div>
+      <div class="chip">@RequestBody</div>
+      <div class="chip">ResponseEntity</div>
+      <div class="chip">@Valid</div>
+      <div class="chip">Pageable</div>
+      <div class="chip">OpenAPI 3</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ===== 1. REST INTRO ===== -->
+    <div class="section" id="rest-intro">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">What is REST?</h2>
+      </div>
+
+      <p><strong>REST (Representational State Transfer)</strong> is an architectural style for designing networked applications. It uses standard HTTP methods and focuses on resources exposed via URLs. REST was defined by Roy Fielding in his 2000 doctoral dissertation.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🔄</div>
+          <div class="card-title">Statelessness</div>
+          <div class="card-desc">Each request contains all information needed. Server stores no session state between requests.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖥️</div>
+          <div class="card-title">Client-Server</div>
+          <div class="card-desc">UI and data storage are separated, improving portability and scalability independently.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔗</div>
+          <div class="card-title">Uniform Interface</div>
+          <div class="card-desc">Resources identified by URIs. Representations manipulated through standard HTTP verbs.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💾</div>
+          <div class="card-title">Cacheability</div>
+          <div class="card-desc">Responses must define themselves as cacheable or non-cacheable to improve performance.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧅</div>
+          <div class="card-title">Layered System</div>
+          <div class="card-desc">Intermediaries like load balancers and proxies can be added without clients knowing.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Spring Support</div>
+          <div class="card-desc">Spring MVC / Spring Boot provides first-class REST support with auto-configuration.</div>
+        </div>
+      </div>
+
+      <h3>Spring's REST Ecosystem</h3>
+      <p>Spring Boot makes building REST APIs trivially simple. With <strong>spring-boot-starter-web</strong>, you get an embedded Tomcat, Jackson for JSON serialization, and Spring MVC all pre-configured.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">XML</span><span class="code-file">pom.xml</span></div>
+        <pre><span class="cmt">&lt;!-- Maven dependency --&gt;</span>
+<span class="ret">&lt;dependency&gt;</span>
+  <span class="ret">&lt;groupId&gt;</span>org.springframework.boot<span class="ret">&lt;/groupId&gt;</span>
+  <span class="ret">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="ret">&lt;/artifactId&gt;</span>
+<span class="ret">&lt;/dependency&gt;</span>
+
+<span class="cmt">&lt;!-- For validation --&gt;</span>
+<span class="ret">&lt;dependency&gt;</span>
+  <span class="ret">&lt;groupId&gt;</span>org.springframework.boot<span class="ret">&lt;/groupId&gt;</span>
+  <span class="ret">&lt;artifactId&gt;</span>spring-boot-starter-validation<span class="ret">&lt;/artifactId&gt;</span>
+<span class="ret">&lt;/dependency&gt;</span></pre>
+      </div>
+    </div>
+
+    <!-- ===== 2. RICHARDSON MATURITY MODEL ===== -->
+    <div class="section" id="rmm">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <h2 class="section-title">Richardson Maturity Model</h2>
+      </div>
+
+      <p>The Richardson Maturity Model (RMM) describes four levels of REST API maturity, measuring how well an API adheres to REST principles.</p>
+
+      <div class="maturity-grid">
+        <div class="maturity-row">
+          <div class="maturity-level l0">0</div>
+          <div>
+            <div class="maturity-name">The Swamp of POX</div>
+            <div class="maturity-desc">Single URI, single HTTP method (usually POST). No REST concepts used. Think old-school SOAP or XML-RPC APIs.</div>
+          </div>
+          <div class="maturity-example">POST /api<br>{"action":"getUser","id":1}</div>
+        </div>
+        <div class="maturity-row">
+          <div class="maturity-level l1">1</div>
+          <div>
+            <div class="maturity-name">Resources</div>
+            <div class="maturity-desc">Multiple URIs representing different resources. Still uses single HTTP method for all operations.</div>
+          </div>
+          <div class="maturity-example">POST /users<br>POST /products<br>POST /orders</div>
+        </div>
+        <div class="maturity-row">
+          <div class="maturity-level l2">2</div>
+          <div>
+            <div class="maturity-name">HTTP Verbs</div>
+            <div class="maturity-desc">Correct HTTP verbs (GET, POST, PUT, DELETE). Proper response codes (200, 201, 404). Most APIs live here.</div>
+          </div>
+          <div class="maturity-example">GET /users/1<br>POST /users<br>PUT /users/1<br>DELETE /users/1</div>
+        </div>
+        <div class="maturity-row">
+          <div class="maturity-level l3">3</div>
+          <div>
+            <div class="maturity-name">Hypermedia (HATEOAS)</div>
+            <div class="maturity-desc">Responses include links to related resources and available actions. True "REST" per Fielding. Clients discover navigation dynamically.</div>
+          </div>
+          <div class="maturity-example">{"id":1,"name":"Alice",<br>"_links":{"self":"/users/1",<br>"orders":"/users/1/orders"}}</div>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-icon">ℹ️</div>
+        <p>Most real-world Spring REST APIs target <strong>Level 2</strong>. Level 3 (HATEOAS) can be achieved with <code>spring-boot-starter-hateoas</code>, but adds complexity. Aim for at least Level 2 in all new APIs.</p>
+      </div>
+    </div>
+
+    <!-- ===== 3. CONTROLLERS ===== -->
+    <div class="section" id="controllers">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <h2 class="section-title">Spring REST Controllers</h2>
+      </div>
+
+      <h3>@RestController vs @Controller</h3>
+      <p><code>@RestController</code> is a convenience annotation combining <code>@Controller</code> and <code>@ResponseBody</code>. Every method return value is automatically written as JSON to the response body.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">UserController.java</span></div>
+        <pre><span class="ann">@RestController</span>                          <span class="cmt">// Marks as REST controller</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/users"</span>)           <span class="cmt">// Base URL for all methods</span>
+<span class="kw">public class</span> <span class="cls">UserController</span> {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">UserService</span> userService;
+
+    <span class="cmt">// GET /api/users</span>
+    <span class="ann">@GetMapping</span>
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">getAllUsers</span>() {
+        <span class="kw">return</span> userService.findAll();
+    }
+
+    <span class="cmt">// GET /api/users/5</span>
+    <span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">User</span> <span class="fn">getById</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+        <span class="kw">return</span> userService.findById(id);
+    }
+
+    <span class="cmt">// GET /api/users?role=admin&active=true</span>
+    <span class="ann">@GetMapping</span>(<span class="str">"/search"</span>)
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">search</span>(
+            <span class="ann">@RequestParam</span> <span class="cls">String</span> role,
+            <span class="ann">@RequestParam</span>(defaultValue = <span class="str">"true"</span>) <span class="kw">boolean</span> active) {
+        <span class="kw">return</span> userService.findByRoleAndStatus(role, active);
+    }
+
+    <span class="cmt">// POST /api/users</span>
+    <span class="ann">@PostMapping</span>
+    <span class="ann">@ResponseStatus</span>(<span class="cls">HttpStatus</span>.CREATED)
+    <span class="kw">public</span> <span class="cls">User</span> <span class="fn">create</span>(<span class="ann">@RequestBody</span> <span class="cls">User</span> user) {
+        <span class="kw">return</span> userService.save(user);
+    }
+
+    <span class="cmt">// DELETE /api/users/5</span>
+    <span class="ann">@DeleteMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="ann">@ResponseStatus</span>(<span class="cls">HttpStatus</span>.NO_CONTENT)
+    <span class="kw">public void</span> <span class="fn">delete</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+        userService.delete(id);
+    }
+}</pre>
+      </div>
+
+      <h3>URL Mapping Annotations</h3>
+      <table>
+        <tr><th>Annotation</th><th>HTTP Method</th><th>Typical Use</th></tr>
+        <tr><td><code>@GetMapping</code></td><td><span class="verb get">GET</span></td><td>Retrieve a resource or list</td></tr>
+        <tr><td><code>@PostMapping</code></td><td><span class="verb post">POST</span></td><td>Create a new resource</td></tr>
+        <tr><td><code>@PutMapping</code></td><td><span class="verb put">PUT</span></td><td>Full update (replace)</td></tr>
+        <tr><td><code>@PatchMapping</code></td><td><span class="verb patch">PATCH</span></td><td>Partial update</td></tr>
+        <tr><td><code>@DeleteMapping</code></td><td><span class="verb delete">DELETE</span></td><td>Delete a resource</td></tr>
+        <tr><td><code>@RequestMapping</code></td><td>Any</td><td>Generic (use method attribute)</td></tr>
+      </table>
+
+      <h3>@PathVariable vs @RequestParam</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">Examples.java</span></div>
+        <pre><span class="cmt">// @PathVariable: Part of the URL path → /users/42</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/users/{id}"</span>)
+<span class="kw">public</span> <span class="cls">User</span> <span class="fn">getUser</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) { ... }
+
+<span class="cmt">// @RequestParam: Query parameter → /users?name=Alice&page=2</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/users"</span>)
+<span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">search</span>(
+    <span class="ann">@RequestParam</span>(required = <span class="kw">false</span>) <span class="cls">String</span> name,
+    <span class="ann">@RequestParam</span>(defaultValue = <span class="str">"0"</span>) <span class="kw">int</span> page
+) { ... }
+
+<span class="cmt">// Multiple path variables</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/users/{userId}/orders/{orderId}"</span>)
+<span class="kw">public</span> <span class="cls">Order</span> <span class="fn">getUserOrder</span>(
+    <span class="ann">@PathVariable</span> <span class="cls">Long</span> userId,
+    <span class="ann">@PathVariable</span> <span class="cls">Long</span> orderId
+) { ... }</pre>
+      </div>
+    </div>
+
+    <!-- ===== 4. REQUEST & RESPONSE ===== -->
+    <div class="section" id="request-handling">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Request &amp; Response Handling</h2>
+      </div>
+
+      <h3>@RequestBody — Accepting JSON</h3>
+      <p>Jackson automatically deserializes incoming JSON into your Java objects when you use <code>@RequestBody</code>.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">ProductController.java</span></div>
+        <pre><span class="ann">@PostMapping</span>(<span class="str">"/products"</span>)
+<span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">Product</span>&gt; <span class="fn">createProduct</span>(<span class="ann">@RequestBody</span> <span class="cls">Product</span> product) {
+    <span class="cls">Product</span> saved = productService.save(product);
+    <span class="cls">URI</span> location = <span class="cls">URI</span>.create(<span class="str">"/products/"</span> + saved.getId());
+    <span class="kw">return</span> <span class="cls">ResponseEntity</span>.created(location).body(saved);
+}</pre>
+      </div>
+
+      <h3>ResponseEntity — Full HTTP Control</h3>
+      <p><code>ResponseEntity&lt;T&gt;</code> gives you complete control over the HTTP response: status code, headers, and body.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">ResponseEntity Examples</span></div>
+        <pre><span class="cmt">// 200 OK with body</span>
+<span class="kw">return</span> <span class="cls">ResponseEntity</span>.ok(user);
+
+<span class="cmt">// 201 Created with Location header</span>
+<span class="kw">return</span> <span class="cls">ResponseEntity</span>
+    .created(<span class="cls">URI</span>.create(<span class="str">"/users/"</span> + user.getId()))
+    .body(user);
+
+<span class="cmt">// 404 Not Found with error message</span>
+<span class="kw">return</span> <span class="cls">ResponseEntity</span>
+    .status(<span class="cls">HttpStatus</span>.NOT_FOUND)
+    .body(<span class="kw">new</span> <span class="cls">ErrorResponse</span>(<span class="str">"User not found"</span>));
+
+<span class="cmt">// 204 No Content (for DELETE)</span>
+<span class="kw">return</span> <span class="cls">ResponseEntity</span>.noContent().build();
+
+<span class="cmt">// Custom headers</span>
+<span class="kw">return</span> <span class="cls">ResponseEntity</span>.ok()
+    .header(<span class="str">"X-Custom-Header"</span>, <span class="str">"value"</span>)
+    .header(<span class="cls">HttpHeaders</span>.CACHE_CONTROL, <span class="str">"no-cache"</span>)
+    .body(data);</pre>
+      </div>
+
+      <h3>Returning XML (Content Negotiation)</h3>
+      <p>Add Jackson XML dependency and Spring handles content negotiation automatically via the <code>Accept</code> header.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">XML</span><span class="code-file">pom.xml</span></div>
+        <pre><span class="ret">&lt;dependency&gt;</span>
+  <span class="ret">&lt;groupId&gt;</span>com.fasterxml.jackson.dataformat<span class="ret">&lt;/groupId&gt;</span>
+  <span class="ret">&lt;artifactId&gt;</span>jackson-dataformat-xml<span class="ret">&lt;/artifactId&gt;</span>
+<span class="ret">&lt;/dependency&gt;</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">Controller + Model</span></div>
+        <pre><span class="cmt">// Controller — produces both JSON and XML</span>
+<span class="ann">@GetMapping</span>(value = <span class="str">"/users/{id}"</span>,
+    produces = {<span class="str">"application/json"</span>, <span class="str">"application/xml"</span>})
+<span class="kw">public</span> <span class="cls">User</span> <span class="fn">getUser</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) { ... }
+
+<span class="cmt">// Model class</span>
+<span class="ann">@XmlRootElement</span>
+<span class="kw">public class</span> <span class="cls">User</span> {
+    <span class="kw">private</span> <span class="cls">Long</span> id;
+    <span class="kw">private</span> <span class="cls">String</span> name;
+    <span class="cmt">// getters + setters</span>
+}</pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <p>Client sends <code>Accept: application/xml</code> header to receive XML, or <code>Accept: application/json</code> for JSON. Spring's <strong>ContentNegotiationHandler</strong> routes accordingly.</p>
+      </div>
+
+      <h3>Common HTTP Status Codes</h3>
+      <div class="status-grid">
+        <div class="status-badge"><span class="status-code s2xx">200</span><span class="status-label">OK</span></div>
+        <div class="status-badge"><span class="status-code s2xx">201</span><span class="status-label">Created</span></div>
+        <div class="status-badge"><span class="status-code s2xx">204</span><span class="status-label">No Content</span></div>
+        <div class="status-badge"><span class="status-code s3xx">301</span><span class="status-label">Moved Permanently</span></div>
+        <div class="status-badge"><span class="status-code s4xx">400</span><span class="status-label">Bad Request</span></div>
+        <div class="status-badge"><span class="status-code s4xx">401</span><span class="status-label">Unauthorized</span></div>
+        <div class="status-badge"><span class="status-code s4xx">403</span><span class="status-label">Forbidden</span></div>
+        <div class="status-badge"><span class="status-code s4xx">404</span><span class="status-label">Not Found</span></div>
+        <div class="status-badge"><span class="status-code s4xx">409</span><span class="status-label">Conflict</span></div>
+        <div class="status-badge"><span class="status-code s4xx">422</span><span class="status-label">Unprocessable Entity</span></div>
+        <div class="status-badge"><span class="status-code s5xx">500</span><span class="status-label">Internal Server Error</span></div>
+        <div class="status-badge"><span class="status-code s5xx">503</span><span class="status-label">Service Unavailable</span></div>
+      </div>
+    </div>
+
+    <!-- ===== 5. EXCEPTION HANDLING ===== -->
+    <div class="section" id="exception">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <h2 class="section-title">Error &amp; Exception Handling</h2>
+      </div>
+
+      <h3>Global Exception Handler with @RestControllerAdvice</h3>
+      <p><code>@RestControllerAdvice</code> creates a centralized class that handles exceptions thrown from any controller, keeping your controller code clean.</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">GlobalExceptionHandler.java</span></div>
+        <pre><span class="ann">@RestControllerAdvice</span>
+<span class="kw">public class</span> <span class="cls">GlobalExceptionHandler</span> {
+
+    <span class="cmt">// Handle 404 - Resource Not Found</span>
+    <span class="ann">@ExceptionHandler</span>(<span class="cls">ResourceNotFoundException</span>.class)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">ErrorResponse</span>&gt; <span class="fn">handleNotFound</span>(<span class="cls">ResourceNotFoundException</span> ex) {
+        <span class="cls">ErrorResponse</span> error = <span class="kw">new</span> <span class="cls">ErrorResponse</span>(
+            <span class="cls">HttpStatus</span>.NOT_FOUND.value(), ex.getMessage(), <span class="cls">LocalDateTime</span>.now()
+        );
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.status(<span class="cls">HttpStatus</span>.NOT_FOUND).body(error);
+    }
+
+    <span class="cmt">// Handle 400 - Validation errors from @Valid</span>
+    <span class="ann">@ExceptionHandler</span>(<span class="cls">MethodArgumentNotValidException</span>.class)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">String</span>&gt;&gt; <span class="fn">handleValidation</span>(
+            <span class="cls">MethodArgumentNotValidException</span> ex) {
+        <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">String</span>&gt; errors = <span class="kw">new</span> <span class="cls">HashMap</span>&lt;&gt;();
+        ex.getBindingResult().getFieldErrors().forEach(err ->
+            errors.put(err.getField(), err.getDefaultMessage())
+        );
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.badRequest().body(errors);
+    }
+
+    <span class="cmt">// Handle 500 - Generic fallback</span>
+    <span class="ann">@ExceptionHandler</span>(<span class="cls">Exception</span>.class)
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">ErrorResponse</span>&gt; <span class="fn">handleGeneric</span>(<span class="cls">Exception</span> ex) {
+        <span class="cls">ErrorResponse</span> error = <span class="kw">new</span> <span class="cls">ErrorResponse</span>(
+            <span class="num">500</span>, <span class="str">"Internal server error"</span>, <span class="cls">LocalDateTime</span>.now()
+        );
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>.internalServerError().body(error);
+    }
+}
+
+<span class="cmt">// Standard error response DTO</span>
+<span class="kw">public record</span> <span class="cls">ErrorResponse</span>(<span class="kw">int</span> status, <span class="cls">String</span> message, <span class="cls">LocalDateTime</span> timestamp) {}</pre>
+      </div>
+
+      <h3>Custom Exception Class</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">ResourceNotFoundException.java</span></div>
+        <pre><span class="ann">@ResponseStatus</span>(<span class="cls">HttpStatus</span>.NOT_FOUND)   <span class="cmt">// Optional: sets status if unhandled</span>
+<span class="kw">public class</span> <span class="cls">ResourceNotFoundException</span> <span class="kw">extends</span> <span class="cls">RuntimeException</span> {
+    <span class="kw">public</span> <span class="cls">ResourceNotFoundException</span>(<span class="cls">String</span> message) {
+        <span class="kw">super</span>(message);
+    }
+}
+
+<span class="cmt">// Usage in service/controller:</span>
+<span class="cls">User</span> user = userRepo.findById(id)
+    .orElseThrow(() -> <span class="kw">new</span> <span class="cls">ResourceNotFoundException</span>(<span class="str">"User not found: "</span> + id));</pre>
+      </div>
+    </div>
+
+    <!-- ===== 6. VALIDATION ===== -->
+    <div class="section" id="validation">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <h2 class="section-title">REST Validation</h2>
+      </div>
+
+      <h3>Hibernate Validator Annotations</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">UserRequest.java</span></div>
+        <pre><span class="kw">public class</span> <span class="cls">UserRequest</span> {
+
+    <span class="ann">@NotNull</span>(message = <span class="str">"Name cannot be null"</span>)
+    <span class="ann">@Size</span>(min = <span class="num">2</span>, max = <span class="num">50</span>, message = <span class="str">"Name must be 2-50 characters"</span>)
+    <span class="kw">private</span> <span class="cls">String</span> name;
+
+    <span class="ann">@NotNull</span>
+    <span class="ann">@Email</span>(message = <span class="str">"Must be a valid email address"</span>)
+    <span class="kw">private</span> <span class="cls">String</span> email;
+
+    <span class="ann">@Min</span>(value = <span class="num">18</span>, message = <span class="str">"Age must be at least 18"</span>)
+    <span class="ann">@Max</span>(value = <span class="num">120</span>, message = <span class="str">"Age must be at most 120"</span>)
+    <span class="kw">private</span> <span class="kw">int</span> age;
+
+    <span class="ann">@Pattern</span>(regexp = <span class="str">"^[0-9]{10}$"</span>, message = <span class="str">"Phone must be 10 digits"</span>)
+    <span class="kw">private</span> <span class="cls">String</span> phone;
+
+    <span class="ann">@NotBlank</span>
+    <span class="ann">@Size</span>(min = <span class="num">8</span>)
+    <span class="kw">private</span> <span class="cls">String</span> password;
+
+    <span class="ann">@Future</span>(message = <span class="str">"Date must be in the future"</span>)
+    <span class="kw">private</span> <span class="cls">LocalDate</span> subscriptionEnd;
+}</pre>
+      </div>
+
+      <table>
+        <tr><th>Annotation</th><th>Description</th></tr>
+        <tr><td><code>@NotNull</code></td><td>Field must not be null</td></tr>
+        <tr><td><code>@NotBlank</code></td><td>String must not be null, empty, or whitespace only</td></tr>
+        <tr><td><code>@NotEmpty</code></td><td>String/collection must not be null or empty</td></tr>
+        <tr><td><code>@Size(min,max)</code></td><td>String/collection length within bounds</td></tr>
+        <tr><td><code>@Min / @Max</code></td><td>Numeric value constraints</td></tr>
+        <tr><td><code>@Email</code></td><td>Valid email format</td></tr>
+        <tr><td><code>@Pattern</code></td><td>Must match regex</td></tr>
+        <tr><td><code>@Positive</code></td><td>Numeric must be positive</td></tr>
+        <tr><td><code>@Future / @Past</code></td><td>Date must be future/past</td></tr>
+      </table>
+
+      <h3>Triggering Validation with @Valid</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">UserController.java</span></div>
+        <pre><span class="ann">@PostMapping</span>
+<span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">User</span>&gt; <span class="fn">createUser</span>(<span class="ann">@Valid</span> <span class="ann">@RequestBody</span> <span class="cls">UserRequest</span> request) {
+    <span class="cmt">// Only reaches here if all validations pass</span>
+    <span class="cls">User</span> user = userService.create(request);
+    <span class="kw">return</span> <span class="cls">ResponseEntity</span>.status(<span class="num">201</span>).body(user);
+}
+<span class="cmt">// If validation fails → MethodArgumentNotValidException → 400 Bad Request</span></pre>
+      </div>
+
+      <h3>Custom Validator</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">UniqueEmailValidator.java</span></div>
+        <pre><span class="cmt">// 1. Create the annotation</span>
+<span class="ann">@Documented</span>
+<span class="ann">@Constraint</span>(validatedBy = <span class="cls">UniqueEmailValidator</span>.class)
+<span class="ann">@Target</span>({ <span class="cls">FIELD</span> })
+<span class="ann">@Retention</span>(<span class="cls">RUNTIME</span>)
+<span class="kw">public @interface</span> <span class="cls">UniqueEmail</span> {
+    <span class="cls">String</span> <span class="fn">message</span>() <span class="kw">default</span> <span class="str">"Email already in use"</span>;
+    <span class="cls">Class</span>&lt;?&gt;[] <span class="fn">groups</span>() <span class="kw">default</span> {};
+    <span class="cls">Class</span>&lt;? <span class="kw">extends</span> <span class="cls">Payload</span>&gt;[] <span class="fn">payload</span>() <span class="kw">default</span> {};
+}
+
+<span class="cmt">// 2. Create the validator logic</span>
+<span class="kw">public class</span> <span class="cls">UniqueEmailValidator</span> <span class="kw">implements</span> <span class="cls">ConstraintValidator</span>&lt;<span class="cls">UniqueEmail</span>, <span class="cls">String</span>&gt; {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">UserRepository</span> userRepo;
+
+    <span class="ann">@Override</span>
+    <span class="kw">public boolean</span> <span class="fn">isValid</span>(<span class="cls">String</span> email, <span class="cls">ConstraintValidatorContext</span> ctx) {
+        <span class="kw">return</span> email != <span class="kw">null</span> && !userRepo.existsByEmail(email);
+    }
+}
+
+<span class="cmt">// 3. Use it on the field</span>
+<span class="ann">@Email</span>
+<span class="ann">@UniqueEmail</span>
+<span class="kw">private</span> <span class="cls">String</span> email;</pre>
+      </div>
+    </div>
+
+    <!-- ===== 7. CRUD ===== -->
+    <div class="section" id="crud">
+      <div class="section-header">
+        <span class="section-num">07</span>
+        <h2 class="section-title">Implementing CRUD Operations</h2>
+      </div>
+
+      <h3>Complete CRUD Controller with JpaRepository</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">Product.java (Entity)</span></div>
+        <pre><span class="ann">@Entity</span>
+<span class="ann">@Table</span>(name = <span class="str">"products"</span>)
+<span class="kw">public class</span> <span class="cls">Product</span> {
+    <span class="ann">@Id</span>
+    <span class="ann">@GeneratedValue</span>(strategy = <span class="cls">GenerationType</span>.IDENTITY)
+    <span class="kw">private</span> <span class="cls">Long</span> id;
+
+    <span class="ann">@NotBlank</span>
+    <span class="kw">private</span> <span class="cls">String</span> name;
+
+    <span class="ann">@Positive</span>
+    <span class="kw">private</span> <span class="cls">Double</span> price;
+
+    <span class="kw">private</span> <span class="cls">Integer</span> stock;
+    <span class="cmt">// getters, setters, constructors</span>
+}</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">ProductController.java (Full CRUD)</span></div>
+        <pre><span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/products"</span>)
+<span class="kw">public class</span> <span class="cls">ProductController</span> {
+
+    <span class="ann">@Autowired</span>
+    <span class="kw">private</span> <span class="cls">ProductRepository</span> repo;
+
+    <span class="cmt">// ── READ ALL ─────────────────────────────────</span>
+    <span class="ann">@GetMapping</span>
+    <span class="kw">public</span> <span class="cls">List</span>&lt;<span class="cls">Product</span>&gt; <span class="fn">getAll</span>() {
+        <span class="kw">return</span> repo.findAll();
+    }
+
+    <span class="cmt">// ── READ ONE ─────────────────────────────────</span>
+    <span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">Product</span> <span class="fn">getOne</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+        <span class="kw">return</span> repo.findById(id)
+            .orElseThrow(() -> <span class="kw">new</span> <span class="cls">ResourceNotFoundException</span>(<span class="str">"Product not found: "</span> + id));
+    }
+
+    <span class="cmt">// ── CREATE ───────────────────────────────────</span>
+    <span class="ann">@PostMapping</span>
+    <span class="kw">public</span> <span class="cls">ResponseEntity</span>&lt;<span class="cls">Product</span>&gt; <span class="fn">create</span>(<span class="ann">@Valid</span> <span class="ann">@RequestBody</span> <span class="cls">Product</span> product) {
+        <span class="cls">Product</span> saved = repo.save(product);
+        <span class="kw">return</span> <span class="cls">ResponseEntity</span>
+            .created(<span class="cls">URI</span>.create(<span class="str">"/api/products/"</span> + saved.getId()))
+            .body(saved);
+    }
+
+    <span class="cmt">// ── FULL UPDATE (PUT) ─────────────────────────</span>
+    <span class="ann">@PutMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">Product</span> <span class="fn">update</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id, <span class="ann">@Valid</span> <span class="ann">@RequestBody</span> <span class="cls">Product</span> updated) {
+        <span class="kw">return</span> repo.findById(id).map(p -> {
+            p.setName(updated.getName());
+            p.setPrice(updated.getPrice());
+            p.setStock(updated.getStock());
+            <span class="kw">return</span> repo.save(p);
+        }).orElseThrow(() -> <span class="kw">new</span> <span class="cls">ResourceNotFoundException</span>(<span class="str">"Product not found"</span>));
+    }
+
+    <span class="cmt">// ── PARTIAL UPDATE (PATCH) ────────────────────</span>
+    <span class="ann">@PatchMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">Product</span> <span class="fn">partialUpdate</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id,
+                                  <span class="ann">@RequestBody</span> <span class="cls">Map</span>&lt;<span class="cls">String</span>, <span class="cls">Object</span>&gt; updates) {
+        <span class="cls">Product</span> product = repo.findById(id)
+            .orElseThrow(() -> <span class="kw">new</span> <span class="cls">ResourceNotFoundException</span>(<span class="str">"Product not found"</span>));
+        <span class="kw">if</span> (updates.containsKey(<span class="str">"price"</span>))
+            product.setPrice(((Number) updates.get(<span class="str">"price"</span>)).doubleValue());
+        <span class="kw">if</span> (updates.containsKey(<span class="str">"stock"</span>))
+            product.setStock(((Number) updates.get(<span class="str">"stock"</span>)).intValue());
+        <span class="kw">return</span> repo.save(product);
+    }
+
+    <span class="cmt">// ── DELETE ───────────────────────────────────</span>
+    <span class="ann">@DeleteMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="ann">@ResponseStatus</span>(<span class="cls">HttpStatus</span>.NO_CONTENT)
+    <span class="kw">public void</span> <span class="fn">delete</span>(<span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+        <span class="kw">if</span> (!repo.existsById(id))
+            <span class="kw">throw new</span> <span class="cls">ResourceNotFoundException</span>(<span class="str">"Product not found"</span>);
+        repo.deleteById(id);
+    }
+}</pre>
+      </div>
+
+      <h3>PUT vs PATCH</h3>
+      <table>
+        <tr><th></th><th>PUT</th><th>PATCH</th></tr>
+        <tr><td><strong>Scope</strong></td><td>Full replacement — all fields</td><td>Partial update — only changed fields</td></tr>
+        <tr><td><strong>Idempotent</strong></td><td>Yes</td><td>Not necessarily</td></tr>
+        <tr><td><strong>Body</strong></td><td>Complete resource representation</td><td>Only changed fields</td></tr>
+        <tr><td><strong>Example</strong></td><td><code>PUT /products/1</code> (full object)</td><td><code>PATCH /products/1</code> <code>{"price": 9.99}</code></td></tr>
+      </table>
+    </div>
+
+    <!-- ===== 8. PAGINATION ===== -->
+    <div class="section" id="pagination">
+      <div class="section-header">
+        <span class="section-num">08</span>
+        <h2 class="section-title">Pagination &amp; Sorting</h2>
+      </div>
+
+      <p>Spring Data provides built-in pagination and sorting through the <code>Pageable</code> interface. Just add it as a parameter and Spring handles parsing from query strings automatically.</p>
+
+      <h3>Pageable in Action</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">ProductController.java</span></div>
+        <pre><span class="cmt">// GET /api/products?page=0&size=10&sort=name,asc</span>
+<span class="ann">@GetMapping</span>
+<span class="kw">public</span> <span class="cls">Page</span>&lt;<span class="cls">Product</span>&gt; <span class="fn">getAll</span>(<span class="cls">Pageable</span> pageable) {
+    <span class="kw">return</span> repo.findAll(pageable);
+}
+
+<span class="cmt">// GET /api/products?page=1&size=5&sort=price,desc&sort=name,asc</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/sorted"</span>)
+<span class="kw">public</span> <span class="cls">Page</span>&lt;<span class="cls">Product</span>&gt; <span class="fn">getSorted</span>(<span class="ann">@PageableDefault</span>(size = <span class="num">5</span>, sort = <span class="str">"name"</span>) <span class="cls">Pageable</span> pageable) {
+    <span class="kw">return</span> repo.findAll(pageable);
+}
+
+<span class="cmt">// Manual Pageable construction</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/expensive"</span>)
+<span class="kw">public</span> <span class="cls">Page</span>&lt;<span class="cls">Product</span>&gt; <span class="fn">getExpensive</span>(<span class="ann">@RequestParam</span>(defaultValue = <span class="str">"0"</span>) <span class="kw">int</span> page,
+                                     <span class="ann">@RequestParam</span>(defaultValue = <span class="str">"10"</span>) <span class="kw">int</span> size) {
+    <span class="cls">Pageable</span> pageable = <span class="cls">PageRequest</span>.of(page, size,
+        <span class="cls">Sort</span>.by(<span class="str">"price"</span>).descending().and(<span class="cls">Sort</span>.by(<span class="str">"name"</span>).ascending())
+    );
+    <span class="kw">return</span> repo.findByPriceGreaterThan(<span class="num">100.0</span>, pageable);
+}</pre>
+      </div>
+
+      <h3>Page Response Structure</h3>
+      <div class="page-visual">
+        <div class="page-row"><span class="page-key">content</span><span class="page-val">[ ...array of items... ]</span></div>
+        <div class="page-row"><span class="page-key">pageable</span><span class="page-val">{ pageNumber: 0, pageSize: 10 }</span></div>
+        <div class="page-row"><span class="page-key">totalElements</span><span class="page-val">247</span></div>
+        <div class="page-row"><span class="page-key">totalPages</span><span class="page-val">25</span></div>
+        <div class="page-row"><span class="page-key">last</span><span class="page-val">false</span></div>
+        <div class="page-row"><span class="page-key">first</span><span class="page-val">true</span></div>
+        <div class="page-row"><span class="page-key">numberOfElements</span><span class="page-val">10</span></div>
+        <div class="page-row"><span class="page-key">empty</span><span class="page-val">false</span></div>
+      </div>
+
+      <h3>Sorting Examples</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">Sort Usage</span></div>
+        <pre><span class="cmt">// Single field ascending</span>
+<span class="cls">Sort</span>.by(<span class="str">"name"</span>);
+
+<span class="cmt">// Single field descending</span>
+<span class="cls">Sort</span>.by(<span class="str">"price"</span>).descending();
+
+<span class="cmt">// Multiple fields</span>
+<span class="cls">Sort</span>.by(<span class="cls">Sort</span>.<span class="cls">Order</span>.asc(<span class="str">"name"</span>), <span class="cls">Sort</span>.<span class="cls">Order</span>.desc(<span class="str">"price"</span>));
+
+<span class="cmt">// Chained</span>
+<span class="cls">Sort</span>.by(<span class="str">"category"</span>).ascending().and(<span class="cls">Sort</span>.by(<span class="str">"price"</span>).descending());</pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">💡</div>
+        <p>Enable <code>SpringDataWebAutoConfiguration</code> (enabled by default in Spring Boot) so that <code>Pageable</code> parameters are automatically resolved from HTTP query params: <code>?page=0&size=20&sort=name,asc</code></p>
+      </div>
+    </div>
+
+    <!-- ===== 9. DOCS ===== -->
+    <div class="section" id="docs">
+      <div class="section-header">
+        <span class="section-num">09</span>
+        <h2 class="section-title">API Documentation (Swagger / OpenAPI)</h2>
+      </div>
+
+      <h3>Setup with SpringDoc OpenAPI</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">XML</span><span class="code-file">pom.xml</span></div>
+        <pre><span class="ret">&lt;dependency&gt;</span>
+  <span class="ret">&lt;groupId&gt;</span>org.springdoc<span class="ret">&lt;/groupId&gt;</span>
+  <span class="ret">&lt;artifactId&gt;</span>springdoc-openapi-starter-webmvc-ui<span class="ret">&lt;/artifactId&gt;</span>
+  <span class="ret">&lt;version&gt;</span>2.3.0<span class="ret">&lt;/version&gt;</span>
+<span class="ret">&lt;/dependency&gt;</span>
+<span class="cmt">&lt;!-- Swagger UI: http://localhost:8080/swagger-ui.html --&gt;
+&lt;!-- OpenAPI JSON: http://localhost:8080/v3/api-docs    --&gt;</span></pre>
+      </div>
+
+      <h3>Documenting Controllers</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">ProductController.java</span></div>
+        <pre><span class="ann">@Tag</span>(name = <span class="str">"Products"</span>, description = <span class="str">"Product management endpoints"</span>)
+<span class="ann">@RestController</span>
+<span class="ann">@RequestMapping</span>(<span class="str">"/api/products"</span>)
+<span class="kw">public class</span> <span class="cls">ProductController</span> {
+
+    <span class="ann">@Operation</span>(
+        summary = <span class="str">"Get product by ID"</span>,
+        description = <span class="str">"Returns a single product. Returns 404 if not found."</span>
+    )
+    <span class="ann">@ApiResponses</span>({
+        <span class="ann">@ApiResponse</span>(responseCode = <span class="str">"200"</span>, description = <span class="str">"Product found"</span>,
+            content = <span class="ann">@Content</span>(schema = <span class="ann">@Schema</span>(implementation = <span class="cls">Product</span>.class))),
+        <span class="ann">@ApiResponse</span>(responseCode = <span class="str">"404"</span>, description = <span class="str">"Product not found"</span>)
+    })
+    <span class="ann">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="cls">Product</span> <span class="fn">getOne</span>(<span class="ann">@Parameter</span>(description = <span class="str">"Product ID"</span>) <span class="ann">@PathVariable</span> <span class="cls">Long</span> id) {
+        <span class="kw">return</span> repo.findById(id).orElseThrow(...);
+    }
+}
+
+<span class="cmt">// OpenAPI Info Config</span>
+<span class="ann">@Configuration</span>
+<span class="kw">public class</span> <span class="cls">OpenApiConfig</span> {
+    <span class="ann">@Bean</span>
+    <span class="kw">public</span> <span class="cls">OpenAPI</span> <span class="fn">openAPI</span>() {
+        <span class="kw">return new</span> <span class="cls">OpenAPI</span>()
+            .info(<span class="kw">new</span> <span class="cls">Info</span>()
+                .title(<span class="str">"Product API"</span>)
+                .version(<span class="str">"v1.0"</span>)
+                .description(<span class="str">"REST API for product management"</span>));
+    }
+}</pre>
+      </div>
+
+      <h3>Swagger UI Preview</h3>
+      <div class="swagger-block">
+        <div style="color:var(--muted); font-size:0.72rem; font-family:JetBrains Mono,monospace; margin-bottom: 14px;">📄 Product API — v1.0 · /v3/api-docs</div>
+        <div class="swagger-endpoint"><span class="verb get">GET</span><span class="swagger-path">/api/products</span><span class="swagger-summary">Get all products (paginated)</span></div>
+        <div class="swagger-endpoint"><span class="verb post">POST</span><span class="swagger-path">/api/products</span><span class="swagger-summary">Create a new product</span></div>
+        <div class="swagger-endpoint"><span class="verb get">GET</span><span class="swagger-path">/api/products/{id}</span><span class="swagger-summary">Get product by ID</span></div>
+        <div class="swagger-endpoint"><span class="verb put">PUT</span><span class="swagger-path">/api/products/{id}</span><span class="swagger-summary">Full update of a product</span></div>
+        <div class="swagger-endpoint"><span class="verb patch">PATCH</span><span class="swagger-path">/api/products/{id}</span><span class="swagger-summary">Partial update of a product</span></div>
+        <div class="swagger-endpoint"><span class="verb delete">DELETE</span><span class="swagger-path">/api/products/{id}</span><span class="swagger-summary">Delete a product</span></div>
+      </div>
+    </div>
+
+    <!-- ===== 10. BEST PRACTICES ===== -->
+    <div class="section" id="best-practices">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2 class="section-title">REST Best Practices</h2>
+      </div>
+
+      <h3>URI Design Rules</h3>
+      <table>
+        <tr><th>❌ Bad</th><th>✅ Good</th><th>Reason</th></tr>
+        <tr><td><code>GET /getUsers</code></td><td><code>GET /users</code></td><td>URI is a noun, verb in HTTP method</td></tr>
+        <tr><td><code>POST /users/delete/5</code></td><td><code>DELETE /users/5</code></td><td>Use HTTP verbs correctly</td></tr>
+        <tr><td><code>/User/List</code></td><td><code>/users</code></td><td>Lowercase, plural, no PascalCase</td></tr>
+        <tr><td><code>/user_list</code></td><td><code>/users</code></td><td>Hyphens over underscores if needed</td></tr>
+        <tr><td><code>/getProductsByCategory?cat=5</code></td><td><code>/categories/5/products</code></td><td>Express hierarchy with path</td></tr>
+        <tr><td><code>/update_price</code></td><td><code>PATCH /products/1</code></td><td>Resources, not actions</td></tr>
+      </table>
+
+      <h3>✅ Good Practices</h3>
+      <ul class="bp-list">
+        <li class="bp-good"><span class="bp-icon">✅</span>Use plural nouns for resources: <code>/users</code>, <code>/orders</code>, <code>/products</code></li>
+        <li class="bp-good"><span class="bp-icon">✅</span>Always return appropriate HTTP status codes (201 for create, 204 for delete, 404 for not found)</li>
+        <li class="bp-good"><span class="bp-icon">✅</span>Version your API: <code>/api/v1/users</code> — ensures backward compatibility</li>
+        <li class="bp-good"><span class="bp-icon">✅</span>Use consistent error response format with status, message, and timestamp</li>
+        <li class="bp-good"><span class="bp-icon">✅</span>Validate all incoming request bodies with <code>@Valid</code> and Hibernate Validator</li>
+        <li class="bp-good"><span class="bp-icon">✅</span>Use pagination for list endpoints — never return all records unbounded</li>
+        <li class="bp-good"><span class="bp-icon">✅</span>Document your API with OpenAPI / Swagger from day one</li>
+      </ul>
+
+      <h3>❌ Anti-Patterns to Avoid</h3>
+      <ul class="bp-list">
+        <li class="bp-bad"><span class="bp-icon">❌</span>Using <code>GET</code> for state modifications: <code>GET /users/delete/5</code></li>
+        <li class="bp-bad"><span class="bp-icon">❌</span>Always returning 200 OK even for errors — masks real status</li>
+        <li class="bp-bad"><span class="bp-icon">❌</span>Exposing internal entity structure directly — use DTOs instead</li>
+        <li class="bp-bad"><span class="bp-icon">❌</span>Using verbs in resource URIs: <code>/createUser</code>, <code>/fetchProducts</code></li>
+        <li class="bp-bad"><span class="bp-icon">❌</span>Returning unbounded lists without pagination for large datasets</li>
+        <li class="bp-bad"><span class="bp-icon">❌</span>Throwing raw exceptions — always use <code>@RestControllerAdvice</code></li>
+      </ul>
+
+      <h3>DTO Pattern — Don't Expose Entities Directly</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Java</span><span class="code-file">UserDTO.java</span></div>
+        <pre><span class="cmt">// Request DTO (what the client sends)</span>
+<span class="kw">public record</span> <span class="cls">UserCreateRequest</span>(
+    <span class="ann">@NotBlank</span> <span class="cls">String</span> name,
+    <span class="ann">@Email</span>    <span class="cls">String</span> email,
+    <span class="ann">@Size</span>(min = <span class="num">8</span>) <span class="cls">String</span> password   <span class="cmt">// Never return this!</span>
+) {}
+
+<span class="cmt">// Response DTO (what the client receives)</span>
+<span class="kw">public record</span> <span class="cls">UserResponse</span>(
+    <span class="cls">Long</span> id,
+    <span class="cls">String</span> name,
+    <span class="cls">String</span> email,
+    <span class="cls">LocalDateTime</span> createdAt
+    <span class="cmt">// password NOT included</span>
+) {}
+
+<span class="cmt">// In service — map Entity → DTO</span>
+<span class="kw">public</span> <span class="cls">UserResponse</span> <span class="fn">toDto</span>(<span class="cls">User</span> user) {
+    <span class="kw">return new</span> <span class="cls">UserResponse</span>(user.getId(), user.getName(),
+                            user.getEmail(), user.getCreatedAt());
+}</pre>
+      </div>
+
+      <div class="callout warn">
+        <div class="callout-icon">⚠️</div>
+        <p>Never expose JPA entity classes directly from your REST API. They may contain sensitive fields, bidirectional relationships causing infinite recursion, or lazy-loading issues. Always use dedicated DTOs (Data Transfer Objects).</p>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Smooth scroll for nav
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>

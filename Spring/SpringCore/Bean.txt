@@ -1,0 +1,58 @@
+What is bean? -> object managed by spring is known as bean
+
+Application Container(Spring's container) is where beans live, think of it as a big warehouse of ready to use objects, whenever a class needs one, Spring supplies it
+
+Scope of bean:
+defines the lifecycle and visibility of a bean, weather Spring creates a single shared instance or multiple instance per request, session or usage.
+
+Why? -> some objects should be shared(like services, repository), and some should be fresh every time(like user specific data)
+
+Scope lets spring know which behaviour you want
+
+1. Singleton(Default): one object per container
+every injection gets the same instance
+
+@Service
+@Scope("singleton")
+class PaymentService {
+}
+
+creates one at startup, reused everywhere, destroyed when app shut down
+NOTE: if a bean is singleton it must be stateless or thread-safe as many users may use it at same time
+
+2.Prototype: new object every time it is requested
+
+@Component
+@Scope("prototype")
+class ReportBuilder {
+}
+
+3. Request scope (web apps) one instance per HTTP request
+
+@Componenet
+@Scope(value= WebApplicationContext.SCOPE_REQUEST)
+class UserRequestData {
+}
+
+4. Session Scope(web apps)
+one instance per user session, lives as long as the user session lives. 
+
+@SessionScope / @Scope("session")
+
+
+@Bean annotation: 
+tells Spring that the object returned from this method should be managed by the container as a bean
+use it when you need custom creation logic but do not want to manage it
+
+eg.
+
+@Configuration
+class AppConfig {
+	@Bean
+	public PaymentService paymentService() {
+		return new PaymentService();
+	}
+}
+
+@Component -> Spring creates the object and manages it
+@Bean -> you create the object, and spring manages it

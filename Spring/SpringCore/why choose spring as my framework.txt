@@ -1,0 +1,20 @@
+why choose spring as my framework? 
+1. mature, battle tested: 
+spring has been around since 2003, huge bank's, e-commerce platforms, governments, and SaaS companies run it in production.
+this means -> problems you hit, someone already solved it, enormous documentation, stable upgrade paths, predictable behavior under load
+
+2.Ecosystem is gigantic: 
+it connects you to ready-made modules for: 
+database(JDBC, JPA),
+security & OAuth
+messaging(Kafka, RabbitMQ)
+batch processing
+clous & microservices
+so instead of building infrastructure, you assemble solutions
+
+3. Spring IoC container helps manage object creation and wiring
+you'll get loose coupling, easier testing, cleaner architecture, replaceable components
+
+DOWNSIDE: 
+complex due to vast features, potential for performance overhead
+

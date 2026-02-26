@@ -1,0 +1,7 @@
+we should not use default package as spring boot annotations like @ComponentScan, @EntityScan, @ConfigurationPropertyScan, and @SpringBootApplication uses package to define scanning locations. hence it is recommended that we declare package in our class
+
+@SpringbootApplication triggers component scanning for the current package and its sub packages. Therefore, a solid way to have the main class of the project in base package
+This is configurable, and we can still locate it elsewhere by specifying the base package manually
+eg. @SpringBootApplication(scanBasePackages = "example.epam.com")
+however, in most cases first option is certainly simpler
+

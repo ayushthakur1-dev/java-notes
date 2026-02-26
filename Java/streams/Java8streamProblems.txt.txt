@@ -1,0 +1,50 @@
+Q1) Given a list of integers, find the maximum element using reduce().
+Q2) Given a list of integers, find the sum of all odd numbers.
+Q3) Given a list of strings, count how many strings have length greater than 5.
+Q4) Given a list of strings, find the string with minimum length.
+Q5) Given a list of integers, return a list containing square of each number.
+Q6) Given a list of integers, remove duplicates and preserve insertion order.
+Q7) Given a list of strings, sort them alphabetically ignoring case.
+Q8) Given a list of integers, find the third smallest element.
+Q9) Given a list of strings, group them by their first character.
+Q10) Given a list of strings, find the total number of characters across all strings.
+Q11) Given a list of integers, find the product of all elements.
+Q12) Given a list of strings, filter out blank or empty strings.
+Q13) Given a list of integers, check whether the list contains at least one prime number.
+Q14) Given a list of strings, convert them into a Map where key is string and value is its length.
+Q15) Given a list of integers, find the difference between max and min values.
+Q16) Given a list of strings, find the first string starting with the letter 'A'.
+Q17) Given a list of integers, sort them in descending order without using Comparator.reverseOrder().
+Q18) Given a list of strings, group them by length and count how many strings per length.
+Q19) Given a list of integers, return a list of distinct numbers multiplied by 10.
+Q20) Given a list of strings, find the longest string using reduce().
+Q21) Given a list of integers, partition the list into multiples of 3 and non-multiples of 3.
+Q22) Given a list of employees, find the total salary paid.
+Q23) Given a list of employees, group employees by gender and count them.
+Q24) Given a list of employees, find the employee with the lowest salary.
+Q25) Given a list of employees, get a list of employee names sorted by salary.
+Q26) Given a list of employees, check if any employee belongs to HR department.
+Q27) Given a list of employees, check if all employees have salary greater than 10,000.
+Q28) Given a list of employees, find the average salary of all employees.
+Q29) Given a list of employees, group them by department and list only employee names.
+Q30) Given a list of employees, find the department with maximum employees.
+Q31) Given a list of strings, find strings that contain only alphabets.
+Q32) Given a list of integers, return a list containing only numbers greater than the average.
+Q33) Given a list of integers, find the first even number greater than 10.
+Q34) Given a list of strings, find the number of distinct characters across all strings.
+Q35) Given a list of strings, sort them by length first and then alphabetically.
+Q36) Given a list of integers, calculate summary statistics (count, sum, min, max, average).
+Q37) Given a list of strings, find the string with the maximum number of vowels.
+Q38) Given a list of integers, check whether the list is already sorted.
+Q39) Given a list of employees, find the highest paid employee in each department.
+Q40) Given a list of employees, get a Map of department → average salary.
+Q41) Given a list of strings, remove duplicates and concatenate them into a single string.
+Q42) Given a list of integers, find the sum of cubes of odd numbers.
+Q43) Given a list of strings, find all strings that end with a digit.
+Q44) Given a list of integers, find the middle element (assume odd size list).
+Q45) Given a list of employees, find the oldest employee.
+Q46) Given a list of strings, group them into palindromes and non-palindromes.
+Q47) Given a list of integers, find the top 5 smallest numbers.
+Q48) Given a list of employees, sort them by joining date.
+Q49) Given a list of strings, find the string with maximum distinct characters.
+Q50) Given a list of employees, convert the list into a Map where key is employeeId and value is employee name.

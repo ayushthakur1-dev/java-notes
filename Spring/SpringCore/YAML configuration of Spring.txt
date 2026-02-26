@@ -1,0 +1,74 @@
+YAML is a human friendly format for writing configuration.
+In spring (specially spring boot) it's commonly used instead of .properties files
+
+YAML is hierarchical key-value configuration using indentation instead of dots
+
+so now instead of writing:
+server.port=8080
+spring.datasource.url=jdbc::mqsql://localhost/test
+spring.datasource.username=root
+
+we write:
+server: 
+	port: 8080
+
+spring:
+	datasource:
+  		url: jdbc::mqsql://localhost/test
+		username: root
+
+Same meaning different styles
+
+why prefer YAML? -> because real applications have deep, nested configuration and YAML is easier to read, group, less repetitive and better for complex structures
+
+Basic YAML rules: 
+1. indentation = structure
+
+2. List uses -
+servers:
+	- host1
+	- host2
+
+3. key: value
+
+How values are read in code
+@Value("${app.currency}") // same way as .properties files
+
+OR recommended way
+Binding YAML to a Config Class
+
+@Configuration -> this marks the class as a source of bean definition
+@ConfigurationProperties -> this binds and validates the external configuration to a configuration class
+@EnableConfigurationProperties -> used to enable @ConfigurationProperties annoted bean in the Spring application
+public class YAMLConfid {
+	private String name;
+	private String environment;
+	private boolean enabled;
+	private List<String> servers = new ArrayList<>();
+
+	// standard getter
+}
+
+to access the YAML properties, we'll create an object to the YAMLConfig class, and access the properties using that object
+
+@SpringBootApplication
+public class MyApplication implements CommandLineRunner {
+	@Autowired
+	private YAMLConfig myConfig;
+
+	public static void main(String[] args) {
+		SpringApplication app = new SpringApplication(MyApplication.class);
+		app.run();
+	}
+
+	public void run(String... args) throws Exception {
+		// now we can get the values from getters
+		myConfig.getUsername();
+		myConfig.getServers();
+	}
+}
+
+
+YAML property overriding:
+in spring boot YAML files can be overridden by other YAML property files
+As of SpringBoot2.4 external files always override packaged files, regardless of whether they are profile specific or not

@@ -1,0 +1,71 @@
+to enable caching in spring use @EnableCaching annotation on Configuration class
+
+after enabling it we have to register a cache manager
+@Configuration
+@EnableCaching
+public class CachingConfig {
+
+	@Bean
+	public CacheManager cacheManager() {
+		return new ConcurrentMapCacheManager("addresses");
+	}
+}
+
+we can also add it's customizations 
+@Component
+public class SimpleCacheCustomizer implements CacheManagerCustomizer<ConcurrentMapCacheManager> {
+
+	@Override
+	public void customize(ConcurrentMapCacheManager cacheManager) {
+		cacheManager.setCacgeNames(asList("users", "transactions"));
+	}
+}
+
+the CacheAutoConfiguration auto-configuration picks up these customizers and applies them to the current CacheManager before its complete intializtion
+
+once we have enable the caching feature, we have to bind the caching behaviour to the methods with declarative annoations 
+
+@Cacheable("address")
+tell that method is Cacheable and in parameter address of cache is defined for storing it
+
+while in most cases one cache is enough, but the spring framework also supports multiple caches to be passes as parameters 
+@Cacheable("addresses", "directory")
+
+
+@CacheEvict -> indicate the removal of one or more/all valyes so that fresh values can be loaded into the cache again
+
+@CachePut -> while cache evict reduces the overhead of looking up entries in large cache by removing stale and unused entries, we want to avoid evicting too  much data out of the cache
+so we selecttively update entries whenever we alter them
+therefore, we can update the content of cache without interfering with the method execution
+
+Cacheable will skip running the method if it's result is already present whereas cachePut will actually run the method and then put it's results in the cache.
+
+@Caching -> when we want to use multiple same type of annotation
+eg. 
+@CacheEvict("addresses")
+@CacheEvict(value="directory", key="cusotmer.name")
+public String getAddress(Customer customer) { }
+
+JAVA DOES NOT ALLOW THIS, so we use
+
+@Caching( evict = {
+@CacheEvict("addresses")
+@CacheEvict(value="directory", key="cusotmer.name") })
+public String getAddress(Customer customer) { }
+
+Conditional Caching: 
+sometimes we need to use cache in specific conditions only
+eg. CachePut annotation will both execute the method as well as cache the results each and every time, in order to avoid that we can conditions
+
+condition parameter: 
+@CachePut(value="addresses", condition="#customer.name=='TOM'") // now this will only run when condition if true
+
+unless parameter: 
+@CachePut(value="addresses", unless="#result.length()<64")
+the above annotation could cache address unless they are shorter than 64 characters
+
+the condition and unless parameters can be used in conjunction with all the caching annotation 
+
+
+
+

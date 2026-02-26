@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Data JPA — Complete Master Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080f;--s1:#0b0f1c;--s2:#10162a;--s3:#161e32;--s4:#1c263c;
+  --border:#1d2c42;--border2:#273d58;
+  --c1:#22d3ee;--c2:#818cf8;--c3:#4ade80;--c4:#fb923c;--c5:#f472b6;--c6:#facc15;
+  --text:#dce8f5;--muted:#4a6882;--muted2:#7a9bb8;--code:#030712;
+  --font:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 55% 35% at 15% 0%,rgba(34,211,238,.04),transparent),
+  radial-gradient(ellipse 45% 30% at 85% 100%,rgba(129,140,248,.04),transparent);
+  pointer-events:none;z-index:0}
+
+.wrap{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:28px 18px 80px}
+
+/* ─── HERO ─────────────────────────────────────────────────────────── */
+.hero{padding:44px 0 38px;text-align:center}
+.hero-pill{display:inline-flex;align-items:center;gap:7px;font-size:.67rem;letter-spacing:.22em;text-transform:uppercase;color:var(--c1);border:1px solid rgba(34,211,238,.22);background:rgba(34,211,238,.05);padding:5px 16px;border-radius:99px;margin-bottom:18px}
+.hero h1{font-size:clamp(2rem,4.5vw,3rem);font-weight:800;line-height:1.08;margin-bottom:12px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--muted2);font-size:.9rem;max-width:560px;margin:0 auto 20px}
+.hero-chips{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.hero-chip{font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:99px;font-family:var(--mono)}
+
+/* ─── TOP NAV (chapter selector) ───────────────────────────────────── */
+.chapter-nav{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:6px;margin-bottom:8px}
+.cnav{padding:9px 14px;border-radius:10px;border:none;background:transparent;color:var(--muted2);cursor:pointer;font-size:.76rem;font-weight:700;font-family:var(--font);letter-spacing:.02em;transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.cnav:hover{color:var(--text);background:var(--s2)}
+.cnav.on{background:var(--c1);color:#000}
+.cnav .ch-num{font-size:.6rem;opacity:.7}
+
+/* ─── SUB-TAB BAR ──────────────────────────────────────────────────── */
+.sub-bar{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-bottom:26px;min-height:38px}
+.stab{padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:var(--s1);color:var(--muted2);cursor:pointer;font-size:.74rem;font-weight:700;font-family:var(--font);transition:all .2s;white-space:nowrap}
+.stab:hover{color:var(--text);border-color:var(--border2)}
+.stab.on{border-color:var(--c1);color:var(--c1);background:rgba(34,211,238,.08)}
+
+/* ─── PANELS ───────────────────────────────────────────────────────── */
+.chapter{display:none}.chapter.on{display:block}
+.panel{display:none;animation:up .3s ease}.panel.on{display:block}
+@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── CARDS ────────────────────────────────────────────────────────── */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px}
+.ctitle{font-size:.93rem;font-weight:700;color:var(--c1);display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.ctitle .pip{width:7px;height:7px;border-radius:50%;background:var(--c1);box-shadow:0 0 8px var(--c1);flex-shrink:0}
+
+/* ─── CODE ─────────────────────────────────────────────────────────── */
+pre,code{font-family:var(--mono)}
+.cb{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:16px 18px;overflow-x:auto;position:relative;margin-bottom:12px}
+.cb:last-child{margin-bottom:0}
+.clabel{position:absolute;top:9px;right:12px;font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--font)}
+pre{font-size:.74rem;line-height:1.82;white-space:pre}
+.kw{color:#7dd3fc}.ann{color:#c084fc;font-weight:600}.str{color:#86efac}.cm{color:#253d52;font-style:italic}.ty{color:#fbbf24}.nm{color:#fb923c}.op{color:#f472b6}
+
+/* ─── HIGHLIGHT BOXES ──────────────────────────────────────────────── */
+.hl{background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.14);border-radius:10px;padding:12px 15px;font-size:.8rem;color:#94a3b8;line-height:1.7;margin-bottom:14px}
+.hl strong{color:var(--c1)}.hl code{color:var(--c3);font-family:var(--mono);font-size:.72rem}
+.hlw{background:rgba(251,146,60,.05);border-color:rgba(251,146,60,.18)}.hlw strong,.hlw b{color:var(--c4)}
+.hlg{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.18)}.hlg strong{color:var(--c3)}
+
+/* ─── LAYOUT UTILS ─────────────────────────────────────────────────── */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:660px){.two,.three{grid-template-columns:1fr}}
+.slabel{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+hr.dv{border:none;border-top:1px solid var(--border);margin:18px 0}
+
+/* ─── PILLS & BADGES ───────────────────────────────────────────────── */
+.pill{display:inline-block;font-size:.63rem;font-weight:700;padding:2px 8px;border-radius:99px;font-family:var(--mono);margin:2px}
+.p1{background:rgba(34,211,238,.1);color:var(--c1);border:1px solid rgba(34,211,238,.2)}
+.p2{background:rgba(129,140,248,.1);color:var(--c2);border:1px solid rgba(129,140,248,.2)}
+.p3{background:rgba(74,222,128,.1);color:var(--c3);border:1px solid rgba(74,222,128,.2)}
+.p4{background:rgba(251,146,60,.1);color:var(--c4);border:1px solid rgba(251,146,60,.2)}
+.p5{background:rgba(244,114,182,.1);color:var(--c5);border:1px solid rgba(244,114,182,.2)}
+.p6{background:rgba(250,204,21,.1);color:var(--c6);border:1px solid rgba(250,204,21,.2)}
+
+/* ─── TIMELINE ─────────────────────────────────────────────────────── */
+.timeline{position:relative;padding-left:32px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border)}
+.titem{position:relative;margin-bottom:24px}
+.titem::before{content:'';position:absolute;left:-26px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--c1);border:2px solid var(--bg)}
+.titem h3{font-size:.95rem;color:var(--text);margin-bottom:4px}
+.titem p{font-size:.82rem;color:var(--muted2);line-height:1.6}
+.titem .yr{font-size:.72rem;color:var(--c1);font-weight:700;margin-bottom:3px}
+
+/* ─── ARCH DIAGRAM ─────────────────────────────────────────────────── */
+.arch{display:flex;flex-direction:column;align-items:center}
+.arch-box{border-radius:12px;padding:14px 24px;text-align:center;width:100%;max-width:440px}
+.arch-box h3{font-size:.9rem;margin-bottom:4px}
+.arch-box p{font-size:.75rem;color:var(--muted2)}
+.arch-tag{display:inline-block;font-size:.65rem;padding:2px 9px;border-radius:99px;margin-top:5px;font-weight:700;font-family:var(--mono)}
+.arch-arrow{font-size:1.3rem;color:var(--muted);line-height:1.4;text-align:center;margin:2px 0}
+
+/* ─── BEFORE/AFTER CODE COMPARE ────────────────────────────────────── */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.compare{grid-template-columns:1fr}}
+.codeblock{border-radius:10px;padding:16px;font-size:.75rem;line-height:1.75}
+.codeblock.old{background:#1a0a0a;border:1px solid rgba(248,113,113,.25)}
+.codeblock.new{background:#0a1a0a;border:1px solid rgba(74,222,128,.25)}
+.codeblock h3{font-size:.82rem;font-weight:700;margin-bottom:10px}
+.codeblock.old h3{color:#f87171}.codeblock.new h3{color:var(--c3)}
+
+/* ─── CLICKABLE EXPAND CARDS ───────────────────────────────────────── */
+.ex-card{background:var(--code);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .22s;margin-bottom:8px;position:relative}
+.ex-card:hover{border-color:var(--border2)}.ex-card.open{border-color:var(--c1)}
+.ex-card h3{font-size:.83rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.ex-card p{font-size:.75rem;color:var(--muted2)}
+.ex-detail{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.ex-card.open .ex-detail{display:block}
+.ex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+
+/* ─── RELATIONSHIP CARDS ───────────────────────────────────────────── */
+.rel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:16px}
+.rel-card{border-radius:12px;padding:16px;border:1px solid;cursor:pointer;transition:all .22s}
+.rel-card:hover{transform:translateY(-2px)}
+.rel-card h3{font-size:.85rem;font-weight:700;margin-bottom:4px}
+.rel-card .rsym{font-size:1.5rem;margin-bottom:8px}
+.rel-card .rshort{font-size:.75rem;color:var(--muted2);line-height:1.5}
+.rel-card .rdetail{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:.75rem;color:#94a3b8;line-height:1.6}
+.rel-card.open .rdetail{display:block}
+
+/* ─── FETCH BOXES ──────────────────────────────────────────────────── */
+.fetch-box{border-radius:12px;padding:16px;border:2px solid}
+.fetch-box h3{font-size:.85rem;font-weight:700;margin-bottom:6px}
+.fetch-box .ftag{display:inline-block;font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:99px;margin-bottom:8px;font-family:var(--mono)}
+.fetch-box ul{list-style:none;font-size:.77rem;color:var(--muted2);line-height:1.8}
+.fetch-box ul li::before{content:'→ ';color:var(--c3)}
+
+/* ─── TABLES ───────────────────────────────────────────────────────── */
+.dtable{width:100%;border-collapse:collapse;font-size:.77rem}
+.dtable th{padding:10px 12px;text-align:left;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;border-bottom:2px solid var(--border);color:var(--muted2)}
+.dtable td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.55;color:#94a3b8}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:rgba(34,211,238,.02)}
+.chk{color:var(--c3)}.crs{color:var(--c5)}
+
+/* ─── REPO STACK ───────────────────────────────────────────────────── */
+.repo-stack{display:flex;flex-direction:column;gap:0}
+.repo-item{position:relative;padding:14px 18px;border:1px solid var(--border);background:var(--code);cursor:pointer;transition:all .2s}
+.repo-item:first-child{border-radius:12px 12px 0 0}
+.repo-item:last-child{border-radius:0 0 12px 12px;border-top:none}
+.repo-item:not(:first-child):not(:last-child){border-top:none}
+.repo-item:hover,.repo-item.open{background:var(--s3);border-color:var(--border2)}
+.repo-item h3{font-family:var(--mono);font-size:.8rem;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:8px}
+.repo-item p{font-size:.73rem;color:var(--muted2)}
+.repo-item .methods{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:.72rem;color:#94a3b8;line-height:1.75;font-family:var(--mono)}
+.repo-item.open .methods{display:block}
+.repo-connector{text-align:center;font-size:.68rem;color:var(--muted);padding:3px 0;letter-spacing:.1em}
+
+/* ─── PAGINATION SIMULATOR ─────────────────────────────────────────── */
+.page-sim{background:var(--s2);border:1px solid var(--border2);border-radius:14px;padding:20px}
+.page-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.page-controls label{font-size:.75rem;color:var(--muted2);display:flex;align-items:center;gap:6px}
+.page-controls input[type=range]{accent-color:var(--c1);width:100px}
+.page-controls select{background:var(--code);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 8px;font-size:.75rem;font-family:var(--font)}
+.page-row{background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-size:.75rem;display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.page-row .rid{color:var(--c1);font-family:var(--mono);font-weight:600;min-width:28px}
+.page-row .rname{color:var(--text);flex:1}
+.page-row .rmeta{color:var(--muted2);font-size:.72rem}
+.page-nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px}
+.pnbtn{padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:var(--s3);color:var(--muted2);cursor:pointer;font-size:.73rem;font-weight:700;font-family:var(--font);transition:all .2s}
+.pnbtn:hover:not(:disabled){border-color:var(--c1);color:var(--c1)}
+.pnbtn:disabled{opacity:.3;cursor:default}
+.pnbtn.cur{background:var(--c1);color:#000;border-color:var(--c1)}
+.page-meta{font-size:.72rem;color:var(--muted2);margin-left:auto}
+.sql-prev{font-family:var(--mono);font-size:.71rem;color:var(--c3);background:var(--code);border-radius:7px;padding:8px 12px;border:1px solid var(--border);margin-top:10px}
+
+/* ─── SORT BUILDER ─────────────────────────────────────────────────── */
+.sort-builder{background:var(--s2);border:1px solid var(--border2);border-radius:14px;padding:18px}
+.sb-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.sb-sel{background:var(--code);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;font-size:.75rem;font-family:var(--font)}
+.sb-btn{padding:6px 13px;border-radius:7px;border:1px solid var(--border);background:var(--s3);cursor:pointer;font-size:.73rem;font-weight:700;font-family:var(--font);transition:all .2s}
+.sb-add{color:var(--c3);border-color:rgba(74,222,128,.3)}.sb-add:hover{background:rgba(74,222,128,.1)}
+.sb-clr{color:var(--c5);border-color:rgba(244,114,182,.3)}.sb-clr:hover{background:rgba(244,114,182,.1)}
+.sort-chain{min-height:36px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.sort-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:.71rem;font-family:var(--mono);font-weight:600;cursor:pointer;border:1px solid;transition:all .2s}
+.sort-chip.asc{background:rgba(74,222,128,.1);color:var(--c3);border-color:rgba(74,222,128,.25)}
+.sort-chip.desc{background:rgba(244,114,182,.1);color:var(--c5);border-color:rgba(244,114,182,.25)}
+.sort-chip:hover{opacity:.7}
+.mono-out{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:.72rem;line-height:1.8;min-height:40px}
+
+/* ─── SPEC BUILDER ─────────────────────────────────────────────────── */
+.spec-builder{background:var(--s2);border:1px solid var(--border2);border-radius:14px;padding:18px}
+.spec-filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.sf-btn{padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:var(--code);color:var(--muted2);cursor:pointer;font-size:.74rem;font-weight:700;font-family:var(--font);transition:all .2s}
+.sf-btn:hover{border-color:var(--c2);color:var(--c2)}
+.sf-btn.on{border-color:var(--c2);color:var(--c2);background:rgba(129,140,248,.1)}
+
+/* ─── QUERY BUILDER ────────────────────────────────────────────────── */
+.qb-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.qb-btn{padding:6px 12px;border-radius:7px;border:1px solid var(--border);background:var(--code);color:var(--muted2);cursor:pointer;font-size:.73rem;font-weight:700;font-family:var(--font);transition:all .2s}
+.qb-btn:hover,.qb-btn.on{border-color:var(--c1);color:var(--c1);background:rgba(34,211,238,.08)}
+
+/* ─── PROPAGATION SCENARIOS ────────────────────────────────────────── */
+.prop-item{cursor:pointer;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:9px;transition:all .2s}
+.prop-item:hover{border-color:var(--border2)}.prop-item.open{border-color:var(--c2)}
+.prop-item h3{font-size:.83rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.prop-item > p{font-size:.75rem;color:var(--muted2)}
+.prop-detail{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.prop-item.open .prop-detail{display:block}
+
+/* ─── FLOW ─────────────────────────────────────────────────────────── */
+.flow-h{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:14px 0}
+.fbox{border-radius:9px;padding:9px 12px;text-align:center;font-size:.72rem;font-weight:700;border:1px solid;flex:1;min-width:100px}
+.farr{display:flex;align-items:center;color:var(--muted);font-size:1rem;flex-shrink:0}
+
+/* ─── PROJECTION TABS ──────────────────────────────────────────────── */
+.ptabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.ptab{padding:6px 13px;border-radius:7px;border:1px solid var(--border);background:var(--code);color:var(--muted2);cursor:pointer;font-size:.73rem;font-weight:700;font-family:var(--font);transition:all .2s}
+.ptab.on{border-color:var(--c2);color:var(--c2);background:rgba(129,140,248,.1)}
+.ppanel{display:none}.ppanel.on{display:block}
+
+/* ─── QUIZ ─────────────────────────────────────────────────────────── */
+.quiz-q{margin-bottom:20px}
+.qt{font-size:.87rem;font-weight:700;color:var(--text);margin-bottom:9px;padding-left:10px;border-left:3px solid var(--c1)}
+.qopts{display:flex;flex-direction:column;gap:6px}
+.qopt{padding:9px 14px;border-radius:8px;border:1px solid var(--border);background:var(--code);cursor:pointer;font-size:.79rem;color:#94a3b8;transition:all .2s;text-align:left;font-family:var(--font);font-weight:600}
+.qopt:hover:not(:disabled){border-color:var(--c1);color:var(--c1)}
+.qopt.ok{background:rgba(74,222,128,.1);border-color:var(--c3);color:var(--c3)}
+.qopt.bad{background:rgba(244,63,94,.08);border-color:#f43f5e;color:#f87171}
+.qfb{font-size:.75rem;padding:8px 12px;border-radius:7px;margin-top:6px;display:none;line-height:1.6}
+.qfb.ok{background:rgba(74,222,128,.07);color:var(--c3);border:1px solid rgba(74,222,128,.17)}
+.qfb.bad{background:rgba(244,63,94,.07);color:#f87171;border:1px solid rgba(244,63,94,.14)}
+.score-box{text-align:center;padding:28px;background:var(--s2);border-radius:14px;border:1px solid var(--border);display:none;margin-top:14px}
+.score-box .sn{font-size:3.2rem;font-weight:800;color:var(--c1)}
+.score-box p{color:var(--muted2);font-size:.84rem;margin-top:6px}
+.quiz-chapter{margin-bottom:24px}
+.quiz-chapter-title{font-size:.8rem;font-weight:800;color:var(--c2);letter-spacing:.1em;text-transform:uppercase;padding:8px 14px;background:rgba(129,140,248,.08);border-radius:7px;margin-bottom:14px;border-left:3px solid var(--c2)}
+
+/* ─── PERF TABLE ───────────────────────────────────────────────────── */
+.perf-table{width:100%;border-collapse:collapse;font-size:.77rem}
+.perf-table th{padding:10px 12px;text-align:left;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;border-bottom:2px solid var(--border);color:var(--muted2)}
+.perf-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.55;color:#94a3b8}
+.perf-table tr:last-child td{border-bottom:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div class="hero">
+  <div class="hero-pill">☕ Complete Reference</div>
+  <h1>Spring Data JPA<br><em>Master Guide</em></h1>
+  <p>Everything from JDBC history to advanced Specifications — 9 chapters, interactive demos, full code, and a comprehensive quiz.</p>
+  <div class="hero-chips">
+    <span class="pill p1">JPA / Hibernate</span>
+    <span class="pill p2">Annotations</span>
+    <span class="pill p3">Relationships</span>
+    <span class="pill p4">Repositories</span>
+    <span class="pill p5">Queries</span>
+    <span class="pill p6">Pagination</span>
+    <span class="pill p1">Specifications</span>
+    <span class="pill p2">Transactions</span>
+  </div>
+</div>
+
+<!-- ═══════════════════ CHAPTER NAV ═══════════════════ -->
+<div class="chapter-nav" id="chapterNav">
+  <button class="cnav on" data-ch="0"><span class="ch-num">01</span>History & Architecture</button>
+  <button class="cnav" data-ch="1"><span class="ch-num">02</span>Annotations</button>
+  <button class="cnav" data-ch="2"><span class="ch-num">03</span>Relationships</button>
+  <button class="cnav" data-ch="3"><span class="ch-num">04</span>Repositories</button>
+  <button class="cnav" data-ch="4"><span class="ch-num">05</span>Queries</button>
+  <button class="cnav" data-ch="5"><span class="ch-num">06</span>Pagination & Sort</button>
+  <button class="cnav" data-ch="6"><span class="ch-num">07</span>Specifications</button>
+  <button class="cnav" data-ch="7"><span class="ch-num">08</span>Transactions</button>
+  <button class="cnav" data-ch="8"><span class="ch-num">09</span>Quiz</button>
+</div>
+<div class="sub-bar" id="subBar"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 0 — HISTORY & ARCHITECTURE
+     ════════════════════════════════════════════════════════ -->
+<div id="ch0" class="chapter on">
+
+  <div id="ch0p0" class="panel on">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>The Evolution: From Painful JDBC to Modern JPA</div>
+      <div class="timeline">
+        <div class="titem"><div class="yr">~1997</div><h3>😩 Raw JDBC Era</h3><p style="color:#f87171">Every DB operation required manual SQL, manual field mapping, manual connection management. Forgetting to close a connection = memory leak. Changing the schema = rewriting everything.</p></div>
+        <div class="titem"><div class="yr">2001</div><h3>🌱 Hibernate Born</h3><p>Gavin King built Hibernate to solve ORM (Object-Relational Mapping). Java classes automatically mapped to DB tables. Developers wrote Java, not SQL, for most operations.</p></div>
+        <div class="titem"><div class="yr">2006</div><h3>📋 JPA 1.0 — The Standard</h3><p>Java EE introduced JPA — a <strong style="color:var(--c1)">specification</strong> (set of rules/interfaces) that standardised ORM. Multiple vendors could implement it. Hibernate became the #1 implementation.</p></div>
+        <div class="titem"><div class="yr">2011+</div><h3>⚡ Spring Data JPA</h3><p>Spring built a convenience layer on top of JPA. Repository interfaces auto-generate all CRUD code. Zero boilerplate. Spring Boot auto-configures everything.</p></div>
+        <div class="titem"><div class="yr">Today</div><h3 style="color:var(--c3)">✅ The Modern Stack</h3><p style="color:var(--c3)">Spring Boot + Spring Data JPA + Hibernate + your DB. You write entities and repository interfaces. The stack handles all SQL generation, connection pooling, transactions, and caching.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ch0p1" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>The 3-Layer Stack — What Each Layer Does</div>
+      <div class="hl">These three are always confused. Here's the definitive distinction: <strong>Spring Data JPA wraps JPA; JPA specifies rules; Hibernate executes them.</strong></div>
+      <div class="arch">
+        <div class="arch-box" style="border:2px solid #3b82f6;background:rgba(59,130,246,.07)">
+          <h3 style="color:#93c5fd">Your Application</h3>
+          <p>Write @Entity classes, extend JpaRepository, call save() / findAll()</p>
+          <span class="arch-tag" style="background:rgba(59,130,246,.2);color:#93c5fd">Your Code</span>
+        </div>
+        <div class="arch-arrow">⬇ calls</div>
+        <div class="arch-box" style="border:2px solid var(--c1);background:rgba(34,211,238,.06)">
+          <h3 style="color:var(--c1)">Spring Data JPA</h3>
+          <p>Convenience layer — auto-generates repository implementations, derived queries, pagination</p>
+          <span class="arch-tag" style="background:rgba(34,211,238,.15);color:var(--c1)">Convenience Layer</span>
+        </div>
+        <div class="arch-arrow">⬇ uses</div>
+        <div class="arch-box" style="border:2px solid var(--c3);background:rgba(74,222,128,.06)">
+          <h3 style="color:var(--c3)">JPA (Java Persistence API)</h3>
+          <p>A <strong>specification</strong> only — defines @Entity, @Id, EntityManager. No actual execution. The contract.</p>
+          <span class="arch-tag" style="background:rgba(74,222,128,.15);color:var(--c3)">Specification / Contract</span>
+        </div>
+        <div class="arch-arrow">⬇ implemented by</div>
+        <div class="arch-box" style="border:2px solid var(--c2);background:rgba(129,140,248,.06)">
+          <h3 style="color:var(--c2)">Hibernate (or EclipseLink, OpenJPA…)</h3>
+          <p>The actual engine — generates SQL, manages 1st-level cache, dirty checking, transactions, dialect per DB</p>
+          <span class="arch-tag" style="background:rgba(129,140,248,.15);color:var(--c2)">Implementation / Engine</span>
+        </div>
+        <div class="arch-arrow">⬇ executes SQL on</div>
+        <div class="arch-box" style="border:2px solid var(--c4);background:rgba(251,146,60,.06)">
+          <h3 style="color:var(--c4)">Database (MySQL / PostgreSQL / Oracle…)</h3>
+          <p>Stores the actual data. Hibernate translates JPQL to the right SQL dialect for each DB automatically.</p>
+          <span class="arch-tag" style="background:rgba(251,146,60,.15);color:var(--c4)">Data Store</span>
+        </div>
+      </div>
+      <div class="hl" style="margin-top:16px;margin-bottom:0">
+        💡 <strong>USB Analogy:</strong> JPA = the USB standard (rules). Hibernate = a USB device brand (follows the rules). Spring Data JPA = a smart hub that auto-plugs all your devices in for you.
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Before vs After — The Code Difference</div>
+      <div class="compare">
+        <div class="codeblock old"><h3>❌ Raw JDBC (before)</h3><pre><span class="cm">// Save one user — 10 lines of pain</span>
+Connection conn = DriverManager
+  .getConnection(<span class="str">"jdbc:mysql://..."</span>,
+    <span class="str">"user"</span>,<span class="str">"pass"</span>);
+PreparedStatement s = conn
+  .prepareStatement(<span class="str">"INSERT INTO users
+    (id,name,email)VALUES(?,?,?)"</span>);
+s.setInt(<span class="nm">1</span>, user.getId());
+s.setString(<span class="nm">2</span>, user.getName());
+s.setString(<span class="nm">3</span>, user.getEmail());
+s.executeUpdate();
+s.close(); conn.close();
+<span class="cm">// Repeat for EVERY operation 😩</span></pre></div>
+        <div class="codeblock new"><h3>✅ Spring Data JPA (after)</h3><pre><span class="ann">@Entity</span>
+<span class="kw">public class</span> <span class="ty">User</span> {
+  <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>
+  <span class="kw">private</span> <span class="ty">Long</span> id;
+  <span class="kw">private</span> <span class="ty">String</span> name;
+  <span class="kw">private</span> <span class="ty">String</span> email;
+}
+
+<span class="cm">// That's it — use it:</span>
+repo.save(user);
+repo.findById(id);
+repo.findAll();
+repo.delete(user);
+<span class="cm">// Hibernate writes all SQL ✨</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ch0p2" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Differences Table — Spring Data JPA vs JPA vs Hibernate</div>
+      <table class="dtable">
+        <thead><tr><th>Aspect</th><th style="color:var(--c1)">Spring Data JPA</th><th style="color:var(--c3)">JPA</th><th style="color:var(--c2)">Hibernate</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--text)">What is it?</strong></td><td>Spring module on top of JPA</td><td>Java standard specification (JSR-338)</td><td>Framework that implements JPA</td></tr>
+          <tr><td><strong style="color:var(--text)">Made by</strong></td><td>VMware / Spring team</td><td>Oracle / JCP community</td><td>Red Hat / open-source community</td></tr>
+          <tr><td><strong style="color:var(--text)">Main job</strong></td><td>Auto-generate repositories, derive queries from method names, reduce all boilerplate</td><td>Define standard annotations (@Entity, @Id…) and interfaces (EntityManager)</td><td>Generate SQL, manage sessions, caching, transactions, DB dialect</td></tr>
+          <tr><td><strong style="color:var(--text)">Can run alone?</strong></td><td>No — needs JPA + implementation</td><td>Spec only — needs an impl to run</td><td>Yes — usable without JPA or Spring</td></tr>
+          <tr><td><strong style="color:var(--text)">You use it for</strong></td><td>extends JpaRepository, @Query, method names, pagination</td><td>Writing @Entity, @Id, @Column annotations</td><td>Configuration: dialect, cache, lazy loading</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /ch0 -->
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 1 — ANNOTATIONS
+     ════════════════════════════════════════════════════════ -->
+<div id="ch1" class="chapter">
+
+  <div id="ch1p0" class="panel on">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>JPA Annotation Essentials — Click to Expand</div>
+      <div class="ex-grid" id="annGrid"></div>
+    </div>
+  </div>
+
+  <div id="ch1p1" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Full Annotated Entity — All Annotations Together</div>
+      <div class="cb"><span class="clabel">Java</span><pre><span class="ann">@Entity</span>                              <span class="cm">// This class = a DB table</span>
+<span class="ann">@Table</span>(name = <span class="str">"employees"</span>,           <span class="cm">// Custom table name</span>
+       uniqueConstraints = <span class="ann">@UniqueConstraint</span>(columnNames = {<span class="str">"email"</span>}))
+<span class="kw">public class</span> <span class="ty">Employee</span> {
+
+    <span class="ann">@Id</span>                                <span class="cm">// Primary key</span>
+    <span class="ann">@GeneratedValue</span>(strategy = GenerationType.IDENTITY) <span class="cm">// DB auto-increment</span>
+    <span class="kw">private</span> <span class="ty">Long</span> id;
+
+    <span class="ann">@Column</span>(name = <span class="str">"full_name"</span>,        <span class="cm">// Map to specific column name</span>
+            nullable = <span class="kw">false</span>,          <span class="cm">// NOT NULL constraint in DB</span>
+            length = <span class="nm">100</span>)              <span class="cm">// VARCHAR(100)</span>
+    <span class="kw">private</span> <span class="ty">String</span> name;
+
+    <span class="ann">@Column</span>(unique = <span class="kw">true</span>)
+    <span class="kw">private</span> <span class="ty">String</span> email;
+
+    <span class="ann">@Enumerated</span>(EnumType.STRING)        <span class="cm">// Store "JUNIOR" not 0</span>
+    <span class="kw">private</span> <span class="ty">Level</span> level;                <span class="cm">// enum Level { JUNIOR, MID, SENIOR }</span>
+
+    <span class="ann">@Embedded</span>                           <span class="cm">// Embed Address columns here</span>
+    <span class="kw">private</span> <span class="ty">Address</span> address;
+
+    <span class="ann">@Column</span>(updatable = <span class="kw">false</span>)          <span class="cm">// Written once, never updated</span>
+    <span class="kw">private</span> <span class="ty">LocalDateTime</span> createdAt;
+
+    <span class="ann">@Transient</span>                          <span class="cm">// NOT stored in DB — ignored by JPA</span>
+    <span class="kw">private</span> <span class="ty">String</span> displayLabel;
+
+    <span class="ann">@Lob</span>                                <span class="cm">// Large text/binary → CLOB/BLOB</span>
+    <span class="ann">@Column</span>(columnDefinition = <span class="str">"TEXT"</span>)
+    <span class="kw">private</span> <span class="ty">String</span> bio;
+}
+
+<span class="cm">// The embedded class — its columns are inlined into the employee table</span>
+<span class="ann">@Embeddable</span>
+<span class="kw">public class</span> <span class="ty">Address</span> {
+    <span class="ann">@Column</span>(name = <span class="str">"street"</span>)  <span class="kw">private</span> <span class="ty">String</span> street;
+    <span class="ann">@Column</span>(name = <span class="str">"city"</span>)    <span class="kw">private</span> <span class="ty">String</span> city;
+    <span class="ann">@Column</span>(name = <span class="str">"zip"</span>)     <span class="kw">private</span> <span class="ty">String</span> zip;
+    <span class="cm">// These 3 columns appear directly in the employees table — no separate table!</span>
+}
+
+<span class="cm">// Using @AttributeOverride when embedding Address twice (homeAddress + workAddress)</span>
+<span class="ann">@Embedded</span>
+<span class="ann">@AttributeOverrides</span>({
+    <span class="ann">@AttributeOverride</span>(name=<span class="str">"street"</span>, column=<span class="ann">@Column</span>(name=<span class="str">"home_street"</span>)),
+    <span class="ann">@AttributeOverride</span>(name=<span class="str">"city"</span>,   column=<span class="ann">@Column</span>(name=<span class="str">"home_city"</span>))
+})
+<span class="kw">private</span> <span class="ty">Address</span> homeAddress;</pre></div>
+    </div>
+  </div>
+
+</div><!-- /ch1 -->
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 2 — RELATIONSHIPS
+     ════════════════════════════════════════════════════════ -->
+<div id="ch2" class="chapter">
+
+  <div id="ch2p0" class="panel on">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>The 4 Relationship Types — Click to Expand</div>
+      <div class="rel-grid" id="relGrid"></div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Bidirectional vs Unidirectional</div>
+      <div class="hl"><strong>Unidirectional</strong> — only one side references the other. Simpler. <strong>Bidirectional</strong> — both sides reference each other. Requires <code>mappedBy</code> to designate the <em>owning side</em> (the side with the FK column).</div>
+      <div class="two">
+        <div class="cb"><span class="clabel">Unidirectional</span><pre><span class="ann">@Entity</span> <span class="kw">public class</span> <span class="ty">Post</span> {
+    <span class="ann">@OneToMany</span>
+    <span class="ann">@JoinColumn</span>(name=<span class="str">"post_id"</span>)
+    <span class="kw">private</span> List&lt;<span class="ty">Comment</span>&gt; comments;
+}
+<span class="ann">@Entity</span> <span class="kw">public class</span> <span class="ty">Comment</span> {
+    <span class="cm">// No reference back to Post</span>
+    <span class="kw">private</span> <span class="ty">String</span> text;
+}</pre></div>
+        <div class="cb"><span class="clabel">Bidirectional</span><pre><span class="ann">@Entity</span> <span class="kw">public class</span> <span class="ty">Post</span> {
+    <span class="ann">@OneToMany</span>(mappedBy=<span class="str">"post"</span>)
+    <span class="kw">private</span> List&lt;<span class="ty">Comment</span>&gt; comments;
+    <span class="cm">// mappedBy → Comment.post owns FK</span>
+}
+<span class="ann">@Entity</span> <span class="kw">public class</span> <span class="ty">Comment</span> {
+    <span class="ann">@ManyToOne</span>        <span class="cm">// ← owns FK</span>
+    <span class="ann">@JoinColumn</span>(name=<span class="str">"post_id"</span>)
+    <span class="kw">private</span> <span class="ty">Post</span> post;
+}</pre></div>
+      </div>
+      <div class="hl hlw" style="margin-bottom:0">⚠️ <strong>Golden Rule:</strong> In bidirectional relationships always update both sides in Java code. Use a helper method like <code>post.addComment(c)</code> that also sets <code>c.setPost(post)</code>.</div>
+    </div>
+  </div>
+
+  <div id="ch2p1" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Lazy vs Eager Fetching</div>
+      <div class="two">
+        <div class="fetch-box" style="border-color:var(--c3);background:rgba(74,222,128,.04)">
+          <span class="ftag" style="background:rgba(74,222,128,.15);color:var(--c3)">LAZY (default: collections)</span>
+          <h3 style="color:var(--c3)">Load on demand</h3>
+          <ul><li>Data loaded only when you access it</li><li>Extra SQL query fired on access</li><li>Better memory performance</li><li>⚠️ LazyInitializationException outside session</li><li>Default: @OneToMany, @ManyToMany</li></ul>
+        </div>
+        <div class="fetch-box" style="border-color:var(--c4);background:rgba(251,146,60,.04)">
+          <span class="ftag" style="background:rgba(251,146,60,.15);color:var(--c4)">EAGER (default: single refs)</span>
+          <h3 style="color:var(--c4)">Load immediately (JOIN)</h3>
+          <ul><li>Fetched in same query as parent</li><li>Always loaded whether needed or not</li><li>Can cause N+1 if overused</li><li>Safe to access outside session</li><li>Default: @ManyToOne, @OneToOne</li></ul>
+        </div>
+      </div>
+      <div class="cb" style="margin-top:14px"><span class="clabel">N+1 Problem & Fix</span><pre><span class="cm">// ❌ N+1 — 1 query for list + 1 per author = N+1 total</span>
+List&lt;<span class="ty">Author</span>&gt; authors = repo.findAll();         <span class="cm">// 1 SELECT</span>
+<span class="kw">for</span> (<span class="ty">Author</span> a : authors) a.getBooks().size();   <span class="cm">// N SELECTs!</span>
+
+<span class="cm">// ✅ Fix with JOIN FETCH — single query</span>
+<span class="ann">@Query</span>(<span class="str">"SELECT a FROM Author a JOIN FETCH a.books"</span>)
+List&lt;<span class="ty">Author</span>&gt; findAllWithBooks();
+
+<span class="cm">// ✅ Or use @EntityGraph (Spring Data way)</span>
+<span class="ann">@EntityGraph</span>(attributePaths = {<span class="str">"books"</span>})
+List&lt;<span class="ty">Author</span>&gt; findAll();</pre></div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Cascade Types</div>
+      <div class="hl"><strong>Cascade</strong> = "when I do X on the parent, do X on the children too."</div>
+      <table class="dtable">
+        <thead><tr><th>Type</th><th>What it does</th><th>Use case</th><th>Risk</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill p3">PERSIST</span></td><td>Saving parent saves new children</td><td>Save Order + its items together</td><td>Low</td></tr>
+          <tr><td><span class="pill p1">MERGE</span></td><td>Merging parent merges children</td><td>Update Order + items together</td><td>Low</td></tr>
+          <tr><td><span class="pill p5">REMOVE</span></td><td>Deleting parent deletes children</td><td>Delete Blog post + all Comments</td><td>⚠️ Medium</td></tr>
+          <tr><td><span class="pill p4">REFRESH</span></td><td>Refresh parent refreshes children</td><td>Re-sync from DB</td><td>Low</td></tr>
+          <tr><td><span class="pill p6">DETACH</span></td><td>Detach parent detaches children</td><td>Rare — manual session mgmt</td><td>Low</td></tr>
+          <tr><td><span class="pill p2">ALL</span></td><td>All of the above</td><td>Parent fully owns child lifecycle</td><td>⚠️⚠️ High</td></tr>
+        </tbody>
+      </table>
+      <div class="cb" style="margin-top:14px"><span class="clabel">Java</span><pre><span class="ann">@OneToMany</span>(mappedBy=<span class="str">"order"</span>, cascade=CascadeType.ALL, orphanRemoval=<span class="kw">true</span>)
+<span class="kw">private</span> List&lt;<span class="ty">OrderItem</span>&gt; items = <span class="kw">new</span> ArrayList&lt;&gt;();
+<span class="cm">// orphanRemoval: removing item from list → auto-DELETE from DB</span>
+
+orderRepo.save(order); <span class="cm">// saves Order + all items in one go</span>
+order.getItems().remove(<span class="nm">0</span>); <span class="cm">// ← this item gets deleted from DB at commit</span></pre></div>
+    </div>
+  </div>
+
+  <div id="ch2p2" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>@JoinTable — Many-to-Many Deep Dive</div>
+      <div class="hl">Many-to-Many needs a <strong>pivot table</strong> in the DB (e.g. student_course). <code>@JoinTable</code> controls its name and FK columns.</div>
+      <div class="cb"><span class="clabel">Java + DB Schema</span><pre><span class="ann">@Entity</span>
+<span class="kw">public class</span> <span class="ty">Student</span> {
+    <span class="ann">@ManyToMany</span>
+    <span class="ann">@JoinTable</span>(
+        name               = <span class="str">"student_course"</span>,     <span class="cm">// pivot table name</span>
+        joinColumns        = <span class="ann">@JoinColumn</span>(name=<span class="str">"student_id"</span>),  <span class="cm">// FK → this entity</span>
+        inverseJoinColumns = <span class="ann">@JoinColumn</span>(name=<span class="str">"course_id"</span>)    <span class="cm">// FK → other entity</span>
+    )
+    <span class="kw">private</span> Set&lt;<span class="ty">Course</span>&gt; courses = <span class="kw">new</span> HashSet&lt;&gt;();
+}
+<span class="ann">@Entity</span>
+<span class="kw">public class</span> <span class="ty">Course</span> {
+    <span class="ann">@ManyToMany</span>(mappedBy=<span class="str">"courses"</span>)   <span class="cm">// Student owns the join table</span>
+    <span class="kw">private</span> Set&lt;<span class="ty">Student</span>&gt; students = <span class="kw">new</span> HashSet&lt;&gt;();
+}
+
+<span class="cm">/*  DB Schema:
+    ┌──────────┐      ┌─────────────────┐      ┌──────────┐
+    │ student  │      │ student_course  │      │  course  │
+    │ id (PK)  │─────►│ student_id (FK) │◄─────│ id (PK)  │
+    │ name     │      │ course_id  (FK) │      │ title    │
+    └──────────┘      └─────────────────┘      └──────────┘ */</span></pre></div>
+    </div>
+  </div>
+
+</div><!-- /ch2 -->
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 3 — REPOSITORIES
+     ════════════════════════════════════════════════════════ -->
+<div id="ch3" class="chapter">
+
+  <div id="ch3p0" class="panel on">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Repository Hierarchy — Click Each Layer</div>
+      <div class="repo-stack" id="repoStack"></div>
+    </div>
+  </div>
+
+  <div id="ch3p1" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Default CRUD Methods — What You Get for Free</div>
+      <div class="cb"><span class="clabel">JpaRepository — full API</span><pre><span class="cm">// ── SAVE ──────────────────────────────────────────────────────</span>
+<span class="ty">S</span>         save(<span class="ty">S</span> entity)              <span class="cm">// INSERT if new; UPDATE if exists (checks @Id)</span>
+List&lt;<span class="ty">S</span>&gt;   saveAll(Iterable&lt;<span class="ty">S</span>&gt;)        <span class="cm">// bulk save</span>
+<span class="ty">S</span>         saveAndFlush(<span class="ty">S</span> entity)      <span class="cm">// save + immediately sync to DB</span>
+
+<span class="cm">// ── FIND ──────────────────────────────────────────────────────</span>
+Optional&lt;<span class="ty">T</span>&gt; findById(<span class="ty">ID</span>)              <span class="cm">// SELECT WHERE id = ?</span>
+<span class="ty">T</span>           getReferenceById(<span class="ty">ID</span>)       <span class="cm">// lazy proxy — no SELECT until accessed</span>
+List&lt;<span class="ty">T</span>&gt;    findAll()                   <span class="cm">// SELECT *</span>
+List&lt;<span class="ty">T</span>&gt;    findAllById(Iterable&lt;<span class="ty">ID</span>&gt;)   <span class="cm">// SELECT WHERE id IN (?...)</span>
+Page&lt;<span class="ty">T</span>&gt;    findAll(<span class="ty">Pageable</span>)          <span class="cm">// paginated</span>
+List&lt;<span class="ty">T</span>&gt;    findAll(<span class="ty">Sort</span>)              <span class="cm">// sorted</span>
+
+<span class="cm">// ── CHECK ──────────────────────────────────────────────────────</span>
+<span class="kw">boolean</span>   existsById(<span class="ty">ID</span>)              <span class="cm">// SELECT CASE WHEN COUNT(*)>0...</span>
+<span class="kw">long</span>      count()                     <span class="cm">// SELECT COUNT(*)</span>
+
+<span class="cm">// ── DELETE ──────────────────────────────────────────────────────</span>
+<span class="kw">void</span>      deleteById(<span class="ty">ID</span>)              <span class="cm">// DELETE WHERE id = ?</span>
+<span class="kw">void</span>      delete(<span class="ty">T</span>)                   <span class="cm">// DELETE by entity</span>
+<span class="kw">void</span>      deleteAll()                 <span class="cm">// ⚠️ clears whole table</span>
+<span class="kw">void</span>      deleteAllInBatch()          <span class="cm">// single DELETE statement — faster</span></pre></div>
+      <div class="hl hlg" style="margin-bottom:0">💡 <strong>How save() decides INSERT vs UPDATE:</strong> Calls <code>entityManager.persist()</code> if the ID is null/zero (new entity), or <code>entityManager.merge()</code> if ID already exists. Override by implementing <code>Persistable&lt;ID&gt;</code>.</div>
+    </div>
+  </div>
+
+  <div id="ch3p2" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Projections — Return Only What You Need</div>
+      <div class="hl">Instead of loading the full entity (all columns), projections select only specific fields — better performance and cleaner API responses.</div>
+      <div class="ptabs">
+        <button class="ptab on" onclick="showProj(this,'ppi')">Interface</button>
+        <button class="ptab" onclick="showProj(this,'ppc')">Class / Record DTO</button>
+        <button class="ptab" onclick="showProj(this,'ppd')">Dynamic</button>
+        <button class="ptab" onclick="showProj(this,'ppn')">Native + Projection</button>
+      </div>
+      <div id="ppi" class="ppanel on">
+        <div class="cb"><span class="clabel">Interface Projection</span><pre><span class="cm">// 1. Projection interface — Spring generates implementation</span>
+<span class="kw">public interface</span> <span class="ty">UserSummary</span> {
+    <span class="ty">String</span> getName();    <span class="cm">// getter name must match field name</span>
+    <span class="ty">String</span> getEmail();
+    <span class="ann">@Value</span>(<span class="str">"#{target.firstName + ' ' + target.lastName}"</span>)
+    <span class="ty">String</span> getFullName(); <span class="cm">// derived via SpEL</span>
+}
+<span class="cm">// 2. Repository returns projection</span>
+List&lt;<span class="ty">UserSummary</span>&gt; findByActive(<span class="kw">boolean</span> active);
+<span class="cm">// 3. SQL: SELECT name, email FROM users WHERE active=? — NOT SELECT *</span></pre></div>
+      </div>
+      <div id="ppc" class="ppanel">
+        <div class="cb"><span class="clabel">DTO (Record) Projection</span><pre><span class="cm">// 1. Java record as DTO</span>
+<span class="kw">public record</span> <span class="ty">UserDTO</span>(<span class="ty">String</span> name, <span class="ty">String</span> email, <span class="kw">long</span> postCount) {}
+
+<span class="cm">// 2. Use constructor expression in JPQL</span>
+<span class="ann">@Query</span>(<span class="str">"""
+    SELECT new com.example.dto.UserDTO(u.name, u.email, COUNT(p))
+    FROM User u LEFT JOIN u.posts p
+    GROUP BY u.id, u.name, u.email
+"""</span>)
+List&lt;<span class="ty">UserDTO</span>&gt; findUserSummaries();</pre></div>
+      </div>
+      <div id="ppd" class="ppanel">
+        <div class="cb"><span class="clabel">Dynamic Projection</span><pre><span class="cm">// Same repository method, different projection types</span>
+&lt;<span class="ty">T</span>&gt; List&lt;<span class="ty">T</span>&gt; findByActive(<span class="kw">boolean</span> active, Class&lt;<span class="ty">T</span>&gt; type);
+
+<span class="cm">// Usage — caller decides what shape to get back:</span>
+List&lt;<span class="ty">User</span>&gt; full        = repo.findByActive(<span class="kw">true</span>, <span class="ty">User</span>.<span class="kw">class</span>);
+List&lt;<span class="ty">UserSummary</span>&gt; slim = repo.findByActive(<span class="kw">true</span>, <span class="ty">UserSummary</span>.<span class="kw">class</span>);
+List&lt;<span class="ty">UserDTO</span>&gt; dtos     = repo.findByActive(<span class="kw">true</span>, <span class="ty">UserDTO</span>.<span class="kw">class</span>);</pre></div>
+      </div>
+      <div id="ppn" class="ppanel">
+        <div class="cb"><span class="clabel">Native Query + Interface Projection</span><pre><span class="cm">// Column aliases must match getter names (camelCase → snake_case auto)</span>
+<span class="kw">public interface</span> <span class="ty">ProductSummary</span> {
+    <span class="ty">String</span> getName();
+    <span class="ty">Double</span> getPrice();
+    <span class="ty">Long</span>   getCategoryId();   <span class="cm">// matches alias "categoryId"</span>
+}
+<span class="ann">@Query</span>(value=<span class="str">"""
+    SELECT p.name, p.price, p.category_id AS categoryId
+    FROM products p WHERE p.active = 1 ORDER BY p.price DESC
+"""</span>, nativeQuery=<span class="kw">true</span>)
+List&lt;<span class="ty">ProductSummary</span>&gt; findActiveSummaries();</pre></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /ch3 -->
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 4 — QUERIES
+     ════════════════════════════════════════════════════════ -->
+<div id="ch4" class="chapter">
+
+  <div id="ch4p0" class="panel on">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Interactive Query Builder — Click to Compose</div>
+      <div class="slabel">Subject (what to do)</div>
+      <div class="qb-btns" id="qbSubject"></div>
+      <div class="slabel">Condition</div>
+      <div class="qb-btns" id="qbCond"></div>
+      <div class="slabel">Modifier</div>
+      <div class="qb-btns" id="qbMod"></div>
+      <div class="slabel" style="margin-top:8px">Result</div>
+      <div class="mono-out" id="qbResult"><span style="color:var(--muted)">Select options above…</span></div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Full Derived Query Reference</div>
+      <div class="cb"><span class="clabel">Java</span><pre><span class="kw">public interface</span> <span class="ty">ProductRepository</span> <span class="kw">extends</span> <span class="ty">JpaRepository</span>&lt;<span class="ty">Product</span>, <span class="ty">Long</span>&gt; {
+    <span class="cm">// Comparison</span>
+    List&lt;<span class="ty">P</span>&gt; findByPriceLessThan(<span class="kw">double</span> p);
+    List&lt;<span class="ty">P</span>&gt; findByPriceBetween(<span class="kw">double</span> min, <span class="kw">double</span> max);
+    List&lt;<span class="ty">P</span>&gt; findByStockGreaterThanAndCategoryIn(<span class="kw">int</span> s, Collection&lt;<span class="ty">String</span>&gt; cats);
+    <span class="cm">// String matching</span>
+    List&lt;<span class="ty">P</span>&gt; findByNameIgnoreCase(<span class="ty">String</span> name);
+    List&lt;<span class="ty">P</span>&gt; findByNameContainingIgnoreCase(<span class="ty">String</span> kw);
+    List&lt;<span class="ty">P</span>&gt; findByNameStartingWith(<span class="ty">String</span> prefix);
+    <span class="cm">// Null / Boolean</span>
+    List&lt;<span class="ty">P</span>&gt; findByDescriptionIsNull();
+    List&lt;<span class="ty">P</span>&gt; findByActiveTrue();
+    List&lt;<span class="ty">P</span>&gt; findByStatusIn(Collection&lt;<span class="ty">Status</span>&gt; statuses);
+    <span class="cm">// Dates</span>
+    List&lt;<span class="ty">P</span>&gt; findByCreatedAtAfter(<span class="ty">LocalDateTime</span> d);
+    List&lt;<span class="ty">P</span>&gt; findByCreatedAtBetween(<span class="ty">LocalDateTime</span> from, <span class="ty">LocalDateTime</span> to);
+    <span class="cm">// Limiting</span>
+    Optional&lt;<span class="ty">P</span>&gt; findFirstByOrderByPriceAsc();      <span class="cm">// cheapest</span>
+    List&lt;<span class="ty">P</span>&gt;    findTop5ByOrderByRatingDesc();      <span class="cm">// top 5 rated</span>
+    <span class="cm">// Count / Exists / Delete</span>
+    <span class="kw">long</span>    countByCategory(<span class="ty">String</span> cat);
+    <span class="kw">boolean</span> existsByEmail(<span class="ty">String</span> email);
+    <span class="kw">long</span>    deleteByCreatedAtBefore(<span class="ty">LocalDateTime</span> d);
+}</pre></div>
+    </div>
+  </div>
+
+  <div id="ch4p1" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>@Query — JPQL and Native SQL</div>
+      <div class="two">
+        <div>
+          <div class="slabel">JPQL (class names, DB-agnostic)</div>
+          <div class="cb"><pre><span class="cm">// Uses entity class + field names</span>
+<span class="ann">@Query</span>(<span class="str">"SELECT u FROM User u WHERE u.email=:e"</span>)
+Optional&lt;<span class="ty">User</span>&gt; byEmail(<span class="ann">@Param</span>(<span class="str">"e"</span>) <span class="ty">String</span> e);
+
+<span class="cm">// JOIN FETCH across relationships</span>
+<span class="ann">@Query</span>(<span class="str">"SELECT p FROM Post p JOIN FETCH p.comments WHERE p.author.id=:id"</span>)
+List&lt;<span class="ty">Post</span>&gt; withComments(<span class="ann">@Param</span>(<span class="str">"id"</span>) <span class="ty">Long</span> id);
+
+<span class="cm">// Aggregate</span>
+<span class="ann">@Query</span>(<span class="str">"SELECT AVG(p.price) FROM Product p WHERE p.category=:c"</span>)
+<span class="ty">Double</span> avgPrice(<span class="ann">@Param</span>(<span class="str">"c"</span>) <span class="ty">String</span> c);
+
+<span class="cm">// UPDATE/DELETE — needs @Modifying</span>
+<span class="ann">@Modifying</span> <span class="ann">@Transactional</span>
+<span class="ann">@Query</span>(<span class="str">"UPDATE User u SET u.active=false WHERE u.lastLogin&lt;:d"</span>)
+<span class="kw">int</span> deactivateOld(<span class="ann">@Param</span>(<span class="str">"d"</span>) <span class="ty">LocalDate</span> d);</pre></div>
+        </div>
+        <div>
+          <div class="slabel">Native SQL (table names, DB-specific)</div>
+          <div class="cb"><pre><span class="cm">// Raw SQL — use for DB-specific features</span>
+<span class="ann">@Query</span>(
+  value=<span class="str">"SELECT * FROM users WHERE email LIKE %:domain"</span>,
+  nativeQuery=<span class="kw">true</span>
+)
+List&lt;<span class="ty">User</span>&gt; byDomain(<span class="ann">@Param</span>(<span class="str">"domain"</span>) <span class="ty">String</span> d);
+
+<span class="cm">// Native + Pagination (needs countQuery)</span>
+<span class="ann">@Query</span>(
+  value=<span class="str">"SELECT * FROM products ORDER BY price DESC"</span>,
+  countQuery=<span class="str">"SELECT COUNT(*) FROM products"</span>,
+  nativeQuery=<span class="kw">true</span>
+)
+Page&lt;<span class="ty">Product</span>&gt; allNative(<span class="ty">Pageable</span> p);
+
+<span class="cm">// Use native for:</span>
+<span class="cm">// • Window functions (ROW_NUMBER, RANK)</span>
+<span class="cm">// • Full-text search (MATCH AGAINST)</span>
+<span class="cm">// • DB-specific functions (REGEXP)</span></pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /ch4 -->
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 5 — PAGINATION & SORT
+     ════════════════════════════════════════════════════════ -->
+<div id="ch5" class="chapter">
+
+  <div id="ch5p0" class="panel on">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Live Paginator — Adjust Page Size & Sort</div>
+      <div class="page-sim">
+        <div class="page-controls">
+          <label>Page size: <strong id="psizeVal" style="color:var(--c1)">5</strong><input type="range" id="psize" min="2" max="8" value="5" oninput="updateSim()"></label>
+          <label>Sort by:<select id="psort" onchange="updateSim()"><option value="id">ID</option><option value="name">Name A→Z</option><option value="age">Age ↑</option><option value="age-desc">Age ↓</option></select></label>
+        </div>
+        <div id="pageGrid"></div>
+        <div class="page-nav" id="pageNav"></div>
+        <div class="sql-prev" id="sqlPrev"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Pageable, Page & Slice — Full Code</div>
+      <div class="cb"><span class="clabel">Repository + Service</span><pre><span class="cm">// Repository — add Pageable parameter</span>
+Page&lt;<span class="ty">User</span>&gt;  findByActive(<span class="kw">boolean</span> active, <span class="ty">Pageable</span> pageable);
+Slice&lt;<span class="ty">User</span>&gt; findByDepartment(<span class="ty">String</span> dept, <span class="ty">Pageable</span> pageable); <span class="cm">// no COUNT query</span>
+
+<span class="cm">// Build a Pageable (page numbers are 0-based!)</span>
+<span class="ty">Pageable</span> p1 = PageRequest.of(<span class="nm">0</span>, <span class="nm">10</span>);                        <span class="cm">// page 0, 10 per page</span>
+<span class="ty">Pageable</span> p2 = PageRequest.of(<span class="nm">2</span>, <span class="nm">10</span>, Sort.by(<span class="str">"name"</span>));        <span class="cm">// page 2, sorted</span>
+
+<span class="cm">// Read Page&lt;T&gt; metadata</span>
+<span class="ty">Page</span>&lt;<span class="ty">User</span>&gt; page = repo.findAll(p2);
+page.getContent();          <span class="cm">// List&lt;User&gt; — the actual data</span>
+page.getNumber();           <span class="cm">// current page (0-based)</span>
+page.getTotalElements();    <span class="cm">// total rows in DB</span>
+page.getTotalPages();       <span class="cm">// ceil(total / size)</span>
+page.isFirst();             <span class="cm">// true if page 0</span>
+page.isLast();              <span class="cm">// true if last page</span>
+page.hasNext();             <span class="cm">// false on last page</span>
+page.map(<span class="ty">UserDTO</span>::fromEntity); <span class="cm">// transform while keeping pagination metadata</span>
+
+<span class="cm">// REST controller pattern</span>
+<span class="ann">@GetMapping</span>(<span class="str">"/users"</span>)
+<span class="kw">public</span> Page&lt;<span class="ty">UserDTO</span>&gt; list(
+    <span class="ann">@RequestParam</span>(defaultValue=<span class="str">"0"</span>)  <span class="kw">int</span> page,
+    <span class="ann">@RequestParam</span>(defaultValue=<span class="str">"10"</span>) <span class="kw">int</span> size,
+    <span class="ann">@RequestParam</span>(defaultValue=<span class="str">"id"</span>)  <span class="ty">String</span> sort) {
+    <span class="kw">return</span> repo.findAll(PageRequest.of(page, size, Sort.by(sort))).map(<span class="ty">UserDTO</span>::fromEntity);
+}</pre></div>
+      <div class="hl hlw" style="margin-bottom:0">⚠️ <strong>Page vs Slice:</strong> <code>Page</code> fires 2 queries (data + COUNT). <code>Slice</code> fires 1 query and only knows if there's a next page. Use <code>Slice</code> for infinite scroll / "load more" patterns.</div>
+    </div>
+  </div>
+
+  <div id="ch5p1" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Sort Builder — Interactive Demo</div>
+      <div class="sort-builder">
+        <div class="sb-row">
+          <select class="sb-sel" id="sf"><option>name</option><option>age</option><option>email</option><option>createdAt</option><option>salary</option><option>department</option></select>
+          <select class="sb-sel" id="sd"><option value="asc">ASC ↑</option><option value="desc">DESC ↓</option></select>
+          <button class="sb-btn sb-add" onclick="addSort()">+ Add</button>
+          <button class="sb-btn sb-clr" onclick="clearSort()">✕ Clear</button>
+        </div>
+        <div class="sort-chain" id="sortChain"><span style="color:var(--muted);font-size:.75rem">Add sort fields above…</span></div>
+        <div class="slabel">Generated Java</div>
+        <div class="mono-out" id="sortJava"><span style="color:var(--muted)">Add sort fields above…</span></div>
+        <div class="slabel" style="margin-top:10px">SQL ORDER BY</div>
+        <div class="sql-prev" style="margin-top:0" id="sortSql">Add sort fields above…</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Sort — All Patterns</div>
+      <div class="cb"><span class="clabel">Java</span><pre><span class="cm">// Basic</span>
+Sort.by(<span class="str">"name"</span>)                          <span class="cm">// ASC by default</span>
+Sort.by(Direction.DESC, <span class="str">"name"</span>)
+
+<span class="cm">// Multi-field chained</span>
+Sort.by(<span class="str">"department"</span>).ascending()
+    .and(Sort.by(<span class="str">"salary"</span>).descending())
+    .and(Sort.by(<span class="str">"name"</span>).ascending())
+
+<span class="cm">// Fine-grained control</span>
+Sort.by(
+    Sort.Order.asc(<span class="str">"lastName"</span>).nullsLast(),
+    Sort.Order.desc(<span class="str">"salary"</span>).nullsFirst(),
+    Sort.Order.asc(<span class="str">"firstName"</span>).ignoreCase()
+)
+
+<span class="cm">// ✅ Safe dynamic sort from HTTP param — always whitelist!</span>
+Set&lt;<span class="ty">String</span>&gt; allowed = Set.of(<span class="str">"name"</span>, <span class="str">"age"</span>, <span class="str">"email"</span>);
+<span class="kw">if</span> (!allowed.contains(sortField)) <span class="kw">throw new</span> <span class="ty">BadRequestException</span>();
+Sort sort = dir.equals(<span class="str">"desc"</span>) ? Sort.by(sortField).descending()
+                                 : Sort.by(sortField).ascending();</pre></div>
+    </div>
+  </div>
+
+</div><!-- /ch5 -->
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 6 — SPECIFICATIONS
+     ════════════════════════════════════════════════════════ -->
+<div id="ch6" class="chapter">
+
+  <div id="ch6p0" class="panel on">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Dynamic Filter Builder — Interactive Demo</div>
+      <div class="hl"><strong>Specifications</strong> solve optional / dynamic filtering: "filter users where age > X AND name contains Y AND department is Z — but only the filters that are provided." Derived methods can't handle optional filters elegantly.</div>
+      <div class="spec-builder">
+        <h3 style="font-size:.84rem;font-weight:700;color:var(--c2);margin-bottom:10px">Toggle filters ON/OFF (simulating a real search form)</h3>
+        <div class="spec-filters" id="specFilters"></div>
+        <div class="slabel" style="margin-top:4px">Generated Specification code</div>
+        <div class="mono-out" id="specCode" style="min-height:60px"><span style="color:var(--muted)">Toggle filters above…</span></div>
+        <div class="slabel" style="margin-top:10px">SQL WHERE clause</div>
+        <div class="sql-prev" style="margin-top:0" id="specSql">Toggle filters above…</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ch6p1" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Full Specification Implementation — 3 Steps</div>
+      <div class="cb"><span class="clabel">Step 1 — Extend JpaSpecificationExecutor</span><pre><span class="kw">public interface</span> <span class="ty">UserRepository</span>
+    <span class="kw">extends</span> <span class="ty">JpaRepository</span>&lt;<span class="ty">User</span>, <span class="ty">Long</span>&gt;,
+            <span class="ty">JpaSpecificationExecutor</span>&lt;<span class="ty">User</span>&gt; {  <span class="cm">// ← unlocks spec methods</span>
+    <span class="cm">// adds: findAll(Spec), findOne(Spec), count(Spec), exists(Spec)</span>
+}</pre></div>
+      <div class="cb"><span class="clabel">Step 2 — Write Reusable Specification methods</span><pre><span class="kw">public class</span> <span class="ty">UserSpecs</span> {
+    <span class="cm">// A Specification is: (Root, Query, CriteriaBuilder) → Predicate</span>
+
+    <span class="kw">public static</span> <span class="ty">Specification</span>&lt;<span class="ty">User</span>&gt; nameContains(<span class="ty">String</span> kw) {
+        <span class="kw">return</span> (root, q, cb) -> kw == <span class="kw">null</span> ? <span class="kw">null</span>   <span class="cm">// null = ignored!</span>
+            : cb.like(cb.lower(root.get(<span class="str">"name"</span>)), <span class="str">"%"</span>+kw.toLowerCase()+<span class="str">"%"</span>);
+    }
+    <span class="kw">public static</span> <span class="ty">Specification</span>&lt;<span class="ty">User</span>&gt; olderThan(<span class="kw">int</span> age) {
+        <span class="kw">return</span> (root, q, cb) -> cb.greaterThan(root.get(<span class="str">"age"</span>), age);
+    }
+    <span class="kw">public static</span> <span class="ty">Specification</span>&lt;<span class="ty">User</span>&gt; inDept(<span class="ty">String</span> dept) {
+        <span class="kw">return</span> (root, q, cb) -> dept == <span class="kw">null</span> ? <span class="kw">null</span>
+            : cb.equal(root.get(<span class="str">"department"</span>), dept);
+    }
+    <span class="kw">public static</span> <span class="ty">Specification</span>&lt;<span class="ty">User</span>&gt; isActive() {
+        <span class="kw">return</span> (root, q, cb) -> cb.isTrue(root.get(<span class="str">"active"</span>));
+    }
+    <span class="cm">// JOIN within a Spec</span>
+    <span class="kw">public static</span> <span class="ty">Specification</span>&lt;<span class="ty">User</span>&gt; hasProject(<span class="ty">String</span> name) {
+        <span class="kw">return</span> (root, q, cb) -> {
+            Join&lt;<span class="ty">User</span>,<span class="ty">Project</span>&gt; j = root.join(<span class="str">"projects"</span>, JoinType.LEFT);
+            <span class="kw">return</span> cb.equal(j.get(<span class="str">"name"</span>), name);
+        };
+    }
+}</pre></div>
+      <div class="cb"><span class="clabel">Step 3 — Combine with .where() .and() .or() .not()</span><pre><span class="ty">Specification</span>&lt;<span class="ty">User</span>&gt; spec = Specification
+    .where(<span class="ty">UserSpecs</span>.nameContains(req.getKeyword()))  <span class="cm">// null = ignored</span>
+    .and(<span class="ty">UserSpecs</span>.olderThan(req.getMinAge()))
+    .and(<span class="ty">UserSpecs</span>.inDept(req.getDepartment()))
+    .and(<span class="ty">UserSpecs</span>.isActive());
+
+Page&lt;<span class="ty">User</span>&gt; results = repo.findAll(spec, pageable);  <span class="cm">// paginated + filtered</span>
+
+<span class="cm">// OR logic</span>
+<span class="ty">Specification</span>&lt;<span class="ty">User</span>&gt; adminsOrManagers =
+    <span class="ty">UserSpecs</span>.inDept(<span class="str">"ADMIN"</span>).or(<span class="ty">UserSpecs</span>.inDept(<span class="str">"MANAGEMENT"</span>));
+
+<span class="cm">// NOT logic</span>
+<span class="ty">Specification</span>&lt;<span class="ty">User</span>&gt; notAdmin = Specification.not(<span class="ty">UserSpecs</span>.inDept(<span class="str">"ADMIN"</span>));</pre></div>
+    </div>
+  </div>
+
+</div><!-- /ch6 -->
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 7 — TRANSACTIONS
+     ════════════════════════════════════════════════════════ -->
+<div id="ch7" class="chapter">
+
+  <div id="ch7p0" class="panel on">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>@Transactional — How it Actually Works</div>
+      <div class="hl">Spring wraps your method in an <strong>AOP proxy</strong>. When you call a @Transactional method, Spring intercepts it, begins a transaction, runs your code, then commits or rolls back automatically.</div>
+      <div class="cb"><span class="clabel">What Spring generates around your method</span><pre><span class="cm">// Your code:</span>
+<span class="ann">@Transactional</span>
+<span class="kw">public void</span> transfer(...) { ... }
+
+<span class="cm">// Spring's AOP proxy wraps it like this:</span>
+<span class="kw">try</span> {
+    txManager.begin();          <span class="cm">// 1. START TRANSACTION</span>
+    transfer(...);              <span class="cm">// 2. run your method</span>
+    persistenceCtx.flush();     <span class="cm">// 3. sync dirty entities to DB</span>
+    txManager.commit();         <span class="cm">// 4. COMMIT</span>
+} <span class="kw">catch</span> (<span class="ty">RuntimeException</span> e) {
+    txManager.rollback();       <span class="cm">// 5. ROLLBACK on RuntimeException</span>
+    <span class="kw">throw</span> e;
+}
+<span class="cm">// ⚠️ Checked exceptions do NOT trigger rollback by default!</span>
+<span class="cm">// Fix: rollbackFor = Exception.class</span></pre></div>
+      <div class="cb"><span class="clabel">All @Transactional options + Common Gotcha</span><pre><span class="ann">@Transactional</span>(
+    propagation  = Propagation.REQUIRED,        <span class="cm">// default</span>
+    isolation    = Isolation.READ_COMMITTED,     <span class="cm">// default (DB-dependent)</span>
+    readOnly     = <span class="kw">false</span>,
+    timeout      = <span class="nm">30</span>,                          <span class="cm">// seconds</span>
+    rollbackFor  = { <span class="ty">CustomException</span>.<span class="kw">class</span> },   <span class="cm">// include checked exceptions</span>
+    noRollbackFor= { <span class="ty">BusinessWarning</span>.<span class="kw">class</span> }    <span class="cm">// exclude these</span>
+)
+
+<span class="cm">// ⚠️ Self-invocation BREAKS @Transactional!</span>
+<span class="kw">public class</span> <span class="ty">MyService</span> {
+    <span class="kw">public void</span> outer() {
+        inner();  <span class="cm">// ❌ Calls 'this.inner()' — bypasses the proxy!</span>
+    }             <span class="cm">//    @Transactional on inner() is silently IGNORED</span>
+    <span class="ann">@Transactional</span>
+    <span class="kw">public void</span> inner() { ... }
+    <span class="cm">// Fix: inject the service into itself, or split into two beans</span>
+}</pre></div>
+    </div>
+  </div>
+
+  <div id="ch7p1" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Propagation Types — Click Each to Expand</div>
+      <div id="propScenarios"></div>
+    </div>
+  </div>
+
+  <div id="ch7p2" class="panel">
+    <div class="card">
+      <div class="ctitle"><div class="pip"></div>Read-Only Transactions — Real Optimizations</div>
+      <div class="hl"><strong>readOnly = true</strong> triggers real performance improvements in Hibernate and at the DB level — not just a hint.</div>
+      <table class="perf-table">
+        <thead><tr><th>What changes</th><th>Without readOnly</th><th class="chk">With readOnly = true</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--text)">Dirty Checking</strong></td><td>Hibernate snapshots every entity on load, compares field-by-field at flush time</td><td class="chk">✅ Disabled — no snapshots, no comparison. Huge CPU + memory saving.</td></tr>
+          <tr><td><strong style="color:var(--text)">Flush Mode</strong></td><td>AUTO — flushes before each query for consistency</td><td class="chk">✅ Set to NEVER — no automatic flush overhead.</td></tr>
+          <tr><td><strong style="color:var(--text)">JDBC Driver</strong></td><td>Assumes writes may occur</td><td class="chk">✅ Some drivers (MySQL Connector/J) auto-route to read replicas.</td></tr>
+          <tr><td><strong style="color:var(--text)">Database</strong></td><td>Full transaction overhead, undo log creation</td><td class="chk">✅ PostgreSQL, Oracle can skip undo log. Lower lock contention.</td></tr>
+        </tbody>
+      </table>
+      <div class="cb" style="margin-top:14px"><span class="clabel">Best Practice Service Pattern</span><pre><span class="ann">@Service</span>
+<span class="ann">@Transactional</span>(readOnly = <span class="kw">true</span>)   <span class="cm">// ← class default: optimised for reads</span>
+<span class="kw">public class</span> <span class="ty">ProductService</span> {
+
+    <span class="cm">// All reads inherit readOnly = true ✅</span>
+    <span class="kw">public</span> Page&lt;<span class="ty">Product</span>&gt; findAll(<span class="ty">Pageable</span> p) { <span class="kw">return</span> repo.findAll(p); }
+    <span class="kw">public</span> Optional&lt;<span class="ty">Product</span>&gt; findById(<span class="ty">Long</span> id) { <span class="kw">return</span> repo.findById(id); }
+
+    <span class="cm">// Writes override back to readOnly = false ✅</span>
+    <span class="ann">@Transactional</span>   <span class="cm">// overrides class-level annotation</span>
+    <span class="kw">public</span> <span class="ty">Product</span> save(<span class="ty">Product</span> p) { <span class="kw">return</span> repo.save(p); }
+
+    <span class="ann">@Transactional</span>
+    <span class="kw">public</span> <span class="ty">Product</span> update(<span class="ty">Long</span> id, <span class="ty">ProductDTO</span> dto) {
+        <span class="ty">Product</span> p = repo.findById(id).orElseThrow();
+        p.setName(dto.getName());   <span class="cm">// dirty checking auto-saves at commit</span>
+        <span class="kw">return</span> p;                   <span class="cm">// no explicit save() needed!</span>
+    }
+}</pre></div>
+    </div>
+  </div>
+
+</div><!-- /ch7 -->
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 8 — MEGA QUIZ
+     ════════════════════════════════════════════════════════ -->
+<div id="ch8" class="chapter">
+  <div class="card">
+    <div class="ctitle"><div class="pip"></div>Complete Quiz — All 9 Chapters, 28 Questions</div>
+    <div id="quizContainer"></div>
+    <div class="score-box" id="scoreBox">
+      <div class="sn" id="scoreNum"></div>
+      <p id="scoreMsg"></p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ─── CHAPTER + SUB-TAB NAVIGATION ──────────────────────────────────
+const subDefs = [
+  ['📜 History','🏗️ Architecture','⚖️ Differences'],
+  ['🏷️ Annotations','📄 Full Entity'],
+  ['🔗 Rel. Types','⚡ Fetch & Cascade','🔄 @JoinTable'],
+  ['📦 Repo Hierarchy','🛠️ CRUD Methods','🎯 Projections'],
+  ['🔍 Query Builder','📋 @Query'],
+  ['📄 Pagination','↕️ Sorting'],
+  ['⚙️ Spec Builder','📘 Implementation'],
+  ['@Transactional','🔀 Propagation','⚡ Read-Only'],
+  [],
+];
+
+function st(chIdx) {
+  document.querySelectorAll('.chapter').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.cnav').forEach(c=>c.classList.remove('on'));
+  document.getElementById('ch'+chIdx).classList.add('on');
+  document.querySelectorAll('.cnav')[chIdx].classList.add('on');
+  buildSubBar(chIdx);
+  if(subDefs[chIdx].length>0) showPanel(chIdx, 0);
+}
+
+function buildSubBar(chIdx) {
+  const bar = document.getElementById('subBar');
+  bar.innerHTML = '';
+  subDefs[chIdx].forEach((label, i) => {
+    const b = document.createElement('button');
+    b.className = 'stab' + (i===0?' on':'');
+    b.textContent = label;
+    b.onclick = () => { showPanel(chIdx, i); document.querySelectorAll('.stab').forEach(x=>x.classList.remove('on')); b.classList.add('on'); };
+    bar.appendChild(b);
+  });
+}
+
+function showPanel(chIdx, pIdx) {
+  const ch = document.getElementById('ch'+chIdx);
+  ch.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  const target = document.getElementById('ch'+chIdx+'p'+pIdx);
+  if(target) target.classList.add('on');
+}
+
+document.querySelectorAll('.cnav').forEach((btn, i) => {
+  btn.onclick = () => st(i);
+});
+buildSubBar(0);
+
+// ─── ANNOTATION CARDS ──────────────────────────────────────────────
+const anns = [
+  {name:'@Entity',color:'var(--c1)',short:'Marks class as a DB table',desc:'Every class to be persisted needs this. JPA manages @Entity classes — each instance = one row.',code:`@Entity\npublic class Product { ... }\n// → creates/uses table "product"`},
+  {name:'@Table',color:'var(--c1)',short:'Customise the table name/constraints',desc:'Optional. Controls table name, schema, and unique constraints across multiple columns.',code:`@Entity\n@Table(name="tbl_products",\n       schema="inventory")\npublic class Product { }`},
+  {name:'@Id',color:'var(--c5)',short:'Marks the primary key field',desc:'Required on every @Entity. Tells JPA which field is the unique identifier (primary key).',code:`@Id\nprivate Long id;`},
+  {name:'@GeneratedValue',color:'var(--c5)',short:'Auto-generate the primary key',desc:'IDENTITY = DB auto-increment. SEQUENCE = DB sequence. AUTO = JPA decides. TABLE = tracking table.',code:`@Id\n@GeneratedValue(strategy = GenerationType.IDENTITY)\nprivate Long id;`},
+  {name:'@Column',color:'var(--c3)',short:'Map field to a specific DB column',desc:'Controls column name, nullable, unique, length (VARCHAR), precision/scale (decimals), insertable, updatable.',code:`@Column(name="full_name",\n        nullable=false,\n        length=255,\n        unique=true)\nprivate String name;`},
+  {name:'@Transient',color:'var(--c3)',short:'Skip this field — not stored',desc:'JPA ignores @Transient fields completely. Useful for computed values or UI helpers.',code:`@Transient\nprivate String displayLabel;\n// computed from other fields, not saved`},
+  {name:'@Embeddable',color:'var(--c4)',short:'Reusable embedded object',desc:'Marks a class whose fields are embedded (inlined) into the parent entity table — no separate table.',code:`@Embeddable\npublic class Address {\n    private String street;\n    private String city;\n}`},
+  {name:'@Embedded',color:'var(--c4)',short:'Embed an @Embeddable class',desc:'Used in the parent entity. The embedded class columns are added directly to the parent table.',code:`@Entity public class Employee {\n    @Embedded\n    private Address address;\n    // adds street, city to employee table\n}`},
+  {name:'@Enumerated',color:'var(--c2)',short:'Store Java enums in DB',desc:'STRING = stores name ("ACTIVE") — always prefer this! ORDINAL = stores index (0,1,2) — fragile if you reorder.',code:`@Enumerated(EnumType.STRING) // "ACTIVE"\nprivate Status status;\n// ❌ AVOID EnumType.ORDINAL`},
+  {name:'@Lob',color:'var(--c2)',short:'Large Object — text or binary',desc:'Maps to CLOB (text) or BLOB (binary). Use for blog content, documents, images.',code:`@Lob\n@Column(columnDefinition="TEXT")\nprivate String blogContent;\n\n@Lob\nprivate byte[] profilePicture;`},
+  {name:'@CreatedDate',color:'var(--c3)',short:'Auto-set creation timestamp',desc:'Spring Data Auditing. Needs @EnableJpaAuditing and @EntityListeners(AuditingEntityListener.class).',code:`@CreatedDate\n@Column(updatable=false)\nprivate LocalDateTime createdAt;\n\n@LastModifiedDate\nprivate LocalDateTime updatedAt;`},
+  {name:'@AttributeOverride',color:'var(--c3)',short:'Rename embedded columns',desc:'When embedding the same @Embeddable twice (homeAddress, workAddress), rename columns to avoid conflicts.',code:`@Embedded\n@AttributeOverrides({\n  @AttributeOverride(name="city",\n    column=@Column(name="home_city"))\n})\nprivate Address homeAddress;`},
+];
+
+const ag = document.getElementById('annGrid');
+anns.forEach((a,i)=>{
+  const d=document.createElement('div');d.className='ex-card';
+  d.style.cssText=`--ac:${a.color}`;
+  d.innerHTML=`<h3 style="color:${a.color};font-family:var(--mono);font-size:.8rem">${a.name}</h3><p>${a.short}</p>
+    <div class="ex-detail">
+      <p style="margin-bottom:8px;font-size:.78rem;color:#94a3b8">${a.desc}</p>
+      <div style="background:#030712;border-radius:7px;padding:10px 12px;font-family:var(--mono);font-size:.72rem;line-height:1.75;border:1px solid var(--border);overflow-x:auto"><pre>${a.code}</pre></div>
+    </div>`;
+  d.onclick=()=>{const o=d.classList.contains('open');document.querySelectorAll('.ex-card').forEach(x=>x.classList.remove('open'));if(!o)d.classList.add('open')};
+  ag.appendChild(d);
+});
+
+// ─── RELATIONSHIP CARDS ──────────────────────────────────────────────
+const rels=[
+  {sym:'1️⃣↔1️⃣',name:'@OneToOne',color:'var(--c1)',bc:'rgba(34,211,238,.25)',bg:'rgba(34,211,238,.04)',
+    short:'One record maps to exactly one other',
+    detail:'Example: User ↔ UserProfile. FK lives on the "weaker" entity.',
+    code:`@OneToOne(cascade=CascadeType.ALL)\n@JoinColumn(name="profile_id")\nprivate UserProfile profile;\n\n// inverse side:\n@OneToOne(mappedBy="profile")\nprivate User user;`},
+  {sym:'1️⃣↔🔢',name:'@OneToMany',color:'var(--c3)',bc:'rgba(74,222,128,.25)',bg:'rgba(74,222,128,.04)',
+    short:'One parent, many children',
+    detail:'Example: Author has many Books. FK (author_id) lives in the Books table.',
+    code:`@OneToMany(mappedBy="author",\n           cascade=CascadeType.ALL)\nprivate List<Book> books;\n\n// child:\n@ManyToOne\n@JoinColumn(name="author_id")\nprivate Author author;`},
+  {sym:'🔢↔1️⃣',name:'@ManyToOne',color:'var(--c4)',bc:'rgba(251,146,60,.25)',bg:'rgba(251,146,60,.04)',
+    short:'Many children, one parent',
+    detail:'The side that holds the @JoinColumn owns the FK. @ManyToOne = owning side.',
+    code:`@ManyToOne(fetch=FetchType.LAZY)\n@JoinColumn(name="author_id")\nprivate Author author;\n// This table has author_id FK column`},
+  {sym:'🔢↔🔢',name:'@ManyToMany',color:'var(--c2)',bc:'rgba(129,140,248,.25)',bg:'rgba(129,140,248,.04)',
+    short:'Many records relate to many others',
+    detail:'Needs a pivot/join table. Use @JoinTable to control it. One side owns the table.',
+    code:`@ManyToMany\n@JoinTable(name="student_course",\n  joinColumns=@JoinColumn(name="student_id"),\n  inverseJoinColumns=@JoinColumn(name="course_id"))\nprivate Set<Course> courses;`},
+];
+const rg=document.getElementById('relGrid');
+rels.forEach(r=>{
+  const d=document.createElement('div');d.className='rel-card';
+  d.style.cssText=`border-color:${r.bc};background:${r.bg}`;
+  d.innerHTML=`<div class="rsym">${r.sym}</div><h3 style="color:${r.color}">${r.name}</h3><p class="rshort">${r.short}</p>
+    <div class="rdetail">${r.detail}<div style="background:var(--code);border-radius:7px;padding:10px 12px;margin-top:8px;font-family:var(--mono);font-size:.72rem;line-height:1.75;border:1px solid var(--border);overflow-x:auto"><pre>${r.code}</pre></div></div>`;
+  d.onclick=()=>{const o=d.classList.contains('open');document.querySelectorAll('.rel-card').forEach(x=>x.classList.remove('open'));if(!o)d.classList.add('open')};
+  rg.appendChild(d);
+});
+
+// ─── REPO STACK ──────────────────────────────────────────────────────
+const repos=[
+  {name:'Repository<T,ID>',color:'var(--muted2)',tag:'Marker',methods:'// No methods — just a marker interface\n// Tells Spring "this is a repository"'},
+  {name:'CrudRepository<T,ID>',color:'var(--c3)',tag:'Basic CRUD',methods:'save(S)             → INSERT or UPDATE\nfindById(ID)         → SELECT WHERE id=?\nfindAll()            → SELECT *\nexistsById(ID)       → SELECT COUNT(*)>0\ncount()              → SELECT COUNT(*)\ndeleteById(ID)       → DELETE WHERE id=?\ndelete(T)            → DELETE by entity\ndeleteAll()          → DELETE all'},
+  {name:'PagingAndSortingRepository<T,ID>',color:'var(--c4)',tag:'+ Paging',methods:'// Everything from CrudRepository, plus:\nfindAll(Pageable)    → LIMIT/OFFSET pagination\nfindAll(Sort)        → ORDER BY sorting'},
+  {name:'JpaRepository<T,ID>',color:'var(--c1)',tag:'⭐ Use This',methods:'// Everything above, plus JPA-specific:\nsaveAll(Iterable)         → batch INSERT/UPDATE\nsaveAndFlush(S)           → save + immediate flush\ndeleteAllInBatch()        → single DELETE statement\ngetReferenceById(ID)      → lazy proxy, no SELECT until accessed\nflush()                   → sync persistence context to DB\nfindAll(Example<S>)       → Query By Example (QBE)'},
+];
+const rsDiv=document.getElementById('repoStack');
+repos.forEach((r,i)=>{
+  if(i>0){const sep=document.createElement('div');sep.className='repo-connector';sep.textContent='▼ extends';rsDiv.appendChild(sep)}
+  const d=document.createElement('div');d.className='repo-item';
+  d.innerHTML=`<h3><span style="color:${r.color}">${r.name}</span><span class="pill ${i===3?'p1':'p4'}" style="margin-left:auto">${r.tag}</span></h3><p style="font-size:.72rem">Click to see methods</p><div class="methods"><pre>${r.methods}</pre></div>`;
+  d.onclick=()=>{const o=d.classList.contains('open');document.querySelectorAll('.repo-item').forEach(x=>x.classList.remove('open'));if(!o)d.classList.add('open')};
+  rsDiv.appendChild(d);
+});
+
+// ─── PROJECTIONS ──────────────────────────────────────────────────────
+function showProj(btn, id) {
+  document.querySelectorAll('.ppanel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  btn.classList.add('on');
+}
+
+// ─── QUERY BUILDER ────────────────────────────────────────────────────
+const qbState={subject:'find',cond:'ByName',mod:''};
+const subjects=[{label:'find',sql:'SELECT'},{label:'count',sql:'SELECT COUNT(*)'},{label:'exists',sql:'SELECT EXISTS'},{label:'delete',sql:'DELETE'}];
+const conds=[{label:'ByName',where:'WHERE name = ?'},{label:'ByNameAndAge',where:'WHERE name = ? AND age = ?'},{label:'ByNameContaining',where:"WHERE name LIKE '%?%'"},{label:'ByAgeGreaterThan',where:'WHERE age > ?'},{label:'ByAgeBetween',where:'WHERE age BETWEEN ? AND ?'},{label:'ByEmailIsNull',where:'WHERE email IS NULL'},{label:'ByActiveTrue',where:'WHERE active = true'},{label:'ByStatusIn',where:'WHERE status IN (?)'}];
+const mods=[{label:'(none)',sql:''},{label:'OrderByNameAsc',sql:'ORDER BY name ASC'},{label:'OrderByAgeDesc',sql:'ORDER BY age DESC'},{label:'IgnoreCase',sql:'(case-insensitive)'}];
+function buildQBGroup(arr, id, stateKey) {
+  const c=document.getElementById(id);
+  arr.forEach(item=>{
+    const b=document.createElement('button');b.className='qb-btn'+(qbState[stateKey]===item.label?' on':'');
+    b.textContent=item.label;
+    b.onclick=()=>{qbState[stateKey]=item.label;document.querySelectorAll(`#${id} .qb-btn`).forEach(x=>x.classList.remove('on'));b.classList.add('on');updateQB()};
+    c.appendChild(b);
+  });
+}
+buildQBGroup(subjects,'qbSubject','subject');
+buildQBGroup(conds,'qbCond','cond');
+buildQBGroup(mods,'qbMod','mod');
+function updateQB(){
+  const s=subjects.find(x=>x.label===qbState.subject)||subjects[0];
+  const c=conds.find(x=>x.label===qbState.cond)||conds[0];
+  const m=mods.find(x=>x.label===qbState.mod)||mods[0];
+  const method=qbState.subject+'...'+qbState.cond+(m.sql&&m.label!=='(none)'?m.label.replace('OrderBy','OrderBy'):'');
+  const ret=s.label==='count'?'long':s.label==='exists'?'boolean':'List<Entity>';
+  document.getElementById('qbResult').innerHTML=
+    `<span style="color:var(--muted2);font-size:.7rem">Method: </span><span style="color:var(--c1)">${method}</span>\n<span style="color:var(--muted2);font-size:.7rem">Returns: </span><span style="color:var(--c3)">${ret}</span>\n\n<span style="color:var(--muted2);font-size:.7rem">→ SQL: </span><span style="color:var(--c4)">${s.sql} * FROM entity ${c.where}${m.sql?' '+m.sql:''};</span>`;
+}
+updateQB();
+
+// ─── PAGINATION SIMULATOR ────────────────────────────────────────────
+const users=[
+  {id:1,name:'Alice Chen',age:28,dept:'Engineering'},{id:2,name:'Bob Martin',age:35,dept:'Sales'},
+  {id:3,name:'Carol White',age:24,dept:'Design'},{id:4,name:'David Kim',age:42,dept:'Engineering'},
+  {id:5,name:'Eva Rodriguez',age:31,dept:'HR'},{id:6,name:'Frank Liu',age:27,dept:'Engineering'},
+  {id:7,name:'Grace Park',age:38,dept:'Sales'},{id:8,name:'Henry Brown',age:45,dept:'Management'},
+  {id:9,name:'Iris Tanaka',age:29,dept:'Design'},{id:10,name:'Jake Wilson',age:33,dept:'Engineering'},
+  {id:11,name:'Kara Lee',age:26,dept:'Marketing'},{id:12,name:'Leo Patel',age:39,dept:'Sales'},
+  {id:13,name:'Maya Singh',age:22,dept:'Design'},{id:14,name:'Noah Davis',age:36,dept:'Engineering'},
+  {id:15,name:'Olivia Scott',age:30,dept:'HR'},
+];
+let curPage=0;
+function sortedUsers(){
+  const s=document.getElementById('psort').value;
+  return[...users].sort((a,b)=>s==='name'?a.name.localeCompare(b.name):s==='age'?a.age-b.age:s==='age-desc'?b.age-a.age:a.id-b.id);
+}
+function updateSim(){
+  const size=+document.getElementById('psize').value;
+  document.getElementById('psizeVal').textContent=size;
+  const sorted=sortedUsers();const total=sorted.length;const totalPgs=Math.ceil(total/size);
+  if(curPage>=totalPgs)curPage=totalPgs-1;
+  const start=curPage*size,end=Math.min(start+size,total);
+  const grid=document.getElementById('pageGrid');grid.innerHTML='';
+  sorted.slice(start,end).forEach(u=>{
+    const r=document.createElement('div');r.className='page-row';
+    r.innerHTML=`<span class="rid">#${u.id}</span><span class="rname">${u.name}</span><span class="rmeta">age ${u.age} · ${u.dept}</span>`;
+    grid.appendChild(r);
+  });
+  const nav=document.getElementById('pageNav');nav.innerHTML='';
+  const prev=document.createElement('button');prev.className='pnbtn';prev.textContent='← Prev';prev.disabled=curPage===0;prev.onclick=()=>{if(curPage>0){curPage--;updateSim();}};nav.appendChild(prev);
+  for(let i=0;i<totalPgs;i++){const b=document.createElement('button');b.className='pnbtn'+(i===curPage?' cur':'');b.textContent=i+1;b.onclick=(p=>()=>{curPage=p;updateSim();})(i);nav.appendChild(b);}
+  const next=document.createElement('button');next.className='pnbtn';next.textContent='Next →';next.disabled=curPage>=totalPgs-1;next.onclick=()=>{if(curPage<totalPgs-1){curPage++;updateSim();}};nav.appendChild(next);
+  const info=document.createElement('span');info.className='page-meta';info.textContent=`Showing ${start+1}–${end} of ${total}`;nav.appendChild(info);
+  const sv=document.getElementById('psort').value;
+  const ob=sv==='id'?'id ASC':sv==='name'?'name ASC':sv==='age'?'age ASC':'age DESC';
+  document.getElementById('sqlPrev').textContent=`SELECT * FROM users ORDER BY ${ob} LIMIT ${size} OFFSET ${start};  -- + SELECT COUNT(*) FROM users;`;
+}
+updateSim();
+
+// ─── SORT BUILDER ─────────────────────────────────────────────────────
+const sortState=[];
+function addSort(){
+  const f=document.getElementById('sf').value,d=document.getElementById('sd').value;
+  sortState.push({f,d});renderSort();
+}
+function clearSort(){sortState.length=0;renderSort();}
+function renderSort(){
+  const chain=document.getElementById('sortChain');chain.innerHTML='';
+  if(!sortState.length){chain.innerHTML='<span style="color:var(--muted);font-size:.75rem">No sort fields yet</span>';}
+  else sortState.forEach((s,i)=>{
+    const c=document.createElement('div');c.className='sort-chip '+(s.d==='asc'?'asc':'desc');
+    c.innerHTML=`${s.f} ${s.d==='asc'?'↑':'↓'} <span style="opacity:.5">✕</span>`;
+    c.onclick=()=>{sortState.splice(i,1);renderSort();};chain.appendChild(c);
+  });
+  const jDiv=document.getElementById('sortJava'),sDiv=document.getElementById('sortSql');
+  if(!sortState.length){jDiv.innerHTML='<span style="color:var(--muted)">Add sort fields above…</span>';sDiv.textContent='Add sort fields above…';return;}
+  let java=sortState.length===1
+    ?`Sort sort = Sort.by("${sortState[0].f}").${sortState[0].d==='asc'?'ascending()':'descending()'};`
+    :`Sort sort = Sort.by("${sortState[0].f}").${sortState[0].d==='asc'?'ascending()':'descending()'}`
+      +sortState.slice(1).map(s=>`\n     .and(Sort.by("${s.f}").${s.d==='asc'?'ascending()':'descending()'})`).join('')+';';
+  jDiv.textContent=java;
+  sDiv.textContent='ORDER BY '+sortState.map(s=>`${s.f} ${s.d.toUpperCase()}`).join(', ');
+}
+
+// ─── SPEC BUILDER ─────────────────────────────────────────────────────
+const specDefs=[
+  {id:'name',label:'nameContains("Alice")',sql:"name LIKE '%alice%'",code:'UserSpecs.nameContains("Alice")'},
+  {id:'age',label:'olderThan(25)',sql:'age > 25',code:'UserSpecs.olderThan(25)'},
+  {id:'dept',label:'inDept("Engineering")',sql:"department = 'Engineering'",code:'UserSpecs.inDept("Engineering")'},
+  {id:'active',label:'isActive()',sql:'active = true',code:'UserSpecs.isActive()'},
+  {id:'proj',label:'hasProject("Apollo")',sql:"projects.name = 'Apollo'",code:'UserSpecs.hasProject("Apollo")'},
+];
+const specState=new Set();
+const sff=document.getElementById('specFilters');
+specDefs.forEach(d=>{
+  const b=document.createElement('button');b.className='sf-btn';b.textContent=d.label;
+  b.onclick=()=>{
+    specState.has(d.id)?specState.delete(d.id):specState.add(d.id);
+    b.classList.toggle('on');renderSpec();
+  };sff.appendChild(b);
+});
+function renderSpec(){
+  const active=specDefs.filter(d=>specState.has(d.id));
+  const cDiv=document.getElementById('specCode'),sDiv=document.getElementById('specSql');
+  if(!active.length){cDiv.innerHTML='<span style="color:var(--muted)">Toggle filters above…</span>';sDiv.textContent='Toggle filters above…';return;}
+  cDiv.textContent='Specification<User> spec = Specification\n'
+    +active.map((d,i)=>`    .${i===0?'where':'and'}(${d.code})`).join('\n')+';';
+  sDiv.textContent='WHERE '+active.map(d=>d.sql).join(' AND ');
+}
+
+// ─── PROPAGATION ITEMS ────────────────────────────────────────────────
+const props=[
+  {badge:'REQUIRED',pill:'p1',title:'REQUIRED — Join or Create (Default)',desc:'If a TX exists → join it. If none → create one. The default for all @Transactional methods.',
+    code:`@Transactional(propagation = Propagation.REQUIRED) // default\npublic void serviceB() {\n    // Called from serviceA() → uses same TX\n    // Called standalone → creates own TX\n}`},
+  {badge:'REQUIRES_NEW',pill:'p4',title:'REQUIRES_NEW — Always Fresh Transaction',desc:'Always creates a new TX, suspending any existing one. Commits independently. Critical for audit logging that must persist even if outer TX rolls back.',
+    code:`@Transactional(propagation = Propagation.REQUIRES_NEW)\npublic void logAudit(String action) {\n    auditRepo.save(new AuditLog(action));\n    // ALWAYS commits — even if outer TX rolls back later!\n}`},
+  {badge:'MANDATORY',pill:'p5',title:'MANDATORY — Must Have Existing TX',desc:'Throws IllegalTransactionStateException if called without an active transaction. Enforces that callers manage transactions.',
+    code:`@Transactional(propagation = Propagation.MANDATORY)\npublic void criticalOp() {\n    // Calling without an active TX → throws exception\n}`},
+  {badge:'NEVER',pill:'p5',title:'NEVER — Must NOT Have TX',desc:'Throws exception if called within an existing transaction. Rare — for methods that explicitly must not run transactionally.',
+    code:`@Transactional(propagation = Propagation.NEVER)\npublic void nonTxReport() {\n    // Called inside a @Transactional → throws!\n}`},
+  {badge:'SUPPORTS',pill:'p2',title:'SUPPORTS — Optional TX',desc:'Uses existing TX if present; runs without one if not. Good for read methods that work in both contexts.',
+    code:`@Transactional(propagation = Propagation.SUPPORTS)\npublic List<User> list() {\n    // TX? Uses it. No TX? Works fine without one.\n}`},
+  {badge:'NOT_SUPPORTED',pill:'p2',title:'NOT_SUPPORTED — Suspend Existing TX',desc:'Suspends any active TX and runs without one. Used for heavy read-only operations that should not hold DB locks.',
+    code:`@Transactional(propagation = Propagation.NOT_SUPPORTED)\npublic void bulkExport() {\n    // Suspends outer TX → runs without TX → outer TX resumes after\n    // Avoids holding locks during slow export\n}`},
+];
+const pc=document.getElementById('propScenarios');
+props.forEach(p=>{
+  const d=document.createElement('div');d.className='prop-item';
+  d.innerHTML=`<h3><span class="pill ${p.pill}">${p.badge}</span>${p.title}</h3><p>${p.desc}</p>
+    <div class="prop-detail"><div class="cb" style="margin-bottom:0"><pre style="color:#94a3b8">${p.code}</pre></div></div>`;
+  d.onclick=()=>{const o=d.classList.contains('open');document.querySelectorAll('.prop-item').forEach(x=>x.classList.remove('open'));if(!o)d.classList.add('open')};
+  pc.appendChild(d);
+});
+
+// ─── MEGA QUIZ ────────────────────────────────────────────────────────
+const allQ=[
+  // Chapter 0 — History & Architecture
+  {ch:'History & Architecture',q:'What is the main difference between JPA and Hibernate?',opts:['They are the same','JPA is a specification (contract); Hibernate is an implementation that follows the spec','Hibernate is a database; JPA is a query language','JPA is faster than Hibernate'],correct:1,fb:'JPA defines the rules (annotations, interfaces). Hibernate does the actual work — generates SQL, manages sessions. Spring Data JPA sits on top of both.'},
+  {ch:'History & Architecture',q:'What was the main problem with raw JDBC?',opts:['It was too fast','It only worked with MySQL','Massive boilerplate: manual SQL, manual mapping, manual connection management for every operation','It had no transaction support'],correct:2,fb:'JDBC required 10+ lines per operation, manual field mapping, and careful connection lifecycle management. Forgetting to close connections caused memory leaks.'},
+  // Chapter 1 — Annotations
+  {ch:'Annotations',q:'Why should you always prefer @Enumerated(EnumType.STRING) over ORDINAL?',opts:['STRING is faster','STRING is the default','ORDINAL stores 0,1,2… — inserting a new enum value in the middle breaks all existing data. STRING stores the name, which is stable.','ORDINAL wastes storage'],correct:2,fb:'If you use ORDINAL and later add a value between existing ones, all stored integers become wrong. STRING stores "ACTIVE", "INACTIVE" etc. — reordering is safe.'},
+  {ch:'Annotations',q:'What does @Embedded do?',opts:['Creates a new table','Marks a field whose class columns are inlined into the parent entity table — no separate table','Creates a foreign key','Stores binary data'],correct:1,fb:'@Embeddable + @Embedded means the embedded class has no own table — its columns are added directly to the parent entity\'s table. Great for Address, Money, etc.'},
+  {ch:'Annotations',q:'What does @Transient do?',opts:['Makes a transaction','Skips this field — JPA does not persist or load it','Makes the field read-only','Auto-generates the value'],correct:1,fb:'@Transient tells JPA to completely ignore that field. It is never stored in or loaded from the database.'},
+  // Chapter 2 — Relationships
+  {ch:'Relationships',q:'In @OneToMany(mappedBy="post"), what does mappedBy mean?',opts:['The table is named post','The field named "post" in the child entity owns the foreign key column','Creates a new column named post','The parent owns the join'],correct:1,fb:'mappedBy tells JPA which field in the other entity holds the actual FK column. That side is the "owning" side. The mappedBy side is the "inverse" side.'},
+  {ch:'Relationships',q:'What is the N+1 query problem?',opts:['Having N+1 database connections','Loading a list (1 query) then accessing a lazy collection per item in a loop = N extra queries','Having more than 1 index','A Hibernate version bug'],correct:1,fb:'N+1: 1 query to get all authors, then 1 query per author to get their books = N+1 total. Fix with JOIN FETCH in JPQL or @EntityGraph.'},
+  {ch:'Relationships',q:'What does orphanRemoval = true do?',opts:['Removes null columns','Auto-deletes a child entity from the DB when it is removed from the parent\'s collection','Removes duplicate rows','Cleans migration files'],correct:1,fb:'When you call order.getItems().remove(item), Hibernate automatically issues DELETE for that item at transaction commit — no manual repo.delete() needed.'},
+  // Chapter 3 — Repositories
+  {ch:'Repositories',q:'How does save() decide whether to INSERT or UPDATE?',opts:['It always INSERTs','It always UPDATEs','Calls persist() if ID is null/zero (new), merge() if ID already set','It checks the database first'],correct:2,fb:'Spring Data inspects the ID field. Null/zero = new entity → persist (INSERT). ID already set → merge (UPDATE or SELECT then UPDATE).'},
+  {ch:'Repositories',q:'What is the difference between an Interface Projection and a DTO Projection?',opts:['No difference','Interface projections use getter-name matching — Spring auto-generates implementation. DTO projections use a JPQL constructor expression: new DTO(field1, field2)','DTOs are only for native queries','Interface projections need @Query'],correct:1,fb:'Interface: define getters, Spring generates implementation, matches by field name. DTO: write the class/record yourself, use "new com.example.DTO(u.name)" in JPQL.'},
+  // Chapter 4 — Queries
+  {ch:'Queries',q:'When should you use @Modifying on a @Query?',opts:['Always','Only for SELECT queries','For UPDATE and DELETE JPQL queries that modify data — also requires @Transactional','For native queries only'],correct:2,fb:'@Modifying tells Spring Data the query modifies data (not just reads). Without it, Spring will throw an exception. You also need @Transactional for write operations.'},
+  {ch:'Queries',q:'What is the advantage of JPQL over native SQL in @Query?',opts:['JPQL is faster','JPQL is database-agnostic — uses entity class/field names. Works on any DB Hibernate supports. Native SQL ties you to a specific DB.','JPQL supports more features','JPQL does not need @Param'],correct:1,fb:'JPQL references entity classes and fields, not table/column names. If you switch from MySQL to PostgreSQL, your JPQL queries still work. Native SQL may need adjustments.'},
+  // Chapter 5 — Pagination & Sort
+  {ch:'Pagination & Sorting',q:'In PageRequest.of(2, 10), what rows are fetched?',opts:['Rows 1–10','Rows 11–20','Rows 21–30','Rows 2–10'],correct:2,fb:'Page numbers are 0-based. Page 2, size 10 → OFFSET 20 → fetches rows 21–30. Page 0 = rows 1–10, Page 1 = rows 11–20.'},
+  {ch:'Pagination & Sorting',q:'What is the key difference between Page<T> and Slice<T>?',opts:['No difference','Page runs 2 queries (data + COUNT for total pages). Slice runs 1 query and only tells you if there is a next page.','Slice returns more data','Page is only for JPA'],correct:1,fb:'Page fires an extra COUNT(*) to compute total pages/elements. Slice skips that — it\'s faster and ideal for infinite scroll where you only need "is there more?".'},
+  {ch:'Pagination & Sorting',q:'Why must you whitelist sort fields from HTTP requests?',opts:['Performance','Spring requires it','To prevent SQL injection — a malicious user could pass "password" to expose sensitive data or craft an injection','JPA restriction'],correct:2,fb:'Passing user input directly to Sort.by() could expose column names (like "password") or enable SQL injection. Always validate against a Set of allowed field names.'},
+  // Chapter 6 — Specifications
+  {ch:'Specifications',q:'When should you use Specifications over @Query?',opts:['Always — Specifications are better','When filters are optional and dynamic (e.g. a search form where any combination of 10 filters may be active)','When the query has fixed parameters','When using native SQL'],correct:1,fb:'Specifications shine for dynamic optional filtering. The null = ignore pattern elegantly handles forms where users may or may not fill in each filter. Fixed queries: use @Query.'},
+  {ch:'Specifications',q:'What must your repository extend to use Specifications?',opts:['CrudRepository','JpaRepository only','Both JpaRepository<T,ID> AND JpaSpecificationExecutor<T>','SpecificationRepository'],correct:2,fb:'JpaSpecificationExecutor adds findAll(Spec), findOne(Spec), count(Spec), exists(Spec). You need both JpaRepository (for CRUD) and JpaSpecificationExecutor (for spec queries).'},
+  {ch:'Specifications',q:'In a Specification lambda (root, query, cb), what does cb stand for?',opts:['ClassBinder','CriteriaBuilder — the object used to create predicates like cb.equal(), cb.like(), cb.greaterThan()','ColumnBuilder','CacheBuilder'],correct:1,fb:'CriteriaBuilder is the factory for creating predicates (conditions). root refers to the queried entity. query is the Criteria query object for ordering/grouping.'},
+  // Chapter 7 — Transactions
+  {ch:'Transactions',q:'What is the self-invocation problem with @Transactional?',opts:['Calling a method twice causes deadlock','Calling a @Transactional method from within the same class bypasses the Spring AOP proxy — the annotation is silently ignored','@Transactional only works on public methods','readOnly prevents self-invocation'],correct:1,fb:'Spring wraps your bean in a proxy. Calling this.methodB() skips the proxy entirely. Solution: inject the service bean into itself, or split into two separate Spring beans.'},
+  {ch:'Transactions',q:'What optimizations does @Transactional(readOnly=true) enable?',opts:['Caching only','Skips dirty checking + snapshot creation, sets flush mode to NEVER, may route to read replicas, DB can skip undo log','Parallel execution','Disables the persistence context'],correct:1,fb:'readOnly=true: Hibernate skips dirty checking (huge CPU win), flush mode = NEVER (no writes), some JDBC drivers route to read replicas, DB engines can optimize internally.'},
+  {ch:'Transactions',q:'Which propagation type should you use for an audit log that must commit even if the calling transaction rolls back?',opts:['REQUIRED','SUPPORTS','REQUIRES_NEW','MANDATORY'],correct:2,fb:'REQUIRES_NEW suspends the caller\'s TX and runs in a new independent TX. The audit log commits on its own, even if the outer TX rolls back later.'},
+  {ch:'Transactions',q:'Checked exceptions do not trigger rollback by default. How do you include them?',opts:['They always trigger rollback','Add noRollbackFor=Exception.class','Add rollbackFor=Exception.class to @Transactional','Use @Modifying'],correct:2,fb:'By default only RuntimeException and Error trigger rollback. To include checked exceptions: @Transactional(rollbackFor = Exception.class) or specify the exact exception class.'},
+];
+
+let score=0,answered=0;
+const qc=document.getElementById('quizContainer');
+let lastCh='';
+allQ.forEach((q,qi)=>{
+  if(q.ch!==lastCh){
+    const ct=document.createElement('div');ct.className='quiz-chapter-title';ct.textContent='📚 '+q.ch;qc.appendChild(ct);lastCh=q.ch;
+  }
+  const d=document.createElement('div');d.className='quiz-q';
+  d.innerHTML=`<p class="qt">Q${qi+1}: ${q.q}</p><div class="qopts">${q.opts.map((o,oi)=>`<button class="qopt" data-qi="${qi}" data-oi="${oi}">${o}</button>`).join('')}</div><div class="qfb" id="qf${qi}"></div>`;
+  qc.appendChild(d);
+});
+document.querySelectorAll('.qopt').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    const qi=+this.dataset.qi,oi=+this.dataset.oi,q=allQ[qi];
+    document.querySelectorAll(`.qopt[data-qi="${qi}"]`).forEach(b=>b.disabled=true);
+    const fb=document.getElementById('qf'+qi);
+    if(oi===q.correct){this.classList.add('ok');score++;fb.className='qfb ok';fb.textContent='✅ '+q.fb;}
+    else{this.classList.add('bad');document.querySelector(`.qopt[data-qi="${qi}"][data-oi="${q.correct}"]`).classList.add('ok');fb.className='qfb bad';fb.textContent='❌ '+q.fb;}
+    fb.style.display='block';
+    if(++answered===allQ.length){
+      const sb=document.getElementById('scoreBox');sb.style.display='block';
+      document.getElementById('scoreNum').textContent=`${score}/${allQ.length}`;
+      const pct=score/allQ.length;
+      document.getElementById('scoreMsg').textContent=
+        pct>=.9?'🏆 Outstanding — you have mastered Spring Data JPA!':
+        pct>=.75?'🎉 Excellent work — very solid understanding!':
+        pct>=.55?'👍 Good progress — review a few chapters to sharpen up.':
+        '📚 Keep studying — revisit the chapters above and try again!';
+    }
+  });
+});
+</script>
+</body>
+</html>

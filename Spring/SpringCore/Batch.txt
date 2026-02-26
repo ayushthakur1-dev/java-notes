@@ -1,0 +1,18 @@
+while processing a high volume of data, we process it in batch instead of processing everything at once
+
+everything revolves around a few building blocks
+
+Job -> a container for the entire batch process
+
+Step -> a phase of jab (eg. read->process->write)
+
+Chunk processing: handle items in small group instead of one giant transaction 
+eg. read100->process->write->commit->next100
+
+ItemReader/ ItemProcess/ ItemWriter
+
+Job Repository: 
+- what ran
+- when
+- success/failures
+- restart position

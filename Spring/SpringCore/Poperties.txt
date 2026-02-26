@@ -1,0 +1,28 @@
+In spring framework, properties are simply external configuration values that your application reads at runtime
+they allow you to change behaviour without changing code
+
+eg: database url, username/password, API keys, feature flags, timeout values
+
+Why Properties exist: 
+Imagine hardcoding this: String url = "jdbc:mysql"//localhost::3306/devdb";
+now you deploy to staging or prod, you must recompile -> bad idea
+so instead, you move it to a property file
+
+eg: db.url=jdbc:mysql"//localhost::3306/devdb
+
+in order to load these properties from a file, so they can be used in the application, @PropertySource annotation is used
+
+eg usage: 
+@Configuration
+@PropertySource("classpath:database.properties")
+class AppConfig {}
+
+now spring knows it should read database.properties 
+after loading values become available 
+
+@Value("${db.url}")
+private String url
+
+But in spring boot, @PropertySource is usually not needed
+because Boot automatically loads application.properties so we can directly use @Value annotation 
+so in Boot @PropertySource is mostly used for: extra files, custom locations, or special configuration cases

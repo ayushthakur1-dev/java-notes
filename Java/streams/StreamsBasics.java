@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class StreamsBasics {
+    // https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html
     // JAVA8 main features:
     // introduced streams for minimal code
 

@@ -1,0 +1,77 @@
+***@DependsOn
+we can use this annotation to make Spring initialize other beans before the annotated one
+usually this behaviour is automatic, based on the explicit dependencies between beans
+we only need this when the dependencies are implicit, eg. JDBC driver loading or static variable initialization 
+
+eg.
+@DependsOn("engine")
+class Car implements Vehicle { }
+
+@Bean
+@DependsOn("fuel")
+Engine engine() {
+	return new Engine();
+}
+
+
+***@Lazy
+we use lazy when we want to initialize out bean lazily. By default, Spring creates all singleton beans eagerly at the startup/ bootstrapping of the application context
+
+the annotation behaves differently depending on where we exactly place it. We can put it on: 
+- @Bean annotated factory method, to delay the method call(hence the bean creation)
+- @Configuration class and all contained @Bean methods will be affected
+- @Component class which is not a @Configuration class, this bean will be initialized lazily
+- @Autowired constructor, setter, or field, to load the dependency itself lazily
+
+this annotation has an argument named value with the default value of true, it is useful to override the default behaviour 
+eg. marking beans to be eagerly loaded when the global setting is lazy, or configure specific @Bean method to eager loading in @Configuration class marked with @Lazy
+
+eg. 
+@Configuration
+@Lazy
+class VechileFactoryConfig {
+	@Bean
+	@Lazy(false)
+	Engine engine() { }
+}
+
+
+***@Lookup
+tells spring to return an instance of the methods return type when we invoke it
+
+
+@Primary
+sometimes we need to define multiple beans of same type, in these cases, the injection will be unsuccessful because spring has no clue which bean we need
+we can mark all write point with @Qualifier and specify the name of the required bean
+however, most of the time we need a specific bean and rarely the others. We can use @Primary to simplify this case as that bean will be chosen on unqualified injection points
+
+eg. 
+
+@Component
+@Primary
+class Car implements Vehicle {}
+
+@Component 
+class Bike implements Vehicle {}
+
+@Componenet 
+class Driver {
+	@Autowired
+	Vehicle vehicle;
+}
+
+@Componenet 
+class Biker {
+	@Autowired
+	@Qualifier("bike")
+	Vehicle vehicle;
+}
+
+
+***@Import
+we can use specific @Configuration class without component scanning with this annotation. we can provide those classes with @Import's value argument
+eg. 
+
+@Configuration 
+@Import(VehiclePartSupplier.class)
+class VehicleFactoryConfig {}

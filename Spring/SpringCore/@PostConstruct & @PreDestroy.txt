@@ -1,0 +1,50 @@
+spring manages bean lifecycle
+that means it can notify you: 
+- when a bean is fully created and dependencies are injected
+- when a bean is about the be removed / application shutting down
+
+@PostConstruct -> run after creation
+spring calls this method:
+- after object is created
+- after dependencies are injected
+- before the bean is used
+
+eg. 
+@Service
+class PaymentService {
+	
+	@PostConstruct
+	public void init() {
+		System.out.prtinln("Bean is ready");
+	}
+}
+
+runs automatically at startup
+Uses: 
+- open connections
+- warm caches 
+- validate configuration
+- pre laod data
+- initialize expensice resouces 
+
+@PreDestroy -> run before removal
+Spring calls this when: 
+- context is shutting down
+- bean is about to be destroyed
+
+eg. 
+@PreDestroy
+public void cleanup() {
+	System.out.println("Releasing Resources");
+}
+
+Uses: 
+- close db connections
+- stop threads
+- flush buffers 
+- release files
+
+Important rules: 
+methods should be void, no arguments and can be any visibility (public/ private)
+
+Under the hood spring uses bean post-processors to detect these annotations and call them at the right time

@@ -1,0 +1,32 @@
+Virtual Threads are one of the biggest changes in modern java
+They arrived with Project Loom and become stable in Java21
+
+
+Platform Thread:
+Traditionally each request in a web server is handled by one thread
+they map 1:1 to OS threads
+managed by OS
+problem is:
+if your app waits on database, http calls, file I/O the thread is blocked doing nothing but still occupies resources
+
+Usage:
+ExecutorService pool = Executors.newFixedThreadPool(200);
+one request = one platform thread
+so concurrency = pool size
+
+
+Virtual Threads (Loom):
+they are managed by JVM not the OS, 
+they are extremely lightweight 
+many virtual threads -> few OS threads underneath
+when one blocks, JVM parks it and runs another
+
+Usage:
+ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+every task -> new virtual thread but cheap
+you can serve many more simultaneous requests without reactive complexity
+
+To use virtual threads you have to enable them with a property 
+spring.threads.virtual.enabled=true
+
+then only your web server (eg. Tomcat) starts using virtual threads

@@ -1,0 +1,39 @@
+Actuator brings production-ready features to our application. 
+They mainly exposes operational information about the running application 
+
+hence by using this library we can get production grade tools without actually having to implement these features ourselves.
+
+predefined endpoints:
+/auditevents: lists security audit-related events such as user login/logout. Also we can filter by principal or type among other fields 
+
+/beans: returns all available beans in our BeanFactory, it does not support filtering
+
+/conditions: formerly known as /autoconfig, builds a report or conditions around autoconfiguration
+
+/configprops: allows us to fetch @ConfigurationProperties beans
+
+/env: returns the current env properties
+
+/flyway: provides details about our Flyway database
+
+/health: summarizes the health status of our application
+
+/heapdump: builds and returns a heap dump from the JVM used by our application
+
+/info: returns general information. It may be custom data, build information or details about the latest commit
+
+/liquibase: behaves like /flyway but for  Liquibase
+
+/logfile: returns ordinary application logs
+
+/loggers: enables us to query and modify the logging level of our application
+
+/metrics: details metrics for our application
+
+/sessions: lists HTTP sessions, given we are using spring session
+
+/shutdown: performs a graceful shutdown of the application
+
+/threaddump: dumps the thread information of the underlying JVM
+
+NOTE: actuator comes with most endpoints disabled, only two available by default are /health and /info, if we want to enable all of them, we could set management.endpoints.web.exposure.include=*(or list endpoints that should be enabled)

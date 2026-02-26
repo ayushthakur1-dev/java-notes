@@ -1,8 +1,9 @@
 package implementation;
 
-public class Generics {
+import java.io.Serializable;
+
+public class Generics{
     public static void main(String[] args) {
 
     }
 }
-
