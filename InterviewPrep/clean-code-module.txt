@@ -1,0 +1,66 @@
+what is clean code and code smells 
+clean code good practices
+clean code principles -> SOLID, DRY, YAGNI, KISS
+design patterns -> Singleton (5 ways), Builder, Factory, Abstract Factory, Decorator
+
+clean code -> code that is easy to read, understand and maintain, core concept behind writing clean code is that code is more read than it is written, and also in order to collaborate in a team one should be able to write such code to do so there are certain good practices and principles 
+
+clean code good practices:
+not more than three level of indentation 
+avoid comments -> during code change, comments are sometimes ignored because they are non functional which means context will be different that the code written at that time, which can cause confusion so we should write such that is self explanatory using means like consistent naming conventions through out the code base, and not using unnamed variables 
+logical code should not exceed 10 lines , if it does it is recommended to brake that in separate methods, so it will be easy to debug and understand
+we should avoid using flag variables, as most of the time work related to them can be represented separately which is more clear
+a method should not have more than 5 arguments
+
+clean code principles 
+SOLID -> single responsibility, open and closed principle, Liskov's substitution principle, interface segregation, dependency inversion
+Single Responsibility Principle: 
+a class should have single responsibility eg. a Order class having orderId, list of orderItems and pay method in it, -> pay method is another responsibility that should be handled separately in a different class not here
+
+Open And Closed Principle: 
+our code should be open for extension but closed for modification, mean we should be able to add new functionality without changing the existing code 
+eg. we have a PaymentManager class where in pay method we are accepting a string method and we have written if(method == cashOnDelivery)else if(method == creditCard)... but what if in future we need to add crypto payment, we have to change the existing code so to avoid that what could we have done is that instead of accepting a string we can accept an object of that payment type and just run obj.pay() inside, now even if new need to add more payment methods in future we can simply extend the paymentType class and pass that object into PaymentManager
+
+Liskov's Substitution Principle: 
+objects of a superclass should be replaceable with object of it's subclass without breaking the application or changing the base functionality, 
+eg. lets say there is a User class that have a method grantPermission that returns read, now it have two subclasses regular user that have permission to read, and an admin user that have permissions to read and write, now If am expecting User type of object somewhere, it can be User, RegularUser or AdminUser, so while running greantPermission method it should not break.
+
+Interface Segregration:
+classes should not be forced to use methods they do not use, eg. instead of writing contract for regular user and admin user in a single interface and then implementing those in classes will lead to interface pollution specially for regular user as admin user will have some extra functionality so instead of doing that, segregated that interface into two UserFeature, AdminUserFeatures and implement both of them in AdminUser but for RegularUser implement only UserFeature
+
+Dependency Inversion:
+High level modules should not depend on low level modules or vice-versa instead both of them should depend on an abstraction layer
+eg. we have emailSender -> a low level module and a notification class -> a high level module, now there is a tight coupling between them if I want to add another typeOfSender lets say SmsSender I must change the existing code which violates the open closed principle, so to avoid that an abstraction layer MessageSender will be added in between that all other senders will extend and that MessageSender will be passed to Notification class 
+
+DRY -> dont repeat yourself
+it means we should avoid repeating our code, if we have same logic written everywhere we should write it inside a method, but we should also keep in mind that it does not mean that every logic is written inside a sperate method, because that will lead to over dryness and tight coupling between components 
+eg of dry -> using logic to check if a number is prime or not -> should be inside a method 
+eg of over dryness -> over dryness is often lead by the over centralization that is forcing completely separate modules of share a single method, so if method have to change for one module it will break for other
+eg we have created a displayUserInfo and displayEmployeeInfo method that is only displaying their id, first name and last name, so we merge them into single method displayInfo, but in future what if we need to display age for user, and department for employee, it will break 
+
+KISS -> keep it simple stupid
+we should avoid writing complex code, as complexity is harder to maintain, that can lead to several bugs and lead to technical debt 
+eg. instead of writing (x & 1) == 0 we can use x % 2 == 0 in order to check if a number is even or odd
+because every developer might not know about bit logic, although it is faster but it will not make such performance difference in most of real world applications and it's understanding complexity is high 
+
+YAGNI -> you aren't gonna need it
+focus on delivering minimum viable functionality and not on part which is not required right now, because requirements can change in future and over engineering may lead to maintenance overhead
+eg -> someone have role to create basic CRUD methods for user, and they overengineered that with scaling assumptions, some extra requirements like additional roles of PREMIUM, REGULAR_USER, etc -> this will lead to slower delivery, feature that may be never used, and if requirement changes in future like instead of PREMIUM, we need Admin that can have many functionality so our work will have no point 
+
+Design Patterns:
+it a reusable, high level blueprint for solving commonly occurring problem 
+Singleton: -> when we want to control the object creation, or make ensure that there is only one object of a particular class throughout the code base,
+eg. Caching, Logging(SLF4J -> Simple Logging Facade for java), in java java.lang.Runtime(used to interface with JVM directly, but using methods like gc() -> suggests to run gc, exit(int status) -> ends the current JVM instance) have only one instance that is done using singleton pattern
+
+Builder: -> it is a creational design pattern that enables step by step construction for complex object and especially useful for objects having optional fields, eg. a car having doors, engine, roof, seats, -> default values can be set and if we need to change something we can do so using CarBuilder setter methods and in last we can call it's build method to get Car's instance. StringBuilder follow a somewhat smilar apporach where a string is formed step by step by appending or removing parts from it
+
+Decorator: -> it is a structural design pattern that is used to add extra behaviour at runtime without changing the existing code by wrapping it inside a decorator class, eg. lets say we have various discount types like coupon, festival, membership and birthday -> for these 4 types there will be 2^4 - 1 i.e 15 possible combinations hence we need to create 11 more classes which will lead to class explosion in our code base to avoid that we can use decorator pattern.
+
+Factory: -> used to create objects without exposing the exact class being instantiated, eg. Integer.valueOf(10), instead of using new Integer(10) -> here Integer.valueOf() will return a cached object instead of returning new one if the value is between -128 to 127 so it is deciding to add optimization layer or to create a new object on it's own and hiding which class is being instantiated.
+but a simple factory pattern often violates open closed principle to avoid that, we can use registration based factory pattern where factory will have an internal map of string as key and supplier as value, which will allow us to make new registries and get those whenever we need, Spring framework used some what we can say a similar concept in order to register Beans stored inside BeanFactory which creates an object on demand
+
+Abstract Factory: -> it is a creational design pattern, provides an instance for creating families of related or dependent objects, eg we have two payment gateways Razorpay and Cashfree so we have to implement their payment class and a separate refund class -> following the single responsibility principle, but the thing is if i am doing payment from one gateway refund should also be initialized from the same one, instead of letting client to figure out which object are related to each other we will provide them, here core principle of factory pattern that is not to expose instantiating class is also being followed but the core difference is that instead of deciding for one single object, we are providing with a family of objects that are closely related or dependent on each other
+
+Strategy Pattern: -> it is a behavioural pattern that defines a family of algorithm encapsulate each one in separate class and makes them interchangeable at runtime. eg. Collections.sort(), Arrays.sort() thakes a comparator as a strategy to define how to order elements
+
+

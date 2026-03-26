@@ -1,0 +1,52 @@
+class loader:
+takes a .class file(bytecode)
+converts it into class object in JVM memory
+makes it usable in our program
+
+Class loading phases:s
+1. Loading
+2. Linking
+	Verification
+	Preparation
+	Resolution
+3. Initialization
+
+Loading phase:
+JVM finds the .class file, reads bytecode into memory and creates a Class<?> object
+
+Linking phase:
+this phase prepares the class to actually run
+(a)Verification:
+	ensures bytecode is safe and valid
+	checks include: bytecode format correctness, no illegal memory access, stack operations are valid
+
+(b)Preparation:
+	Allocate memory for static variables
+	assign default values
+
+(c)Resolution:
+	Replace symbolic reference with real reference
+	constant pool contains: class name, method names, fields names and resolution converts these into direct pointer
+	eg. class A -> refers to class B(symbolic) -> class A -> memory address of class B
+
+3. Initialization phase:
+	now jvm actually executes static variable assignments and static blocks
+
+Trigger points for class loader:
+Object is created using 'new'
+static method is called
+static field is accessed
+reflection is used
+else class will not be loaded
+
+class loader follows a parent delegation model:
+application -> platform -> bootstrap
+why? -> prevents duplicate classes, ensures security(core classes cannot be overridden)
+
+what is Class<?>
+in java every loaded class(via ClassLoader) is represented by an object of Class
+eg. Class c = String.class
+this class object contains: className, Methods, fields, and constructor
+
+why <?> generics where introduced here? 
+because at compile time you may not no which type of class so generics will allow read only through Object hence type safety

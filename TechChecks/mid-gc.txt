@@ -1,0 +1,63 @@
+GIT
+Maven
+Java Fundamentals
+Java Memory Model
+oops Concepts
+Basics of OOP in Java
+Java Classes and Objects
+Methods, Constructors, and Access Modifiers
+Inheritance and Overriding Methods
+Polymorphism (Compile-time and Runtime)
+Abstraction (Abstract Classes and Interfaces)
+Encapsulation and its advantages in Java
+Core Java Essentials
+Types of inner class: local, static and anonymous inner class
+String, HashCode, and Equals
+Static Keyword (Static Variables, Methods, Block)
+final (Final keyword, Final variable, Final method, Final class)
+Serialization
+Exception Handling in Java
+Generics & Annotations
+Collections Framework
+What is Collections Framework?
+List, Set, Map - creation, iteration & manipulation
+Comparator and comparable interfaces
+Key Java Features
+Lambda Expressions
+Functional Interfaces
+Optionals
+The Streams API
+Method References
+Records
+Sealed Classes
+SE Best Practices
+Clean code
+Design Principles (SOILD, DRY, KISS, YAGNI)
+Design Patterns (Singleton, Factory, Abstract Factory, Decorator, Strategy)
+Unit Testing
+Junit
+Spring Framework
+Spring core concepts
+Inversion of Control (IoC) and Dependency Injection (DI)
+Bean lifecycle and scopes
+ApplicationContext vs BeanFactory
+Configuration: Java-based and Annotations
+Spring Boot
+Purpose and advantages of Spring Boot
+Starter dependencies and auto-configuration
+Application properties/yaml configuration
+Main class and @SpringBootApplication annotation
+Profiles and environment-specific configuration
+Embedded servers (Tomcat, Jetty, etc.)
+Running and packaging Spring Boot applications (jar/war)
+Spring Data JPA
+What is JPA? Difference between JPA and Hibernate
+Entity mapping (@Entity, @Id, @GeneratedValue, etc.)
+Repository interfaces (CrudRepository, JpaRepository)
+Basic CRUD operations
+Query methods (naming conventions)
+Custom queries (@Query annotation)
+Pagination and sorting
+Relationships (OneToOne, OneToMany, ManyToOne, ManyToMany)
+Transaction management (@Transactional)
+ 

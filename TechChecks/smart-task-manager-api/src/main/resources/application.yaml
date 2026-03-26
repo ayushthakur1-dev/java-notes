@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://mysql-container:3306/smartdb
+    username: root
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: hrh8y34839539485y284huwud8Fmdjfuy8579y34urwifhsdjkwioeu4yfjeiw349u82yirwe34reiw4riwuo42qirwu4irewu54qireu452ioereioqwhu492rioqeh2q9uoeiw34uy2reqoihy3892uoeqiy32uqr392erqoihwy2ueqiwyuaewighdyqruiewq3HEG3BHDSGWQHAvgyqvJDGWVBACEhukjdfavbhfgeqrkFAGIDHAEjbiHQEDRUI13EY3R49878Y587YU341IEWSQDJAFSG
+  expiryMs: 846000000

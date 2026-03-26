@@ -1,0 +1,6 @@
+types of inner classes:
+
+member inner class -> directly inside class (non-static)
+method local inner class (inside a method)
+anonymous inner class -> (anonymous class)
+static inner class -> (static inner class)

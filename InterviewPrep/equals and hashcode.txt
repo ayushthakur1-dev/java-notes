@@ -1,0 +1,2 @@
+equals and hashcode:
+there is a contract between equals and hashcode that two object that are equal will have same hashcode but two objects having same hashcode dose not mean they are equals this happens because hascode value are of 32bit, 62bit etc. depending upon the system architecture -> this mean that possible values are finite causing two non equal objects having same hashcode	
